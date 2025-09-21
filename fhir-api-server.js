@@ -11,16 +11,17 @@ const helmet = require('helmet');
 const compression = require('compression');
 const { v4: uuidv4 } = require('uuid');
 
+// A simple middleware to wrap async functions and catch errors
+const asyncHandler = (fn) => (req, res, next) =>
+    Promise.resolve(fn(req, res, next)).catch(next);
+
 class FHIRAPIServer {
     constructor() {
         this.app = express();
-        this.port = process.env.FHIR_PORT || 3003;
-        this.jwtSecret = process.env.JWT_SECRET || 'fhir-api-secret-key-2024';
-
-        // Initialize FHIR client for external EHR integration (mock for now)
-        // this.fhirClient = new Client({
-        //     baseUrl: process.env.EHR_API_URL || 'https://api.epic.com/fhir'
-        // });
+        // Use environment variable for port, with a default
+        this.port = process.env.FHIR_PORT || 3003; //
+        // Use environment variable for JWT secret for better security
+        this.jwtSecret = process.env.JWT_SECRET || 'fhir-api-secret-key-2024'; //
 
         // In-memory FHIR resource storage (replace with database in production)
         this.resources = {
@@ -40,54 +41,54 @@ class FHIRAPIServer {
     }
 
     setupMiddleware() {
-        // Security
         this.app.use(helmet());
         this.app.use(cors({
             origin: process.env.FRONTEND_URL || 'http://localhost:3000',
             credentials: true
         }));
         this.app.use(compression());
-
-        // Body parsing
         this.app.use(express.json({ limit: '50mb' }));
         this.app.use(express.urlencoded({ extended: true }));
-
-        // Request logging
         this.app.use((req, res, next) => {
-            console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+            console.log(`[FHIR] [${new Date().toISOString()}] ${req.method} ${req.path}`);
             next();
         });
     }
 
     setupRoutes() {
-        // FHIR Capability Statement
         this.app.get('/fhir/metadata', this.getCapabilityStatement.bind(this));
 
-        // FHIR Resource endpoints
-        this.app.get('/fhir/Patient/:id', this.authenticateToken.bind(this), this.getPatient.bind(this));
-        this.app.get('/fhir/Patient', this.authenticateToken.bind(this), this.searchPatients.bind(this));
-        this.app.post('/fhir/Patient', this.authenticateToken.bind(this), this.createPatient.bind(this));
-        this.app.put('/fhir/Patient/:id', this.authenticateToken.bind(this), this.updatePatient.bind(this));
+        // Patient routes
+        this.app.get('/fhir/Patient/:id', this.authenticateToken.bind(this), asyncHandler(this.getPatient.bind(this)));
+        this.app.get('/fhir/Patient', this.authenticateToken.bind(this), asyncHandler(this.searchPatients.bind(this)));
+        this.app.post('/fhir/Patient', this.authenticateToken.bind(this), asyncHandler(this.createPatient.bind(this)));
+        this.app.put('/fhir/Patient/:id', this.authenticateToken.bind(this), asyncHandler(this.updatePatient.bind(this)));
 
-        this.app.get('/fhir/Observation/:id', this.authenticateToken.bind(this), this.getObservation.bind(this));
-        this.app.get('/fhir/Observation', this.authenticateToken.bind(this), this.searchObservations.bind(this));
-        this.app.post('/fhir/Observation', this.authenticateToken.bind(this), this.createObservation.bind(this));
+        // Observation routes
+        this.app.get('/fhir/Observation/:id', this.authenticateToken.bind(this), asyncHandler(this.getObservation.bind(this)));
+        this.app.get('/fhir/Observation', this.authenticateToken.bind(this), asyncHandler(this.searchObservations.bind(this)));
+        this.app.post('/fhir/Observation', this.authenticateToken.bind(this), asyncHandler(this.createObservation.bind(this)));
+        // Placeholder for future implementation
+        this.app.put('/fhir/Observation/:id', this.authenticateToken.bind(this), (req, res) => res.status(501).send({ message: 'Not Implemented' }));
+        this.app.delete('/fhir/Observation/:id', this.authenticateToken.bind(this), (req, res) => res.status(501).send({ message: 'Not Implemented' }));
 
-        this.app.get('/fhir/Condition/:id', this.authenticateToken.bind(this), this.getCondition.bind(this));
-        this.app.get('/fhir/Condition', this.authenticateToken.bind(this), this.searchConditions.bind(this));
-        this.app.post('/fhir/Condition', this.authenticateToken.bind(this), this.createCondition.bind(this));
 
-        this.app.get('/fhir/Medication/:id', this.authenticateToken.bind(this), this.getMedication.bind(this));
-        this.app.get('/fhir/Medication', this.authenticateToken.bind(this), this.searchMedications.bind(this));
+        // Condition routes
+        this.app.get('/fhir/Condition/:id', this.authenticateToken.bind(this), asyncHandler(this.getCondition.bind(this)));
+        this.app.get('/fhir/Condition', this.authenticateToken.bind(this), asyncHandler(this.searchConditions.bind(this)));
+        this.app.post('/fhir/Condition', this.authenticateToken.bind(this), asyncHandler(this.createCondition.bind(this)));
+        // Placeholder for future implementation
+        this.app.put('/fhir/Condition/:id', this.authenticateToken.bind(this), (req, res) => res.status(501).send({ message: 'Not Implemented' }));
+        this.app.delete('/fhir/Condition/:id', this.authenticateToken.bind(this), (req, res) => res.status(501).send({ message: 'Not Implemented' }));
 
-        // Bulk data endpoints
-        this.app.get('/fhir/Patient/:id/$everything', this.authenticateToken.bind(this), this.patientEverything.bind(this));
 
-        // Error handling
+        this.app.get('/fhir/Medication/:id', this.authenticateToken.bind(this), asyncHandler(this.getMedication.bind(this)));
+        this.app.get('/fhir/Medication', this.authenticateToken.bind(this), asyncHandler(this.searchMedications.bind(this)));
+        this.app.get('/fhir/Patient/:id/$everything', this.authenticateToken.bind(this), asyncHandler(this.patientEverything.bind(this)));
+
         this.app.use(this.errorHandler.bind(this));
     }
 
-    // Authentication middleware
     authenticateToken(req, res, next) {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
@@ -119,7 +120,6 @@ class FHIRAPIServer {
         });
     }
 
-    // FHIR Capability Statement
     getCapabilityStatement(req, res) {
         const capabilityStatement = {
             resourceType: 'CapabilityStatement',
@@ -135,7 +135,7 @@ class FHIRAPIServer {
                 description: 'OneCare FHIR R4 API Server'
             },
             fhirVersion: '4.0.1',
-            format: ['json', 'xml'],
+            format: ['json'], // Explicitly state that only JSON is supported
             rest: [{
                 mode: 'server',
                 resource: [
@@ -188,431 +188,371 @@ class FHIRAPIServer {
         res.json(capabilityStatement);
     }
 
-    // Patient endpoints
     async getPatient(req, res) {
-        try {
-            const { id } = req.params;
-            const patient = this.resources.Patient.get(id);
+        const { id } = req.params;
+        const patient = this.resources.Patient.get(id);
 
-            if (!patient) {
-                return res.status(404).json({
-                    resourceType: 'OperationOutcome',
-                    issue: [{
-                        severity: 'error',
-                        code: 'not-found',
-                        details: { text: `Patient ${id} not found` }
-                    }]
-                });
-            }
-
-            res.json(patient);
-        } catch (error) {
-            this.handleError(res, error);
+        if (!patient) {
+            return res.status(404).json({
+                resourceType: 'OperationOutcome',
+                issue: [{
+                    severity: 'error',
+                    code: 'not-found',
+                    details: { text: `Patient ${id} not found` }
+                }]
+            });
         }
+
+        res.json(patient);
     }
 
     async searchPatients(req, res) {
-        try {
-            const { name, birthdate, gender, _count = 20, _offset = 0 } = req.query;
-            let patients = Array.from(this.resources.Patient.values());
+        // More robust pagination and search
+        const { name, birthdate, gender, _count = '20', _offset = '0' } = req.query;
+        let patients = Array.from(this.resources.Patient.values());
 
-            // Apply search filters
-            if (name) {
-                patients = patients.filter(p =>
-                    p.name.some(n =>
-                        n.given.some(g => g.toLowerCase().includes(name.toLowerCase())) ||
-                        n.family.toLowerCase().includes(name.toLowerCase())
-                    )
-                );
-            }
-
-            if (birthdate) {
-                patients = patients.filter(p => p.birthDate === birthdate);
-            }
-
-            if (gender) {
-                patients = patients.filter(p => p.gender === gender);
-            }
-
-            // Pagination
-            const total = patients.length;
-            const paginatedPatients = patients.slice(parseInt(_offset), parseInt(_offset) + parseInt(_count));
-
-            res.json({
-                resourceType: 'Bundle',
-                type: 'searchset',
-                total,
-                entry: paginatedPatients.map(patient => ({
-                    resource: patient
-                }))
-            });
-        } catch (error) {
-            this.handleError(res, error);
+        if (name) {
+            patients = patients.filter(p =>
+                p.name.some(n =>
+                    (n.given || []).some(g => g.toLowerCase().includes(name.toLowerCase())) ||
+                    (n.family && n.family.toLowerCase().includes(name.toLowerCase()))
+                )
+            );
         }
+
+        if (birthdate) {
+            patients = patients.filter(p => p.birthDate === birthdate);
+        }
+
+        if (gender) {
+            patients = patients.filter(p => p.gender === gender);
+        }
+
+        const total = patients.length;
+        const count = parseInt(_count, 10);
+        const offset = parseInt(_offset, 10);
+        const paginatedPatients = patients.slice(offset, offset + count);
+
+        res.json({
+            resourceType: 'Bundle',
+            type: 'searchset',
+            total,
+            entry: paginatedPatients.map(patient => ({
+                resource: patient
+            }))
+        });
     }
 
     async createPatient(req, res) {
-        try {
-            const patientData = req.body;
+        const patientData = req.body;
 
-            // Validate FHIR Patient resource
-            if (patientData.resourceType !== 'Patient') {
-                return res.status(400).json({
-                    resourceType: 'OperationOutcome',
-                    issue: [{
-                        severity: 'error',
-                        code: 'invalid',
-                        details: { text: 'Resource must be of type Patient' }
-                    }]
-                });
-            }
-
-            // Generate ID if not provided
-            const id = patientData.id || uuidv4();
-            const patient = {
-                ...patientData,
-                id,
-                meta: {
-                    versionId: '1',
-                    lastUpdated: new Date().toISOString(),
-                    ...patientData.meta
-                }
-            };
-
-            this.resources.Patient.set(id, patient);
-
-            res.status(201).json(patient);
-        } catch (error) {
-            this.handleError(res, error);
+        if (patientData.resourceType !== 'Patient') {
+            return res.status(400).json({
+                resourceType: 'OperationOutcome',
+                issue: [{
+                    severity: 'error',
+                    code: 'invalid',
+                    details: { text: 'Resource must be of type Patient' }
+                }]
+            });
         }
+        // Using uuidv4 for consistent ID generation
+        const id = patientData.id || uuidv4();
+        const patient = {
+            ...patientData,
+            id,
+            meta: {
+                versionId: '1',
+                lastUpdated: new Date().toISOString(),
+                ...patientData.meta
+            }
+        };
+
+        this.resources.Patient.set(id, patient);
+
+        res.status(201).json(patient);
     }
 
     async updatePatient(req, res) {
-        try {
-            const { id } = req.params;
-            const patientData = req.body;
+        const { id } = req.params;
+        const patientData = req.body;
+        const existingPatient = this.resources.Patient.get(id);
 
-            if (!this.resources.Patient.has(id)) {
-                return res.status(404).json({
-                    resourceType: 'OperationOutcome',
-                    issue: [{
-                        severity: 'error',
-                        code: 'not-found',
-                        details: { text: `Patient ${id} not found` }
-                    }]
-                });
-            }
 
-            const updatedPatient = {
-                ...patientData,
-                id,
-                meta: {
-                    versionId: (parseInt(this.resources.Patient.get(id).meta.versionId) + 1).toString(),
-                    lastUpdated: new Date().toISOString(),
-                    ...patientData.meta
-                }
-            };
-
-            this.resources.Patient.set(id, updatedPatient);
-            res.json(updatedPatient);
-        } catch (error) {
-            this.handleError(res, error);
+        if (!existingPatient) {
+            return res.status(404).json({
+                resourceType: 'OperationOutcome',
+                issue: [{
+                    severity: 'error',
+                    code: 'not-found',
+                    details: { text: `Patient ${id} not found` }
+                }]
+            });
         }
+
+        const updatedPatient = {
+            ...patientData,
+            id,
+            meta: {
+                versionId: (parseInt(existingPatient.meta.versionId, 10) + 1).toString(),
+                lastUpdated: new Date().toISOString(),
+                ...patientData.meta
+            }
+        };
+
+        this.resources.Patient.set(id, updatedPatient);
+        res.json(updatedPatient);
     }
 
-    // Observation endpoints
     async getObservation(req, res) {
-        try {
-            const { id } = req.params;
-            const observation = this.resources.Observation.get(id);
+        const { id } = req.params;
+        const observation = this.resources.Observation.get(id);
 
-            if (!observation) {
-                return res.status(404).json({
-                    resourceType: 'OperationOutcome',
-                    issue: [{
-                        severity: 'error',
-                        code: 'not-found',
-                        details: { text: `Observation ${id} not found` }
-                    }]
-                });
-            }
-
-            res.json(observation);
-        } catch (error) {
-            this.handleError(res, error);
+        if (!observation) {
+            return res.status(404).json({
+                resourceType: 'OperationOutcome',
+                issue: [{
+                    severity: 'error',
+                    code: 'not-found',
+                    details: { text: `Observation ${id} not found` }
+                }]
+            });
         }
+
+        res.json(observation);
     }
 
     async searchObservations(req, res) {
-        try {
-            const { patient, category, date, code, _count = 20, _offset = 0 } = req.query;
-            let observations = Array.from(this.resources.Observation.values());
+        const { patient, category, date, code, _count = '20', _offset = '0' } = req.query;
+        let observations = Array.from(this.resources.Observation.values());
 
-            // Apply search filters
-            if (patient) {
-                observations = observations.filter(o =>
-                    o.subject && o.subject.reference === `Patient/${patient}`
-                );
-            }
-
-            if (category) {
-                observations = observations.filter(o =>
-                    o.category && o.category.some(cat =>
-                        cat.coding.some(coding => coding.code === category)
-                    )
-                );
-            }
-
-            if (date) {
-                observations = observations.filter(o =>
-                    o.effectiveDateTime && o.effectiveDateTime.startsWith(date)
-                );
-            }
-
-            if (code) {
-                observations = observations.filter(o =>
-                    o.code && o.code.coding.some(coding => coding.code === code)
-                );
-            }
-
-            // Pagination
-            const total = observations.length;
-            const paginatedObservations = observations.slice(parseInt(_offset), parseInt(_offset) + parseInt(_count));
-
-            res.json({
-                resourceType: 'Bundle',
-                type: 'searchset',
-                total,
-                entry: paginatedObservations.map(observation => ({
-                    resource: observation
-                }))
-            });
-        } catch (error) {
-            this.handleError(res, error);
+        if (patient) {
+            observations = observations.filter(o =>
+                o.subject && o.subject.reference === `Patient/${patient}`
+            );
         }
+
+        if (category) {
+            observations = observations.filter(o =>
+                o.category && o.category.some(cat =>
+                    cat.coding.some(coding => coding.code === category)
+                )
+            );
+        }
+
+        if (date) {
+            observations = observations.filter(o =>
+                o.effectiveDateTime && o.effectiveDateTime.startsWith(date)
+            );
+        }
+
+        if (code) {
+            observations = observations.filter(o =>
+                o.code && o.code.coding.some(coding => coding.code === code)
+            );
+        }
+
+        const total = observations.length;
+        const count = parseInt(_count, 10);
+        const offset = parseInt(_offset, 10);
+        const paginatedObservations = observations.slice(offset, offset + count);
+
+
+        res.json({
+            resourceType: 'Bundle',
+            type: 'searchset',
+            total,
+            entry: paginatedObservations.map(observation => ({
+                resource: observation
+            }))
+        });
     }
 
     async createObservation(req, res) {
-        try {
-            const observationData = req.body;
+        const observationData = req.body;
 
-            if (observationData.resourceType !== 'Observation') {
-                return res.status(400).json({
-                    resourceType: 'OperationOutcome',
-                    issue: [{
-                        severity: 'error',
-                        code: 'invalid',
-                        details: { text: 'Resource must be of type Observation' }
-                    }]
-                });
-            }
-
-            const id = observationData.id || uuidv4();
-            const observation = {
-                ...observationData,
-                id,
-                meta: {
-                    versionId: '1',
-                    lastUpdated: new Date().toISOString(),
-                    ...observationData.meta
-                }
-            };
-
-            this.resources.Observation.set(id, observation);
-            res.status(201).json(observation);
-        } catch (error) {
-            this.handleError(res, error);
+        if (observationData.resourceType !== 'Observation') {
+            return res.status(400).json({
+                resourceType: 'OperationOutcome',
+                issue: [{
+                    severity: 'error',
+                    code: 'invalid',
+                    details: { text: 'Resource must be of type Observation' }
+                }]
+            });
         }
+
+        const id = observationData.id || uuidv4();
+        const observation = {
+            ...observationData,
+            id,
+            meta: {
+                versionId: '1',
+                lastUpdated: new Date().toISOString(),
+                ...observationData.meta
+            }
+        };
+
+        this.resources.Observation.set(id, observation);
+        res.status(201).json(observation);
     }
 
-    // Condition endpoints
     async getCondition(req, res) {
-        try {
-            const { id } = req.params;
-            const condition = this.resources.Condition.get(id);
+        const { id } = req.params;
+        const condition = this.resources.Condition.get(id);
 
-            if (!condition) {
-                return res.status(404).json({
-                    resourceType: 'OperationOutcome',
-                    issue: [{
-                        severity: 'error',
-                        code: 'not-found',
-                        details: { text: `Condition ${id} not found` }
-                    }]
-                });
-            }
-
-            res.json(condition);
-        } catch (error) {
-            this.handleError(res, error);
+        if (!condition) {
+            return res.status(404).json({
+                resourceType: 'OperationOutcome',
+                issue: [{
+                    severity: 'error',
+                    code: 'not-found',
+                    details: { text: `Condition ${id} not found` }
+                }]
+            });
         }
+
+        res.json(condition);
     }
 
     async searchConditions(req, res) {
-        try {
-            const { patient, 'clinical-status': clinicalStatus, 'onset-date': onsetDate, _count = 20, _offset = 0 } = req.query;
-            let conditions = Array.from(this.resources.Condition.values());
+        const { patient, 'clinical-status': clinicalStatus, 'onset-date': onsetDate, _count = '20', _offset = '0' } = req.query;
+        let conditions = Array.from(this.resources.Condition.values());
 
-            if (patient) {
-                conditions = conditions.filter(c =>
-                    c.subject && c.subject.reference === `Patient/${patient}`
-                );
-            }
-
-            if (clinicalStatus) {
-                conditions = conditions.filter(c =>
-                    c.clinicalStatus && c.clinicalStatus.coding.some(coding => coding.code === clinicalStatus)
-                );
-            }
-
-            if (onsetDate) {
-                conditions = conditions.filter(c =>
-                    c.onsetDateTime && c.onsetDateTime.startsWith(onsetDate)
-                );
-            }
-
-            const total = conditions.length;
-            const paginatedConditions = conditions.slice(parseInt(_offset), parseInt(_offset) + parseInt(_count));
-
-            res.json({
-                resourceType: 'Bundle',
-                type: 'searchset',
-                total,
-                entry: paginatedConditions.map(condition => ({
-                    resource: condition
-                }))
-            });
-        } catch (error) {
-            this.handleError(res, error);
+        if (patient) {
+            conditions = conditions.filter(c =>
+                c.subject && c.subject.reference === `Patient/${patient}`
+            );
         }
+
+        if (clinicalStatus) {
+            conditions = conditions.filter(c =>
+                c.clinicalStatus && c.clinicalStatus.coding.some(coding => coding.code === clinicalStatus)
+            );
+        }
+
+        if (onsetDate) {
+            conditions = conditions.filter(c =>
+                c.onsetDateTime && c.onsetDateTime.startsWith(onsetDate)
+            );
+        }
+
+        const total = conditions.length;
+        const count = parseInt(_count, 10);
+        const offset = parseInt(_offset, 10);
+        const paginatedConditions = conditions.slice(offset, offset + count);
+
+        res.json({
+            resourceType: 'Bundle',
+            type: 'searchset',
+            total,
+            entry: paginatedConditions.map(condition => ({
+                resource: condition
+            }))
+        });
     }
 
     async createCondition(req, res) {
-        try {
-            const conditionData = req.body;
+        const conditionData = req.body;
 
-            if (conditionData.resourceType !== 'Condition') {
-                return res.status(400).json({
-                    resourceType: 'OperationOutcome',
-                    issue: [{
-                        severity: 'error',
-                        code: 'invalid',
-                        details: { text: 'Resource must be of type Condition' }
-                    }]
-                });
-            }
-
-            const id = conditionData.id || uuidv4();
-            const condition = {
-                ...conditionData,
-                id,
-                meta: {
-                    versionId: '1',
-                    lastUpdated: new Date().toISOString(),
-                    ...conditionData.meta
-                }
-            };
-
-            this.resources.Condition.set(id, condition);
-            res.status(201).json(condition);
-        } catch (error) {
-            this.handleError(res, error);
+        if (conditionData.resourceType !== 'Condition') {
+            return res.status(400).json({
+                resourceType: 'OperationOutcome',
+                issue: [{
+                    severity: 'error',
+                    code: 'invalid',
+                    details: { text: 'Resource must be of type Condition' }
+                }]
+            });
         }
+
+        const id = conditionData.id || uuidv4();
+        const condition = {
+            ...conditionData,
+            id,
+            meta: {
+                versionId: '1',
+                lastUpdated: new Date().toISOString(),
+                ...conditionData.meta
+            }
+        };
+
+        this.resources.Condition.set(id, condition);
+        res.status(201).json(condition);
     }
 
-    // Medication endpoints
     async getMedication(req, res) {
-        try {
-            const { id } = req.params;
-            const medication = this.resources.Medication.get(id);
+        const { id } = req.params;
+        const medication = this.resources.Medication.get(id);
 
-            if (!medication) {
-                return res.status(404).json({
-                    resourceType: 'OperationOutcome',
-                    issue: [{
-                        severity: 'error',
-                        code: 'not-found',
-                        details: { text: `Medication ${id} not found` }
-                    }]
-                });
-            }
-
-            res.json(medication);
-        } catch (error) {
-            this.handleError(res, error);
+        if (!medication) {
+            return res.status(404).json({
+                resourceType: 'OperationOutcome',
+                issue: [{
+                    severity: 'error',
+                    code: 'not-found',
+                    details: { text: `Medication ${id} not found` }
+                }]
+            });
         }
+
+        res.json(medication);
     }
 
     async searchMedications(req, res) {
-        try {
-            const { _count = 20, _offset = 0 } = req.query;
-            let medications = Array.from(this.resources.Medication.values());
+        const { _count = '20', _offset = '0' } = req.query;
+        let medications = Array.from(this.resources.Medication.values());
 
-            const total = medications.length;
-            const paginatedMedications = medications.slice(parseInt(_offset), parseInt(_offset) + parseInt(_count));
+        const total = medications.length;
+        const count = parseInt(_count, 10);
+        const offset = parseInt(_offset, 10);
+        const paginatedMedications = medications.slice(offset, offset + count);
 
-            res.json({
-                resourceType: 'Bundle',
-                type: 'searchset',
-                total,
-                entry: paginatedMedications.map(medication => ({
-                    resource: medication
-                }))
-            });
-        } catch (error) {
-            this.handleError(res, error);
-        }
+        res.json({
+            resourceType: 'Bundle',
+            type: 'searchset',
+            total,
+            entry: paginatedMedications.map(medication => ({
+                resource: medication
+            }))
+        });
     }
 
-    // Patient $everything operation
     async patientEverything(req, res) {
-        try {
-            const { id } = req.params;
-            const patient = this.resources.Patient.get(id);
+        const { id } = req.params;
+        const patient = this.resources.Patient.get(id);
 
-            if (!patient) {
-                return res.status(404).json({
-                    resourceType: 'OperationOutcome',
-                    issue: [{
-                        severity: 'error',
-                        code: 'not-found',
-                        details: { text: `Patient ${id} not found` }
-                    }]
-                });
-            }
-
-            // Get all resources related to this patient
-            const relatedResources = [];
-
-            // Add the patient
-            relatedResources.push({
-                resource: patient
+        if (!patient) {
+            return res.status(404).json({
+                resourceType: 'OperationOutcome',
+                issue: [{
+                    severity: 'error',
+                    code: 'not-found',
+                    details: { text: `Patient ${id} not found` }
+                }]
             });
-
-            // Add observations
-            const patientObservations = Array.from(this.resources.Observation.values())
-                .filter(obs => obs.subject && obs.subject.reference === `Patient/${id}`);
-            relatedResources.push(...patientObservations.map(obs => ({ resource: obs })));
-
-            // Add conditions
-            const patientConditions = Array.from(this.resources.Condition.values())
-                .filter(cond => cond.subject && cond.subject.reference === `Patient/${id}`);
-            relatedResources.push(...patientConditions.map(cond => ({ resource: cond })));
-
-            res.json({
-                resourceType: 'Bundle',
-                type: 'searchset',
-                total: relatedResources.length,
-                entry: relatedResources
-            });
-        } catch (error) {
-            this.handleError(res, error);
         }
+
+        const relatedResources = [];
+        relatedResources.push({ resource: patient });
+
+        const patientObservations = Array.from(this.resources.Observation.values())
+            .filter(obs => obs.subject && obs.subject.reference === `Patient/${id}`);
+        relatedResources.push(...patientObservations.map(obs => ({ resource: obs })));
+
+        const patientConditions = Array.from(this.resources.Condition.values())
+            .filter(cond => cond.subject && cond.subject.reference === `Patient/${id}`);
+        relatedResources.push(...patientConditions.map(cond => ({ resource: cond })));
+
+        res.json({
+            resourceType: 'Bundle',
+            type: 'searchset',
+            total: relatedResources.length,
+            entry: relatedResources
+        });
     }
 
-    // Initialize sample FHIR data
     initializeSampleData() {
-        // Sample Patient
         const samplePatient = {
             resourceType: 'Patient',
             id: 'patient-demo-001',
@@ -652,7 +592,6 @@ class FHIRAPIServer {
 
         this.resources.Patient.set(samplePatient.id, samplePatient);
 
-        // Sample Observation (Blood Pressure)
         const sampleObservation = {
             resourceType: 'Observation',
             id: 'obs-bp-001',
@@ -712,7 +651,6 @@ class FHIRAPIServer {
 
         this.resources.Observation.set(sampleObservation.id, sampleObservation);
 
-        // Sample Condition
         const sampleCondition = {
             resourceType: 'Condition',
             id: 'cond-htn-001',
@@ -767,20 +705,8 @@ class FHIRAPIServer {
         console.log('🏥 FHIR API initialized with sample data');
     }
 
-    handleError(res, error) {
-        console.error('FHIR API Error:', error);
-        res.status(500).json({
-            resourceType: 'OperationOutcome',
-            issue: [{
-                severity: 'error',
-                code: 'exception',
-                details: { text: error.message }
-            }]
-        });
-    }
-
     errorHandler(err, req, res, next) {
-        console.error('Unhandled error:', err);
+        console.error('Unhandled FHIR API Error:', err);
         res.status(500).json({
             resourceType: 'OperationOutcome',
             issue: [{
@@ -799,10 +725,10 @@ class FHIRAPIServer {
     }
 }
 
-// Create and start the FHIR API server
-const fhirAPIServer = new FHIRAPIServer();
-fhirAPIServer.start();
+if (require.main === module) {
+    const fhirAPIServer = new FHIRAPIServer();
+    fhirAPIServer.start();
+}
 
-module.exports = FHIRAPIServer;
 
 module.exports = FHIRAPIServer;
