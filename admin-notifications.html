@@ -526,65 +526,7 @@
     <div class="app-container">
         <!-- Admin Sidebar -->
         <nav class="sidebar" id="sidebar">
-            <div class="logo">
-                <i class="fas fa-heartbeat"></i>
-                OneCare
-                <span class="admin-badge">ADMIN</span>
-            </div>
-            
-            <div class="nav-section">
-                <div class="nav-section-title">Overview</div>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="admin-dashboard.html" class="nav-link">
-                            <i class="fas fa-chart-pie"></i>
-                            Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="admin-analytics.html" class="nav-link">
-                            <i class="fas fa-chart-line"></i>
-                            Analytics
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">User Management</div>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="admin-users.html" class="nav-link">
-                            <i class="fas fa-users"></i>
-                            All Users
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Communications</div>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="admin-notifications.html" class="nav-link active">
-                            <i class="fas fa-bell"></i>
-                            Notifications
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">System</div>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="admin-settings.html" class="nav-link">
-                            <i class="fas fa-cog"></i>
-                            Settings
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <!-- Sidebar will be dynamically loaded -->
         </nav>
 
         <!-- Main Content -->
@@ -822,10 +764,14 @@
         </main>
     </div>
 
+    <!-- Shared component loader -->
+    <script src="js/shared-components.js"></script>
     <script>
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            // Check authentication
+            loadSidebar('admin'); // Load admin sidebar
+
+            /* --- AUTHENTICATION CHECK REMOVED FOR PROTOTYPE ---
             const token = localStorage.getItem('authToken');
             const role = localStorage.getItem('userRole');
             
@@ -834,6 +780,7 @@
                 window.location.href = '/';
                 return;
             }
+            */
 
             initializeNotificationManagement();
         });
@@ -982,28 +929,11 @@
 
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userRole');
-                localStorage.removeItem('userName');
-                window.location.href = '/';
+                // For prototype, just redirect
+                window.location.href = 'index.html';
             }
-        }
-
-        // Mobile sidebar toggle
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('open');
-        }
-
-        // Add mobile menu button for small screens
-        if (window.innerWidth <= 768) {
-            const topBar = document.querySelector('.top-bar');
-            const menuButton = document.createElement('button');
-            menuButton.innerHTML = '<i class="fas fa-bars"></i>';
-            menuButton.onclick = toggleSidebar;
-            menuButton.style.cssText = 'background: #f8fafc; border: none; padding: 0.75rem; border-radius: 12px; cursor: pointer; margin-right: 1rem;';
-            topBar.insertBefore(menuButton, topBar.firstChild);
         }
     </script>
 </body>
 </html>
+

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OneCare - Medications</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>OneCare - My Medications</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -13,11 +13,25 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-color: #667eea;
+            --primary-color-dark: #5a6edc;
+            --secondary-color: #764ba2;
+            --background-color: #f7f9fc;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-color: rgba(149, 157, 165, 0.1);
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
+            background-color: var(--background-color);
+            color: var(--text-primary);
         }
 
         .app-container {
@@ -28,9 +42,8 @@
         /* Sidebar */
         .sidebar {
             width: 280px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
             padding: 2rem 0;
             position: fixed;
             height: 100vh;
@@ -43,35 +56,75 @@
             align-items: center;
             gap: 12px;
             padding: 0 2rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             font-size: 1.5rem;
             font-weight: 700;
-            color: #667eea;
+            color: var(--primary-color);
         }
+        .logo i { font-size: 1.8rem; }
 
-        .nav-menu {
-            list-style: none;
+        .nav-section-title {
+            padding: 0 2rem;
+            margin: 2rem 0 1rem 0;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
         }
-
-        .nav-item {
-            margin-bottom: 0.5rem;
-        }
-
+        
+        .nav-menu { list-style: none; }
+        
         .nav-link {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 1rem 2rem;
+            gap: 1rem;
+            padding: 0.9rem 2rem;
+            margin: 0.25rem 0;
             text-decoration: none;
-            color: #64748b;
+            color: var(--text-secondary);
             transition: all 0.3s ease;
-            border-right: 3px solid transparent;
+            border-left: 4px solid transparent;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color);
+            background-color: #f8f9fe;
         }
 
-        .nav-link:hover, .nav-link.active {
-            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
-            color: #667eea;
-            border-right-color: #667eea;
+        .nav-link.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, rgba(102, 126, 234, 0) 100%);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .nav-link i { width: 20px; text-align: center; }
+        
+        .emergency-contact { padding: 0 2rem; margin-top: 3rem; }
+        
+        .emergency-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        .emergency-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
         }
 
         /* Main Content */
@@ -80,1112 +133,483 @@
             margin-left: 280px;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
 
         .top-bar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            background-color: var(--card-bg);
+            padding: 1.25rem 2.5rem;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 50;
         }
-
+        
         .page-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #1e293b;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
         }
-
-        .top-bar-actions {
+        
+        .user-info {
+            position: relative;
             display: flex;
             align-items: center;
             gap: 1rem;
-        }
-
-        .icon-btn {
-            width: 40px;
-            height: 40px;
-            border: none;
-            border-radius: 10px;
-            background: #f8fafc;
             cursor: pointer;
+        }
+        
+        .user-avatar {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .icon-btn:hover {
-            background: #e2e8f0;
-            transform: translateY(-1px);
-        }
-
-        .notification-dot {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 8px;
-            height: 8px;
-            background: #ef4444;
-            border-radius: 50%;
-            border: 2px solid #fff;
-        }
-
-        /* User Menu */
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px;
-            background: #f8fafc;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .user-menu:hover {
-            background: #e2e8f0;
-        }
-
-        .user-menu img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-        }
-
-        .user-name {
+            font-size: 1.2rem;
             font-weight: 600;
-            color: #1e293b;
-            font-size: 0.9rem;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-
-        .user-role {
-            color: #64748b;
-            font-size: 0.8rem;
-        }
-
-        .dropdown-arrow {
-            transition: transform 0.3s ease;
-        }
-
-        .user-menu.open .dropdown-arrow {
-            transform: rotate(180deg);
-        }
-
-        /* User Dropdown */
-        .user-dropdown {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            width: 280px;
-            z-index: 1000;
-            margin-top: 0.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .dropdown-header {
-            padding: 1rem;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .dropdown-user-name {
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 0.25rem;
-        }
-
-        .dropdown-user-email {
-            color: #64748b;
-            font-size: 0.85rem;
-        }
+        
+        .user-details h4 { color: var(--text-primary); font-weight: 600; }
+        .user-details span { color: var(--text-secondary); font-size: 0.9rem; }
 
         .dropdown-menu {
-            padding: 0.5rem;
+            position: absolute;
+            top: 120%; right: 0;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            width: 220px;
+            overflow: hidden;
+            opacity: 0; visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
         }
-
+        .dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
         .dropdown-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 0.75rem 1rem;
-            background: none;
-            border: none;
-            width: 100%;
-            text-align: left;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #64748b;
-            font-size: 0.9rem;
+            gap: 10px;
+            padding: 0.85rem 1.25rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.95rem; font-weight: 500;
         }
-
-        .dropdown-item:hover {
-            background: #f8fafc;
-            color: #1e293b;
-        }
-
-        .dropdown-divider {
-            height: 1px;
-            background: #f1f5f9;
-            margin: 0.5rem 0;
-        }
-
-        .logout-item {
-            color: #ef4444 !important;
-        }
-
-        .logout-item:hover {
-            background: rgba(239, 68, 68, 0.1);
-        }
+        .dropdown-item:hover { background-color: #f8f9fe; color: var(--primary-color); }
+        .dropdown-divider { height: 1px; background-color: var(--border-color); margin: 0.5rem 0; }
 
         .content-wrapper {
             flex: 1;
-            padding: 2rem;
+            padding: 2.5rem;
             overflow-y: auto;
         }
 
-        /* Medication Management */
-        .med-header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-        }
-
-        .med-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            text-align: center;
-            padding: 1.5rem;
-            background: #f8fafc;
-            border-radius: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: #64748b;
-            font-size: 0.9rem;
-        }
-
-        .med-actions {
+        .medications-header {
             display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
         }
 
-        .btn {
+        .medications-title { font-size: 1.5rem; font-weight: 600; }
+
+        .action-buttons button {
+            background: var(--primary-color);
+            color: white;
             padding: 0.75rem 1.5rem;
-            border: none;
             border-radius: 12px;
-            font-weight: 600;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
+            margin-left: 1rem;
         }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #f8fafc;
-            color: #64748b;
-            border: 2px solid #e2e8f0;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .medications-container {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 2rem;
-        }
-
-        .medications-list {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .list-header {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .list-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .filter-tabs {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .filter-tab {
-            padding: 0.5rem 1rem;
-            border: none;
+        .action-buttons button:hover { background: var(--primary-color-dark); }
+        .action-buttons button.outline {
             background: transparent;
-            cursor: pointer;
-            border-radius: 8px;
-            color: #64748b;
-            transition: all 0.3s ease;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
         }
 
-        .filter-tab.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .medication-item {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid #f1f5f9;
+        .medication-tabs {
             display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: background 0.2s ease;
-            cursor: pointer;
-        }
-
-        .medication-item:hover {
-            background: rgba(102, 126, 234, 0.02);
-        }
-
-        .med-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            color: white;
-        }
-
-        .med-icon.active {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-
-        .med-icon.inactive {
-            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-        }
-
-        .med-icon.overdue {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        }
-
-        .med-details {
-            flex: 1;
-        }
-
-        .med-name {
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 0.25rem;
-        }
-
-        .med-dosage {
-            color: #64748b;
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .med-schedule {
-            color: #64748b;
-            font-size: 0.85rem;
-        }
-
-        .med-status {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-active {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-        }
-
-        .status-inactive {
-            background: rgba(100, 116, 139, 0.1);
-            color: #64748b;
-        }
-
-        .status-overdue {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-        }
-
-        /* Today's Schedule */
-        .schedule-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .schedule-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.95);
-        }
-
-        .schedule-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-        }
-
-        .schedule-date {
-            color: #64748b;
-            font-size: 0.9rem;
-        }
-
-        .schedule-item {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #f1f5f9;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .schedule-time {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 0.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            min-width: 60px;
-            text-align: center;
-        }
-
-        .schedule-med {
-            flex: 1;
-        }
-
-        .schedule-med-name {
-            font-weight: 600;
-            color: #1e293b;
-            font-size: 0.9rem;
-        }
-
-        .schedule-med-dose {
-            color: #64748b;
-            font-size: 0.8rem;
-        }
-
-        .taken-checkbox {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .taken-checkbox.checked {
-            background: #10b981;
-            border-color: #10b981;
-            color: white;
-        }
-
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 0.5rem;
             margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
         }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .close-btn {
+        .tab-btn {
+            padding: 1rem 1.5rem;
             background: none;
             border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #64748b;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #374151;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
             font-size: 1rem;
-            transition: all 0.3s ease;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            position: relative;
+        }
+        .tab-btn.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 3px 3px 0 0;
         }
 
-        .form-control:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        .medication-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 8px 24px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        .medication-table th, .medication-table td {
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .medication-table th {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+        .medication-table tbody tr:last-child td { border-bottom: none; }
+        .medication-table tbody tr:hover { background-color: #f8f9fe; }
+
+        .med-name { font-weight: 600; }
+        .med-purpose { font-size: 0.9rem; color: var(--text-secondary); }
+        .pills-remaining-progress {
+            width: 100px;
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .pills-remaining-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .med-status-tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+        .status-active { background-color: #dcfce7; color: #166534; }
+        .status-inactive { background-color: #f1f5f9; color: #64748b; }
+        .med-actions button {
+            background: transparent; border: none; color: var(--primary-color); cursor: pointer;
+            font-size: 1.2rem; margin: 0 0.5rem;
+        }
+        
+        .intake-btn {
+            background-color: #eef2ff;
+            color: var(--primary-color);
+            border: 1px solid #c7d2fe;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .intake-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .intake-btn.taken {
+            background-color: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+            cursor: not-allowed;
         }
 
-        @media (max-width: 968px) {
-            .medications-container {
-                grid-template-columns: 1fr;
-            }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(30, 41, 59, 0.5);
+            display: none; align-items: center; justify-content: center;
+            z-index: 2000; backdrop-filter: blur(5px);
         }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .med-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .med-actions {
-                flex-direction: column;
-            }
+        .modal-overlay.show { display: flex; }
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 2rem; border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            width: 100%; max-width: 600px;
         }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 1rem; margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .modal-header h3 { font-size: 1.25rem; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; }
+        
+        /* Refill Modal Specifics */
+        .refill-list .med-item {
+            display: flex; align-items: center; padding: 1rem;
+            border: 1px solid var(--border-color); border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+        .refill-list .med-item input { margin-right: 1rem; width: 20px; height: 20px; }
+        .modal-footer { text-align: right; margin-top: 1.5rem; }
+        .modal-footer button { padding: 0.75rem 2rem; }
+
     </style>
 </head>
 <body>
     <div class="app-container">
         <!-- Sidebar -->
-        <nav class="sidebar" id="sidebar">
-            <div class="logo">
-                <i class="fas fa-heartbeat"></i>
-                OneCare
-            </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="patient-dashboard.html" class="nav-link">
-                        <i class="fas fa-home"></i>
-                        Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="appointments.html" class="nav-link">
-                        <i class="fas fa-calendar-alt"></i>
-                        Appointments
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="patient-medications.html" class="nav-link active">
-                        <i class="fas fa-pills"></i>
-                        Medications
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="patient-health-records.html" class="nav-link">
-                        <i class="fas fa-file-medical"></i>
-                        Health Records
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="messages.html" class="nav-link">
-                        <i class="fas fa-comments"></i>
-                        Messages
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="patient-reports.html" class="nav-link">
-                        <i class="fas fa-chart-bar"></i>
-                        Reports & Analytics
-                    </a>
-                </li>
-            </ul>
-        </nav>
+        <nav class="sidebar" id="sidebar"></nav>
 
         <!-- Main Content -->
         <main class="main-content">
             <!-- Top Bar -->
-            <header class="top-bar">
-                <h1 class="page-title">
-                    <i class="fas fa-pills"></i>
-                    Medications
-                </h1>
-                
-                <div class="top-bar-actions">
-                    <button class="icon-btn" onclick="showNotifications()">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-dot"></span>
-                    </button>
-                    
-                    <div class="user-menu" onclick="toggleUserDropdown(event)" id="userMenuTrigger">
-                        <img src="data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23dbeafe'/%3E%3Cpath d='M20 20a5 5 0 100-10 5 5 0 000 10zM20 22c-5.5 0-10 3-10 6v4h20v-4c0-3-4.5-6-10-6z' fill='%232563eb'/%3E%3C/svg%3E" alt="Profile">
-                        <div>
-                            <div class="user-name" id="userName">John Doe</div>
-                            <div class="user-role">Patient</div>
-                        </div>
-                        <i class="fas fa-chevron-down dropdown-arrow"></i>
-                        
-                        <!-- User Dropdown Menu -->
-                        <div class="user-dropdown" id="userDropdown" style="display: none;">
-                            <div class="dropdown-header">
-                                <div class="dropdown-user-name" id="dropdownUserName">John Doe</div>
-                                <div class="dropdown-user-email">john.doe@email.com</div>
-                            </div>
-                            <div class="dropdown-divider"></div>
-                            <div class="dropdown-menu">
-                                <button class="dropdown-item" onclick="showProfileModal()">
-                                    <i class="fas fa-user"></i>
-                                    My Profile
-                                </button>
-                                <button class="dropdown-item" onclick="showSettingsModal()">
-                                    <i class="fas fa-cog"></i>
-                                    Settings
-                                </button>
-                                <button class="dropdown-item" onclick="showHelpModal()">
-                                    <i class="fas fa-question-circle"></i>
-                                    Help & Support
-                                </button>
-                            </div>
-                            <div class="dropdown-divider"></div>
-                            <button class="dropdown-item logout-item" onclick="showLogoutModal()">
-                                <i class="fas fa-sign-out-alt"></i>
-                                Sign Out
-                            </button>
-                        </div>
+            <div class="top-bar">
+                <h1 class="page-title">My Medications</h1>
+                <div class="user-info" id="userInfoToggle">
+                    <div class="user-details">
+                        <h4 id="patientName">Jane Doe</h4>
+                        <span>Patient ID: 12345</span>
+                    </div>
+                    <div class="user-avatar">J</div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#" class="dropdown-item"><i class="fas fa-user-circle"></i><span>My Profile</span></a>
+                        <a href="#" class="dropdown-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" id="logoutButton"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
                     </div>
                 </div>
-            </header>
+            </div>
 
             <!-- Content -->
             <div class="content-wrapper">
-                <!-- Medication Header -->
-                <div class="med-header">
-                    <h2 style="color: #1e293b; font-weight: 600; margin-bottom: 1rem;">Medication Management</h2>
-                    <p style="color: #64748b; margin-bottom: 2rem;">Track your medications, schedules, and adherence</p>
-                    
-                    <div class="med-stats">
-                        <div class="stat-card">
-                            <div class="stat-number" id="activeMedsCount">5</div>
-                            <div class="stat-label">Active Medications</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="todayDosesCount">8</div>
-                            <div class="stat-label">Today's Doses</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="adherenceRate">92%</div>
-                            <div class="stat-label">Adherence Rate</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="overdueDosesCount">1</div>
-                            <div class="stat-label">Overdue Doses</div>
-                        </div>
-                    </div>
-                    
-                    <div class="med-actions">
-                        <button class="btn btn-primary" onclick="showAddMedicationModal()">
-                            <i class="fas fa-plus"></i>
-                            Add Medication
-                        </button>
-                        <button class="btn btn-secondary" onclick="showRefillReminders()">
-                            <i class="fas fa-clock"></i>
-                            Refill Reminders
-                        </button>
-                        <button class="btn btn-secondary" onclick="showMedHistory()">
-                            <i class="fas fa-history"></i>
-                            Medication History
-                        </button>
+                <div class="medications-header">
+                    <h2 class="medications-title">Medication Overview</h2>
+                    <div class="action-buttons">
+                        <button class="outline" id="requestRefillBtn"><i class="fas fa-sync-alt"></i> Request Refill</button>
+                        <button><i class="fas fa-download"></i> Download List</button>
                     </div>
                 </div>
-
-                <!-- Medications Container -->
-                <div class="medications-container">
-                    <!-- Medications List -->
-                    <div class="medications-list">
-                        <div class="list-header">
-                            <h3 class="list-title">Your Medications</h3>
-                            <div class="filter-tabs">
-                                <button class="filter-tab active" onclick="filterMedications('all')">All</button>
-                                <button class="filter-tab" onclick="filterMedications('active')">Active</button>
-                                <button class="filter-tab" onclick="filterMedications('inactive')">Inactive</button>
-                            </div>
-                        </div>
-                        
-                        <div id="medicationsList">
-                            <!-- Medication items will be populated here -->
-                        </div>
-                    </div>
-
-                    <!-- Today's Schedule -->
-                    <div class="schedule-panel">
-                        <div class="schedule-header">
-                            <h3 class="schedule-title">Today's Schedule</h3>
-                            <div class="schedule-date" id="todayDate">March 24, 2024</div>
-                        </div>
-                        
-                        <div id="todaySchedule">
-                            <!-- Today's schedule items will be populated here -->
-                        </div>
-                    </div>
+                
+                <div class="medication-tabs">
+                    <button class="tab-btn active" data-tab="current">Current Prescriptions</button>
+                    <button class="tab-btn" data-tab="past">Past Medications</button>
                 </div>
+                
+                <table class="medication-table">
+                    <thead>
+                        <tr>
+                            <th>Medication</th>
+                            <th>Dosage</th>
+                            <th>Frequency</th>
+                            <th>Pills Remaining</th>
+                            <th>Daily Intake</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="medication-list-body">
+                        <!-- Medications will be dynamically inserted here -->
+                    </tbody>
+                </table>
             </div>
         </main>
     </div>
 
-    <!-- Add Medication Modal -->
-    <div id="addMedicationModal" class="modal" style="display: none;">
+    <!-- Refill Request Modal -->
+    <div class="modal-overlay" id="refillModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Add New Medication</h2>
-                <button class="close-btn" onclick="closeModal('addMedicationModal')">&times;</button>
+                <h3>Request a Refill</h3>
+                <button class="close-btn" data-close>&times;</button>
             </div>
-            <form id="addMedicationForm">
-                <div class="form-group">
-                    <label class="form-label">Medication Name</label>
-                    <input type="text" class="form-control" id="medName" placeholder="Enter medication name" required>
+            <div class="modal-body">
+                <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Select the medications you wish to refill.</p>
+                <div class="refill-list" id="refill-list-container">
+                    <!-- Refillable meds will be inserted here -->
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Dosage</label>
-                    <input type="text" class="form-control" id="medDosage" placeholder="e.g., 10mg" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Frequency</label>
-                    <select class="form-control" id="medFrequency" required>
-                        <option value="">Select frequency</option>
-                        <option value="once">Once daily</option>
-                        <option value="twice">Twice daily</option>
-                        <option value="three">Three times daily</option>
-                        <option value="four">Four times daily</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Times</label>
-                    <input type="text" class="form-control" id="medTimes" placeholder="e.g., 8:00 AM, 8:00 PM">
-                </div>
-                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('addMedicationModal')">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Add Medication</button>
-                </div>
-            </form>
+            </div>
+            <div class="modal-footer">
+                <button class="action-buttons" id="submitRefillRequest">Submit Request</button>
+            </div>
         </div>
     </div>
-
+    
+    <!-- Shared component loader -->
+    <script src="js/shared-components.js"></script>
     <script>
-        // Mock medication data
-        let medications = [
-            {
-                id: 'med1',
-                name: 'Lisinopril',
-                dosage: '10mg',
-                frequency: 'once',
-                times: ['08:00'],
-                status: 'active',
-                adherence: 95
-            },
-            {
-                id: 'med2',
-                name: 'Metformin',
-                dosage: '500mg',
-                frequency: 'twice',
-                times: ['08:00', '20:00'],
-                status: 'active',
-                adherence: 88
-            },
-            {
-                id: 'med3',
-                name: 'Atorvastatin',
-                dosage: '20mg',
-                frequency: 'once',
-                times: ['20:00'],
-                status: 'active',
-                adherence: 92
-            },
-            {
-                id: 'med4',
-                name: 'Aspirin',
-                dosage: '81mg',
-                frequency: 'once',
-                times: ['08:00'],
-                status: 'active',
-                adherence: 96
-            },
-            {
-                id: 'med5',
-                name: 'Omeprazole',
-                dosage: '20mg',
-                frequency: 'once',
-                times: ['08:00'],
-                status: 'inactive',
-                adherence: 0
-            }
-        ];
-
-        // Mock today's schedule
-        let todaySchedule = [
-            { time: '08:00', medId: 'med1', taken: true },
-            { time: '08:00', medId: 'med2', taken: true },
-            { time: '08:00', medId: 'med4', taken: false },
-            { time: '12:00', medId: 'med2', taken: false },
-            { time: '20:00', medId: 'med2', taken: false },
-            { time: '20:00', medId: 'med3', taken: false }
-        ];
-
-        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('authToken');
-            const userName = localStorage.getItem('userName');
-            
-            if (!token) {
-                window.location.href = 'index.html';
-                return;
-            }
+            loadSidebar('patient');
 
-            // Update user name display
-            if (userName) {
-                document.getElementById('userName').textContent = userName;
-                document.getElementById('dropdownUserName').textContent = userName;
-            }
+            const name = localStorage.getItem('userName') || 'Jane Doe';
+            document.getElementById('patientName').textContent = name;
+            document.querySelector('.user-avatar').textContent = name.charAt(0).toUpperCase();
 
-            // Set today's date
-            document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+            const userInfoToggle = document.getElementById('userInfoToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            userInfoToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+            window.addEventListener('click', () => dropdownMenu.classList.remove('show'));
+            document.getElementById('logoutButton').addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = '/index.html';
             });
 
-            renderMedications();
-            renderTodaySchedule();
-            updateStats();
-        });
+            // --- MEDICATION DATA & LOGIC ---
+            const medications = [
+                { id: 1, type: 'current', name: 'Lisinopril', purpose: 'Blood Pressure', dosage: '10 mg', frequency: 'Once Daily', remaining: 25, total: 30, status: 'Active', takenToday: false },
+                { id: 2, type: 'current', name: 'Albuterol', purpose: 'Asthma', dosage: '2 Puffs', frequency: 'As Needed', remaining: 50, total: 200, status: 'Active', takenToday: false },
+                { id: 3, type: 'current', name: 'Metformin', purpose: 'Diabetes', dosage: '500 mg', frequency: 'Twice Daily', remaining: 180, total: 180, status: 'Active', takenToday: false },
+                { id: 4, type: 'past', name: 'Amoxicillin', purpose: 'Infection', dosage: '250 mg', frequency: 'Three times daily', remaining: 0, total: 21, status: 'Inactive' },
+                { id: 5, type: 'past', name: 'Loratadine', purpose: 'Allergies', dosage: '10 mg', frequency: 'Once Daily', remaining: 0, total: 30, status: 'Inactive' },
+            ];
+            
+            const tableBody = document.getElementById('medication-list-body');
+            const tabs = document.querySelectorAll('.tab-btn');
+            let activeTab = 'current';
 
-        // User dropdown functionality
-        function toggleUserDropdown(event) {
-            event.stopPropagation();
-            const dropdown = document.getElementById('userDropdown');
-            const trigger = document.getElementById('userMenuTrigger');
-            
-            const isVisible = dropdown.style.display !== 'none';
-            
-            if (isVisible) {
-                dropdown.style.display = 'none';
-                trigger.classList.remove('open');
-            } else {
-                dropdown.style.display = 'block';
-                trigger.classList.add('open');
-            }
-        }
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const dropdown = document.getElementById('userDropdown');
-            const trigger = document.getElementById('userMenuTrigger');
-            
-            if (!trigger.contains(event.target)) {
-                dropdown.style.display = 'none';
-                trigger.classList.remove('open');
-            }
-        });
-
-        // Render medications list
-        function renderMedications() {
-            const container = document.getElementById('medicationsList');
-            
-            container.innerHTML = medications.map(med => `
-                <div class="medication-item" data-status="${med.status}" onclick="showMedicationDetails('${med.id}')">
-                    <div class="med-icon ${med.status}">
-                        <i class="fas fa-pills"></i>
-                    </div>
-                    <div class="med-details">
-                        <div class="med-name">${med.name}</div>
-                        <div class="med-dosage">${med.dosage} • ${getFrequencyText(med.frequency)}</div>
-                        <div class="med-schedule">Times: ${med.times.join(', ')}</div>
-                    </div>
-                    <div class="med-status status-${med.status}">${med.status.charAt(0).toUpperCase() + med.status.slice(1)}</div>
-                </div>
-            `).join('');
-        }
-
-        // Render today's schedule
-        function renderTodaySchedule() {
-            const container = document.getElementById('todaySchedule');
-            
-            container.innerHTML = todaySchedule.map((item, index) => {
-                const med = medications.find(m => m.id === item.medId);
-                if (!med) return '';
+            function renderMedications(filter) {
+                tableBody.innerHTML = '';
+                const filteredMeds = medications.filter(med => med.type === filter);
                 
-                return `
-                    <div class="schedule-item">
-                        <div class="schedule-time">${item.time}</div>
-                        <div class="schedule-med">
-                            <div class="schedule-med-name">${med.name}</div>
-                            <div class="schedule-med-dose">${med.dosage}</div>
-                        </div>
-                        <div class="taken-checkbox ${item.taken ? 'checked' : ''}" onclick="toggleMedicationTaken(${index})">
-                            ${item.taken ? '<i class="fas fa-check"></i>' : ''}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
+                if(filteredMeds.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem;">No medications found.</td></tr>`;
+                    return;
+                }
 
-        // Update statistics
-        function updateStats() {
-            const activeMeds = medications.filter(m => m.status === 'active').length;
-            const todayDoses = todaySchedule.length;
-            const takenDoses = todaySchedule.filter(s => s.taken).length;
-            const overdueDoses = todaySchedule.filter(s => !s.taken && isPastTime(s.time)).length;
-            const adherenceRate = todayDoses > 0 ? Math.round((takenDoses / todayDoses) * 100) : 100;
-            
-            document.getElementById('activeMedsCount').textContent = activeMeds;
-            document.getElementById('todayDosesCount').textContent = todayDoses;
-            document.getElementById('adherenceRate').textContent = adherenceRate + '%';
-            document.getElementById('overdueDosesCount').textContent = overdueDoses;
-        }
+                filteredMeds.forEach(med => {
+                    const remainingPercentage = (med.remaining / med.total) * 100;
+                    
+                    let intakeHTML = '';
+                    if (med.type === 'current') {
+                        if (med.takenToday) {
+                            intakeHTML = `<button class="intake-btn taken" disabled><i class="fas fa-check"></i> Taken</button>`;
+                        } else {
+                            intakeHTML = `<button class="intake-btn" data-id="${med.id}">Mark as Taken</button>`;
+                        }
+                    }
 
-        // Filter medications
-        function filterMedications(status) {
-            const buttons = document.querySelectorAll('.filter-tab');
-            const items = document.querySelectorAll('.medication-item');
-            
-            // Update active button
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Filter items
-            items.forEach(item => {
-                if (status === 'all' || item.dataset.status === status) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
+                    const row = `
+                        <tr>
+                            <td>
+                                <div class="med-name">${med.name}</div>
+                                <div class="med-purpose">${med.purpose}</div>
+                            </td>
+                            <td>${med.dosage}</td>
+                            <td>${med.frequency}</td>
+                            <td>
+                                <div class="pills-remaining-progress">
+                                    <div class="pills-remaining-bar" style="width: ${remainingPercentage}%;"></div>
+                                </div>
+                            </td>
+                            <td>${intakeHTML}</td>
+                            <td><span class="med-status-tag status-${med.status.toLowerCase()}">${med.status}</span></td>
+                            <td class="med-actions">
+                                ${med.type === 'current' ? `<button title="Request Refill"><i class="fas fa-sync-alt"></i></button>` : ''}
+                                <button title="View Details"><i class="fas fa-ellipsis-h"></i></button>
+                            </td>
+                        </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            }
+
+            tableBody.addEventListener('click', function(e) {
+                if (e.target.classList.contains('intake-btn') && !e.target.disabled) {
+                    const medId = parseInt(e.target.dataset.id, 10);
+                    const med = medications.find(m => m.id === medId);
+                    if (med) {
+                        med.takenToday = true;
+                        
+                        // Decrement pills based on frequency
+                        if (med.frequency.toLowerCase().includes('once')) {
+                            med.remaining -= 1;
+                        } else if (med.frequency.toLowerCase().includes('twice')) {
+                            med.remaining -= 2;
+                        } else { // For "As Needed" or other cases
+                             med.remaining -= 1;
+                        }
+                        if (med.remaining < 0) med.remaining = 0;
+
+                        renderMedications(activeTab);
+                    }
                 }
             });
-        }
 
-        // Toggle medication taken status
-        function toggleMedicationTaken(index) {
-            todaySchedule[index].taken = !todaySchedule[index].taken;
-            renderTodaySchedule();
-            updateStats();
-        }
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    activeTab = tab.dataset.tab;
+                    renderMedications(activeTab);
+                });
+            });
 
-        // Helper functions
-        function getFrequencyText(frequency) {
-            const frequencies = {
-                'once': 'Once daily',
-                'twice': 'Twice daily',
-                'three': 'Three times daily',
-                'four': 'Four times daily'
-            };
-            return frequencies[frequency] || frequency;
-        }
-
-        function isPastTime(timeString) {
-            const now = new Date();
-            const [hours, minutes] = timeString.split(':');
-            const scheduleTime = new Date();
-            scheduleTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-            return now > scheduleTime;
-        }
-
-        // Modal functions
-        function showAddMedicationModal() {
-            document.getElementById('addMedicationModal').style.display = 'flex';
-        }
-
-        function showMedicationDetails(medId) {
-            const med = medications.find(m => m.id === medId);
-            if (med) {
-                alert(`Medication Details:\n\nName: ${med.name}\nDosage: ${med.dosage}\nFrequency: ${getFrequencyText(med.frequency)}\nTimes: ${med.times.join(', ')}\nStatus: ${med.status}\nAdherence: ${med.adherence}%`);
+            // --- REFILL MODAL LOGIC ---
+            const refillModal = document.getElementById('refillModal');
+            const requestRefillBtn = document.getElementById('requestRefillBtn');
+            const refillListContainer = document.getElementById('refill-list-container');
+            const submitRefillRequestBtn = document.getElementById('submitRefillRequest');
+            
+            function openRefillModal() {
+                refillListContainer.innerHTML = '';
+                const refillableMeds = medications.filter(med => med.type === 'current' && med.remaining < med.total);
+                
+                if(refillableMeds.length === 0) {
+                     refillListContainer.innerHTML = '<p>No medications are currently eligible for a refill.</p>';
+                } else {
+                    refillableMeds.forEach(med => {
+                        refillListContainer.innerHTML += `
+                            <div class="med-item">
+                                <input type="checkbox" id="med-${med.id}" value="${med.id}">
+                                <label for="med-${med.id}">
+                                    <strong class="med-name">${med.name}</strong> (${med.dosage})
+                                </label>
+                            </div>`;
+                    });
+                }
+                refillModal.classList.add('show');
             }
-        }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function showProfileModal() {
-            alert('Profile modal coming soon!');
-            toggleUserDropdown(event);
-        }
-
-        function showSettingsModal() {
-            alert('Settings coming soon!');
-            toggleUserDropdown(event);
-        }
-
-        function showHelpModal() {
-            alert('Help & Support coming soon!');
-            toggleUserDropdown(event);
-        }
-
-        function showLogoutModal() {
-            if (confirm('Are you sure you want to sign out?')) {
-                logout();
+            function closeModal() {
+                refillModal.classList.remove('show');
             }
-            toggleUserDropdown(event);
-        }
 
-        function showNotifications() {
-            alert('Notifications coming soon!');
-        }
+            requestRefillBtn.addEventListener('click', openRefillModal);
+            refillModal.addEventListener('click', (e) => {
+                if(e.target.matches('.close-btn') || e.target.matches('.modal-overlay')) {
+                    closeModal();
+                }
+            });
+            submitRefillRequestBtn.addEventListener('click', () => {
+                alert('Refill request submitted successfully!');
+                closeModal();
+            });
 
-        function showRefillReminders() {
-            alert('Refill reminders feature coming soon!');
-        }
-
-        function showMedHistory() {
-            alert('Medication history feature coming soon!');
-        }
-
-        function logout() {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('userName');
-            localStorage.removeItem('userRole');
-            window.location.href = 'index.html';
-        }
-
-        // Handle add medication form
-        document.getElementById('addMedicationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('medName').value;
-            const dosage = document.getElementById('medDosage').value;
-            const frequency = document.getElementById('medFrequency').value;
-            const times = document.getElementById('medTimes').value.split(',').map(t => t.trim());
-            
-            const newMed = {
-                id: 'med' + (medications.length + 1),
-                name: name,
-                dosage: dosage,
-                frequency: frequency,
-                times: times,
-                status: 'active',
-                adherence: 100
-            };
-            
-            medications.push(newMed);
-            renderMedications();
-            updateStats();
-            closeModal('addMedicationModal');
-            
-            // Reset form
-            this.reset();
-            
-            alert('Medication added successfully!');
+            // Initial render
+            renderMedications('current');
         });
-
-        // Mobile menu toggle
-        if (window.innerWidth <= 768) {
-            const topBar = document.querySelector('.top-bar');
-            const menuButton = document.createElement('button');
-            menuButton.innerHTML = '<i class="fas fa-bars"></i>';
-            menuButton.onclick = () => document.getElementById('sidebar').classList.toggle('open');
-            menuButton.style.cssText = 'background: #f8fafc; border: none; padding: 0.75rem; border-radius: 12px; cursor: pointer; margin-right: 1rem;';
-            topBar.insertBefore(menuButton, topBar.firstChild);
-        }
     </script>
-    
-    <!-- Profile Modal Integration -->
-    <script src="js/profile-modal.js"></script>
 </body>
 </html>
+

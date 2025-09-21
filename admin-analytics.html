@@ -469,53 +469,7 @@
     <div class="app-container">
         <!-- Admin Sidebar -->
         <nav class="sidebar" id="sidebar">
-            <div class="logo">
-                <i class="fas fa-heartbeat"></i>
-                OneCare
-                <span class="admin-badge">ADMIN</span>
-            </div>
-            
-            <div class="nav-section">
-                <div class="nav-section-title">Overview</div>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="admin-dashboard.html" class="nav-link">
-                            <i class="fas fa-chart-pie"></i>
-                            Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="admin-analytics.html" class="nav-link active">
-                            <i class="fas fa-chart-line"></i>
-                            Analytics
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">User Management</div>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="admin-users.html" class="nav-link">
-                            <i class="fas fa-users"></i>
-                            All Users
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">System</div>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="admin-settings.html" class="nav-link">
-                            <i class="fas fa-cog"></i>
-                            Settings
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <!-- Sidebar will be dynamically loaded -->
         </nav>
 
         <!-- Main Content -->
@@ -786,7 +740,9 @@
     <script>
         // Initialize charts when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            // Check authentication
+            loadSidebar('admin'); // Load admin sidebar
+            
+            /* --- AUTHENTICATION CHECK REMOVED FOR PROTOTYPE ---
             const token = localStorage.getItem('authToken');
             const role = localStorage.getItem('userRole');
             
@@ -795,6 +751,7 @@
                 window.location.href = '/';
                 return;
             }
+            */
 
             initializeCharts();
             
@@ -934,5 +891,8 @@
             topBar.insertBefore(menuButton, topBar.firstChild);
         }
     </script>
+    <!-- Shared component loader -->
+    <script src="js/shared-components.js"></script>
 </body>
 </html>
+

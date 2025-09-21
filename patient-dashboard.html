@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OneCare - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>OneCare - Patient Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -13,11 +14,23 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-color: #667eea;
+            --primary-color-dark: #5a6edc;
+            --secondary-color: #764ba2;
+            --background-color: #f7f9fc;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-color: rgba(149, 157, 165, 0.1);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
+            background-color: var(--background-color);
+            color: var(--text-primary);
         }
 
         .app-container {
@@ -28,9 +41,8 @@
         /* Sidebar */
         .sidebar {
             width: 280px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
             padding: 2rem 0;
             position: fixed;
             height: 100vh;
@@ -43,35 +55,86 @@
             align-items: center;
             gap: 12px;
             padding: 0 2rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             font-size: 1.5rem;
             font-weight: 700;
-            color: #667eea;
+            color: var(--primary-color);
+        }
+        .logo i {
+            font-size: 1.8rem;
         }
 
+        .nav-section-title {
+            padding: 0 2rem;
+            margin: 2rem 0 1rem 0;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        
         .nav-menu {
             list-style: none;
         }
-
-        .nav-item {
-            margin-bottom: 0.5rem;
-        }
-
+        
         .nav-link {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 1rem 2rem;
+            gap: 1rem;
+            padding: 0.9rem 2rem;
+            margin: 0.25rem 0;
             text-decoration: none;
-            color: #64748b;
+            color: var(--text-secondary);
             transition: all 0.3s ease;
-            border-right: 3px solid transparent;
+            border-left: 4px solid transparent;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color);
+            background-color: #f8f9fe;
         }
 
-        .nav-link:hover, .nav-link.active {
-            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
-            color: #667eea;
-            border-right-color: #667eea;
+        .nav-link.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, rgba(102, 126, 234, 0) 100%);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .emergency-contact {
+            padding: 0 2rem;
+            margin-top: 3rem;
+        }
+        
+        .emergency-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        .emergency-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
         }
 
         /* Main Content */
@@ -80,720 +143,473 @@
             margin-left: 280px;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
 
         .top-bar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            background-color: var(--card-bg);
+            padding: 1.25rem 2.5rem;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 50;
         }
-
-        .search-container {
-            flex: 1;
-            max-width: 500px;
+        
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .user-info {
             position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 0.75rem 1rem 0.75rem 3rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #64748b;
-        }
-
-        .user-menu {
             display: flex;
             align-items: center;
             gap: 1rem;
-            position: relative;
-        }
-
-        .notification-btn, .user-profile {
-            padding: 0.75rem;
-            background: #f8fafc;
-            border: none;
-            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .notification-btn:hover, .user-profile:hover {
-            background: #e2e8f0;
-            transform: translateY(-2px);
         }
         
-        /* User profile dropdown */
-        .user-profile-dropdown {
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .user-details h4 {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .user-details span {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Profile Dropdown */
+        .dropdown-menu {
             position: absolute;
-            top: 100%;
+            top: 120%;
             right: 0;
-            width: 220px;
-            background: white;
+            background-color: var(--card-bg);
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            padding: 1rem 0;
-            margin-top: 0.5rem;
-            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            width: 220px;
+            overflow: hidden;
             opacity: 0;
             visibility: hidden;
             transform: translateY(10px);
             transition: all 0.3s ease;
+            z-index: 1000;
         }
-        
-        .user-profile-dropdown.active {
+
+        .dropdown-menu.show {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
         }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.85rem 1.25rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fe;
+            color: var(--primary-color);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 0.5rem 0;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            padding: 2.5rem;
+            overflow-y: auto;
+        }
         
-        .user-profile-header {
-            padding: 0.5rem 1.5rem 1rem;
-            border-bottom: 1px solid #f1f5f9;
-            margin-bottom: 0.5rem;
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 24px;
+            box-shadow: 0 8px 24px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 35px rgba(149, 157, 165, 0.15);
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+        
+        .health-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        
+        .health-metric {
             display: flex;
             align-items: center;
             gap: 1rem;
         }
         
-        .profile-picture {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
         }
         
-        .profile-info h4 {
-            color: #1e293b;
+        .metric-icon.heart { background: linear-gradient(135deg, #fb7185, #ef4444); }
+        .metric-icon.steps { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
+        .metric-icon.sleep { background: linear-gradient(135deg, #a78bfa, #8b5cf6); }
+        .metric-icon.calories { background: linear-gradient(135deg, #fcd34d, #f59e0b); }
+        
+        .metric-info .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .metric-info .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .appointments-list {
+            list-style: none;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        
+        .appointment-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.25rem 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .appointment-item:last-child { border-bottom: none; }
+        
+        .appointment-date {
+            text-align: center;
+            background-color: #f8f9fe;
+            padding: 0.6rem 0.9rem;
+            border-radius: 12px;
+            color: var(--primary-color);
+        }
+        
+        .appointment-date .month {
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        
+        .appointment-date .day {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .appointment-details p {
             font-weight: 600;
-            font-size: 1rem;
             margin-bottom: 0.25rem;
         }
         
-        .profile-info span {
-            color: #64748b;
-            font-size: 0.85rem;
-        }
-        
-        .dropdown-menu {
-            list-style: none;
-        }
-        
-        .dropdown-item {
-            padding: 0.75rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: #64748b;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        
-        .dropdown-item:hover {
-            background: #f8fafc;
-            color: #667eea;
-        }
-        
-        .dropdown-divider {
-            height: 1px;
-            background: #f1f5f9;
-            margin: 0.5rem 0;
-        }
-        
-        .dropdown-item.logout {
-            color: #ef4444;
-        }
-        
-        .dropdown-item.logout:hover {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-        }
-
-        .content-wrapper {
-            flex: 1;
-            padding: 2rem;
-            overflow-y: auto;
-        }
-
-        .welcome-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 3rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .welcome-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 1rem;
-        }
-
-        .welcome-subtitle {
-            font-size: 1.2rem;
-            color: #64748b;
-            margin-bottom: 2rem;
-        }
-
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .action-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-        }
-
-        .action-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            margin-bottom: 1rem;
-        }
-
-        .action-icon.screening {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .action-icon.medications {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .action-icon.appointments {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-
-        .action-icon.messages {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-        }
-
-        .action-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-        }
-
-        .action-description {
-            color: #64748b;
-            font-size: 0.95rem;
-        }
-
-        .stats-overview {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: #64748b;
+        .appointment-details span {
+            color: var(--text-secondary);
             font-size: 0.9rem;
         }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .content-wrapper {
-                padding: 1rem;
-            }
-            
-            .welcome-title {
-                font-size: 2rem;
-            }
+        
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+        
+        .action-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1.5rem;
+            border-radius: 16px;
+            text-decoration: none;
+            color: var(--text-primary);
+            background-color: #f8f9fe;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .action-button:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        
+        .action-button i {
+            font-size: 1.75rem;
+        }
+        
+        .chart-container {
+            height: 280px;
         }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
+        <!-- Patient Sidebar -->
         <nav class="sidebar" id="sidebar">
-            <div class="logo">
-                <i class="fas fa-heartbeat"></i>
-                OneCare
-            </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="patient-dashboard.html" class="nav-link active">
-                        <i class="fas fa-home"></i>
-                        Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="appointments.html" class="nav-link">
-                        <i class="fas fa-calendar-alt"></i>
-                        Appointments
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="patient-medications.html" class="nav-link">
-                        <i class="fas fa-pills"></i>
-                        Medications
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="patient-health-records.html" class="nav-link">
-                        <i class="fas fa-file-medical"></i>
-                        Health Records
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="messages.html" class="nav-link">
-                        <i class="fas fa-comments"></i>
-                        Messages
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="patient-screening.html" class="nav-link">
-                        <i class="fas fa-clipboard-check"></i>
-                        Screening & Care Plans
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="patient-emergency.html" class="nav-link">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        Emergency & Urgent Care
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="patient-reports.html" class="nav-link">
-                        <i class="fas fa-chart-bar"></i>
-                        Reports & Analytics
-                    </a>
-                </li>
-            </ul>
+            <!-- Sidebar will be dynamically loaded -->
         </nav>
 
         <!-- Main Content -->
         <main class="main-content">
             <!-- Top Bar -->
             <div class="top-bar">
-                <div class="search-container">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-input" placeholder="Search patients, appointments, medications...">
-                </div>
-                <div class="user-menu">
-                    <button class="notification-btn" onclick="showNotifications()">
-                        <i class="fas fa-bell"></i>
-                    </button>
-                    <div class="profile-container">
-                        <button class="user-profile" onclick="toggleUserMenu()">
-                            <i class="fas fa-user"></i>
-                        </button>
-                        <div class="user-profile-dropdown" id="userDropdown">
-                            <div class="user-profile-header">
-                                <div class="profile-picture">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="profile-info">
-                                    <h4 id="userName">John Doe</h4>
-                                    <span>Patient</span>
-                                </div>
-                            </div>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-item" onclick="viewProfile()">
-                                    <i class="fas fa-user-circle"></i>
-                                    <span>View Profile</span>
-                                </li>
-                                <li class="dropdown-item" onclick="accountSettings()">
-                                    <i class="fas fa-cog"></i>
-                                    <span>Account Settings</span>
-                                </li>
-                                <li class="dropdown-item" onclick="help()">
-                                    <i class="fas fa-question-circle"></i>
-                                    <span>Help & Support</span>
-                                </li>
-                                <li class="dropdown-divider"></li>
-                                <li class="dropdown-item logout" onclick="logout()">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                    <span>Logout</span>
-                                </li>
-                            </ul>
-                        </div>
+                <h1 class="page-title">Welcome, Jane!</h1>
+                <div class="user-info" id="userInfoToggle">
+                    <div class="user-details">
+                        <h4 id="patientName">Jane Doe</h4>
+                        <span>Patient ID: 12345</span>
+                    </div>
+                    <div class="user-avatar">J</div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-user-circle"></i>
+                            <span>My Profile</span>
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" id="logoutButton">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
                     </div>
                 </div>
             </div>
 
             <!-- Content -->
             <div class="content-wrapper">
-                <!-- Welcome Section -->
-                <div class="welcome-section">
-                    <h1 class="welcome-title">Welcome to OneCare</h1>
-                    <p class="welcome-subtitle">
-                        Your comprehensive healthcare management platform with AI-powered insights
-                    </p>
-                    
-                    <!-- Quick Stats -->
-                    <div class="stats-overview">
-                        <div class="stat-card">
-                            <div class="stat-number">12</div>
-                            <div class="stat-label">Active Medications</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">3</div>
-                            <div class="stat-label">Upcoming Appointments</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">5</div>
-                            <div class="stat-label">Due Screenings</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">8</div>
-                            <div class="stat-label">Unread Messages</div>
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h3 class="card-title">Today's Health Summary</h3>
+                        <div class="health-summary-grid">
+                            <div class="health-metric">
+                                <div class="metric-icon heart"><i class="fas fa-heartbeat"></i></div>
+                                <div class="metric-info">
+                                    <div class="metric-value">72 <span style="font-size: 1rem; color: #64748b;">bpm</span></div>
+                                    <div class="metric-label">Heart Rate</div>
+                                </div>
+                            </div>
+                            <div class="health-metric">
+                                <div class="metric-icon steps"><i class="fas fa-walking"></i></div>
+                                <div class="metric-info">
+                                    <div class="metric-value">5,280</div>
+                                    <div class="metric-label">Steps Taken</div>
+                                </div>
+                            </div>
+                            <div class="health-metric">
+                                <div class="metric-icon sleep"><i class="fas fa-moon"></i></div>
+                                <div class="metric-info">
+                                    <div class="metric-value">7h 45m</div>
+                                    <div class="metric-label">Sleep</div>
+                                </div>
+                            </div>
+                            <div class="health-metric">
+                                <div class="metric-icon calories"><i class="fas fa-fire"></i></div>
+                                <div class="metric-info">
+                                    <div class="metric-value">1,890</div>
+                                    <div class="metric-label">Calories Burned</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Quick Actions -->
-                <div class="quick-actions">
-                    <a href="screening.html" class="action-card">
-                        <div class="action-icon screening">
-                            <i class="fas fa-clipboard-check"></i>
-                        </div>
-                        <h3 class="action-title">Screening & Care Plans</h3>
-                        <p class="action-description">
-                            AI-powered preventive screening recommendations and care plan tracking
-                        </p>
-                    </a>
+                    <div class="card">
+                        <h3 class="card-title">Upcoming Appointments</h3>
+                        <ul class="appointments-list">
+                            <li class="appointment-item">
+                                <div class="appointment-date">
+                                    <span class="month">SEP</span>
+                                    <span class="day">28</span>
+                                </div>
+                                <div class="appointment-details">
+                                    <p>Dr. Evelyn Reed</p>
+                                    <span>Cardiology Checkup - 10:30 AM</span>
+                                </div>
+                            </li>
+                            <li class="appointment-item">
+                                <div class="appointment-date">
+                                    <span class="month">OCT</span>
+                                    <span class="day">05</span>
+                                </div>
+                                <div class="appointment-details">
+                                    <p>Dr. Samuel Chen</p>
+                                    <span>Dermatology Follow-up - 2:00 PM</span>
+                                </div>
+                            </li>
+                            <li class="appointment-item">
+                                <div class="appointment-date">
+                                    <span class="month">OCT</span>
+                                    <span class="day">12</span>
+                                </div>
+                                <div class="appointment-details">
+                                    <p>Dr. Maria Garcia</p>
+                                    <span>Annual Physical Exam - 9:00 AM</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
 
-                    <a href="medications.html" class="action-card">
-                        <div class="action-icon medications">
-                            <i class="fas fa-pills"></i>
+                    <div class="card">
+                        <h3 class="card-title">Health Trends (Last 7 Days)</h3>
+                        <div class="chart-container">
+                            <canvas id="healthTrendsChart"></canvas>
                         </div>
-                        <h3 class="action-title">Medications</h3>
-                        <p class="action-description">
-                            Manage prescriptions, track adherence, and receive refill reminders
-                        </p>
-                    </a>
+                    </div>
 
-                    <a href="appointments.html" class="action-card">
-                        <div class="action-icon appointments">
-                            <i class="fas fa-calendar-alt"></i>
+                    <div class="card">
+                        <h3 class="card-title">Quick Actions</h3>
+                        <div class="quick-actions-grid">
+                            <a href="appointments.html" class="action-button">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Appointments</span>
+                            </a>
+                            <a href="medications.html" class="action-button">
+                                <i class="fas fa-pills"></i>
+                                <span>Medications</span>
+                            </a>
+                            <a href="messages.html" class="action-button">
+                                <i class="fas fa-comment-medical"></i>
+                                <span>Messages</span>
+                            </a>
+                            <a href="reports.html" class="action-button">
+                                <i class="fas fa-file-waveform"></i>
+                                <span>Reports</span>
+                            </a>
                         </div>
-                        <h3 class="action-title">Appointments</h3>
-                        <p class="action-description">
-                            Schedule, reschedule, and track all your healthcare appointments
-                        </p>
-                    </a>
-
-                    <a href="messages.html" class="action-card">
-                        <div class="action-icon messages">
-                            <i class="fas fa-comments"></i>
-                        </div>
-                        <h3 class="action-title">Messages</h3>
-                        <p class="action-description">
-                            Secure communication with your healthcare providers
-                        </p>
-                    </a>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
 
+    <!-- Shared component loader -->
+    <script src="js/shared-components.js"></script>
     <script>
-        // User dropdown functionality
-        let isDropdownOpen = false;
-        
-        function toggleUserMenu() {
-            const dropdown = document.getElementById('userDropdown');
-            isDropdownOpen = !isDropdownOpen;
-            
-            if (isDropdownOpen) {
-                dropdown.classList.add('active');
-            } else {
-                dropdown.classList.remove('active');
-            }
-        }
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const userMenu = document.querySelector('.user-menu');
-            const dropdown = document.getElementById('userDropdown');
-            
-            if (!userMenu.contains(event.target) && isDropdownOpen) {
-                dropdown.classList.remove('active');
-                isDropdownOpen = false;
-            }
-        });
-        
-        // User menu functions
-        function viewProfile() {
-            // Use the profile modal from profile-modal.js
-            if (typeof showProfileModal === 'function') {
-                showProfileModal();
-            } else {
-                console.log('Profile modal not loaded yet');
-            }
-            toggleUserMenu(); // Close dropdown
-        }
-        
-        function accountSettings() {
-            // Use the settings modal from profile-modal.js
-            if (typeof showSettingsModal === 'function') {
-                showSettingsModal();
-            } else {
-                console.log('Settings modal not loaded yet');
-            }
-            toggleUserMenu(); // Close dropdown
-        }
-        
-        function help() {
-            // Open help modal
-            showHelpModal();
-            toggleUserMenu(); // Close dropdown
-        }
-        
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                // Clear any stored user data
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userRole');
-                localStorage.removeItem('userName');
-                
-                // Redirect to login page
-                window.location.href = 'index.html';
-            }
-            toggleUserMenu(); // Close dropdown
-        }
-
-        // Basic functionality
-        function showNotifications() {
-            // Open notifications panel
-            showNotificationPanel();
-        }
-        
-        function showHelpModal() {
-            // Create help modal if it doesn't exist
-            let helpModal = document.getElementById('helpModal');
-            if (!helpModal) {
-                createHelpModal();
-            }
-            document.getElementById('helpModal').style.display = 'flex';
-        }
-        
-        function showNotificationPanel() {
-            // Create notification panel if it doesn't exist
-            let notificationPanel = document.getElementById('notificationPanel');
-            if (!notificationPanel) {
-                createNotificationPanel();
-            }
-            document.getElementById('notificationPanel').style.display = 'block';
-        }
-
-        // Mobile sidebar toggle
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('open');
-        }
-
-        // Add mobile menu button for small screens
-        if (window.innerWidth <= 768) {
-            const topBar = document.querySelector('.top-bar');
-            const menuButton = document.createElement('button');
-            menuButton.innerHTML = '<i class="fas fa-bars"></i>';
-            menuButton.onclick = toggleSidebar;
-            menuButton.style.cssText = 'background: #f8fafc; border: none; padding: 0.75rem; border-radius: 12px; cursor: pointer; margin-right: 1rem;';
-            topBar.insertBefore(menuButton, topBar.firstChild);
-        }
-
-        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('OneCare Dashboard loaded successfully');
+            loadSidebar('patient');
+
+            const name = localStorage.getItem('userName') || 'Jane Doe';
+            document.getElementById('patientName').textContent = name;
+            document.querySelector('.page-title').textContent = `Welcome, ${name.split(' ')[0]}!`;
+            document.querySelector('.user-avatar').textContent = name.charAt(0).toUpperCase();
+
+            // Profile Dropdown Logic
+            const userInfoToggle = document.getElementById('userInfoToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            userInfoToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+            window.addEventListener('click', () => dropdownMenu.classList.remove('show'));
+            document.getElementById('logoutButton').addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = '/index.html';
+            });
+
+            // Chart.js Configuration
+            const healthTrendsCtx = document.getElementById('healthTrendsChart').getContext('2d');
+            const gradientBg1 = healthTrendsCtx.createLinearGradient(0, 0, 0, 300);
+            gradientBg1.addColorStop(0, 'rgba(239, 68, 68, 0.2)');
+            gradientBg1.addColorStop(1, 'rgba(239, 68, 68, 0)');
             
-            // Check if user is authenticated (optional)
-            const userName = localStorage.getItem('userName');
-            if (userName) {
-                document.getElementById('userName').textContent = userName;
-            }
-            
-            // Load user-specific data
-            loadDashboardData();
-        });
-        
-        // Load dashboard data
-        function loadDashboardData() {
-            // In a real implementation, this would fetch user-specific data
-            console.log('Loading dashboard data...');
-        }
-        
-        // Create Help Modal
-        function createHelpModal() {
-            const helpModalHTML = `
-                <div class="modal-overlay" id="helpModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
-                    <div class="modal-container" style="background: white; border-radius: 15px; padding: 2rem; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
-                        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                            <h2 style="margin: 0; color: #1e293b;">Help & Support</h2>
-                            <button onclick="closeHelpModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b;">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="help-section" style="margin-bottom: 2rem;">
-                                <h3 style="color: #667eea; margin-bottom: 1rem;">Getting Started</h3>
-                                <ul style="color: #64748b; line-height: 1.6;">
-                                    <li>Use the sidebar to navigate between different sections</li>
-                                    <li>Click on quick action cards to access key features</li>
-                                    <li>Check your notifications regularly for important updates</li>
-                                    <li>Keep your profile information up to date</li>
-                                </ul>
-                            </div>
-                            <div class="help-section" style="margin-bottom: 2rem;">
-                                <h3 style="color: #667eea; margin-bottom: 1rem;">Common Questions</h3>
-                                <div style="color: #64748b; line-height: 1.6;">
-                                    <p><strong>How do I schedule an appointment?</strong><br>
-                                    Go to Appointments section and click "Schedule New Appointment"</p>
-                                    
-                                    <p><strong>How do I view my medical records?</strong><br>
-                                    Navigate to Health Records to view and manage your documents</p>
-                                    
-                                    <p><strong>How do I message my doctor?</strong><br>
-                                    Use the Messages section for secure communication</p>
-                                </div>
-                            </div>
-                            <div class="help-section">
-                                <h3 style="color: #667eea; margin-bottom: 1rem;">Contact Support</h3>
-                                <p style="color: #64748b;">If you need additional help, contact our support team:</p>
-                                <p style="color: #64748b;">📞 Phone: 1-800-ONECARE<br>
-                                📧 Email: support@onecare.com<br>
-                                💬 Live Chat: Available 24/7</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', helpModalHTML);
-        }
-        
-        function closeHelpModal() {
-            document.getElementById('helpModal').style.display = 'none';
-        }
-        
-        // Create Notification Panel
-        function createNotificationPanel() {
-            const notificationHTML = `
-                <div id="notificationPanel" style="display: none; position: fixed; top: 80px; right: 20px; width: 400px; max-height: 500px; background: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 1000; overflow-y: auto;">
-                    <div style="padding: 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
-                        <h3 style="margin: 0; color: #1e293b;">Notifications</h3>
-                        <button onclick="closeNotificationPanel()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #64748b;">&times;</button>
-                    </div>
-                    <div style="padding: 1rem;">
-                        <div class="notification-item" style="padding: 1rem; margin-bottom: 0.5rem; background: #f8fafc; border-radius: 8px; border-left: 4px solid #667eea;">
-                            <h4 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 0.9rem;">Appointment Reminder</h4>
-                            <p style="margin: 0; color: #64748b; font-size: 0.8rem;">You have an appointment with Dr. Smith tomorrow at 2:00 PM</p>
-                            <small style="color: #94a3b8;">2 hours ago</small>
-                        </div>
-                        <div class="notification-item" style="padding: 1rem; margin-bottom: 0.5rem; background: #f8fafc; border-radius: 8px; border-left: 4px solid #10b981;">
-                            <h4 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 0.9rem;">Lab Results Available</h4>
-                            <p style="margin: 0; color: #64748b; font-size: 0.8rem;">Your recent blood work results are now available</p>
-                            <small style="color: #94a3b8;">1 day ago</small>
-                        </div>
-                        <div class="notification-item" style="padding: 1rem; margin-bottom: 0.5rem; background: #f8fafc; border-radius: 8px; border-left: 4px solid #f59e0b;">
-                            <h4 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 0.9rem;">Prescription Refill</h4>
-                            <p style="margin: 0; color: #64748b; font-size: 0.8rem;">Time to refill your Lisinopril prescription</p>
-                            <small style="color: #94a3b8;">3 days ago</small>
-                        </div>
-                    </div>
-                    <div style="padding: 1rem; text-align: center; border-top: 1px solid #f1f5f9;">
-                        <a href="messages.html" style="color: #667eea; text-decoration: none; font-size: 0.9rem;">View All Messages →</a>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', notificationHTML);
-        }
-        
-        function closeNotificationPanel() {
-            document.getElementById('notificationPanel').style.display = 'none';
-        }
-        
-        // Close panels when clicking outside
-        document.addEventListener('click', function(event) {
-            const notificationPanel = document.getElementById('notificationPanel');
-            const notificationBtn = document.querySelector('.notification-btn');
-            
-            if (notificationPanel && !notificationPanel.contains(event.target) && !notificationBtn.contains(event.target)) {
-                notificationPanel.style.display = 'none';
-            }
+            const gradientBg2 = healthTrendsCtx.createLinearGradient(0, 0, 0, 300);
+            gradientBg2.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
+            gradientBg2.addColorStop(1, 'rgba(59, 130, 246, 0)');
+
+            new Chart(healthTrendsCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Heart Rate (bpm)',
+                        data: [75, 72, 78, 74, 70, 76, 73],
+                        borderColor: '#ef4444',
+                        backgroundColor: gradientBg1,
+                        fill: true,
+                        tension: 0.4,
+                        yAxisID: 'y'
+                    }, {
+                        label: 'Steps Taken',
+                        data: [5100, 6200, 4800, 7100, 5500, 8200, 6500],
+                        borderColor: '#3b82f6',
+                        backgroundColor: gradientBg2,
+                        fill: true,
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: 'linear', display: true, position: 'left',
+                            title: { display: true, text: 'Heart Rate (bpm)' }
+                        },
+                        y1: {
+                            type: 'linear', display: true, position: 'right',
+                            title: { display: true, text: 'Steps' },
+                            grid: { drawOnChartArea: false }
+                        }
+                    },
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
         });
     </script>
-    
-    <!-- Profile Modal Integration -->
-    <script src="js/profile-modal.js"></script>
-    <!-- Universal Navigation System -->
-    <script src="js/universal-navigation.js"></script>
 </body>
 </html>
+
