@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneCare - My Patients</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #667eea;
+            --primary-color-dark: #5a6edc;
+            --secondary-color: #764ba2;
+            --background-color: #f7f9fc;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-color: rgba(149, 157, 165, 0.1);
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 2rem;
+            margin-bottom: 2.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .logo i { font-size: 1.8rem; }
+
+        .nav-section-title {
+            padding: 0 2rem;
+            margin: 2rem 0 1rem 0;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        
+        .nav-menu { list-style: none; }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 2rem;
+            margin: 0.25rem 0;
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, rgba(102, 126, 234, 0) 100%);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .nav-link i { width: 20px; text-align: center; }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            background-color: var(--card-bg);
+            padding: 1.25rem 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .user-info {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+        }
+        
+        .user-avatar {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .user-details h4 { color: var(--text-primary); font-weight: 600; }
+        .user-details span { color: var(--text-secondary); font-size: 0.9rem; }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 120%; right: 0;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            width: 220px;
+            opacity: 0; visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 0.85rem 1.25rem; text-decoration: none;
+            color: var(--text-secondary);
+        }
+        .dropdown-item:hover { background-color: #f8f9fe; color: var(--primary-color); }
+        .dropdown-divider { height: 1px; background-color: var(--border-color); margin: 0.5rem 0; }
+
+        .content-wrapper {
+            flex: 1;
+            padding: 2.5rem;
+            overflow-y: auto;
+        }
+        
+        .patients-container {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px var(--shadow-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .patients-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .search-bar {
+            position: relative;
+        }
+        .search-bar input {
+            width: 300px;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            font-size: 1rem;
+        }
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .add-patient-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .add-patient-btn:hover {
+             background-color: var(--primary-color-dark);
+        }
+        
+        .patients-table-container {
+            overflow-x: auto;
+        }
+
+        .patients-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .patients-table th, .patients-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .patients-table th {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+        
+        .patient-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .patient-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600; color: white;
+        }
+        .avatar-1 { background-color: #fbbf24; }
+        .avatar-2 { background-color: #a78bfa; }
+        .avatar-3 { background-color: #34d399; }
+        .avatar-4 { background-color: #fb7185; }
+        .avatar-5 { background-color: #60a5fa; }
+        
+        .patient-name {
+            font-weight: 500;
+        }
+        
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status-active { background-color: #dcfce7; color: #166534; }
+        .status-discharged { background-color: #f1f5f9; color: #475569; }
+        .status-at-risk { background-color: #fee2e2; color: #991b1b; }
+        
+        .action-btn {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Provider Sidebar -->
+        <nav class="sidebar" id="sidebar"></nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <h1 class="page-title">My Patients</h1>
+                <div class="user-info" id="userInfoToggle">
+                    <div class="user-details">
+                        <h4>Dr. Evelyn Reed</h4>
+                        <span>Cardiologist</span>
+                    </div>
+                    <div class="user-avatar">E</div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#" class="dropdown-item"><i class="fas fa-user-circle"></i><span>My Profile</span></a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" id="logoutButton"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="content-wrapper">
+                <div class="patients-container">
+                    <div class="patients-toolbar">
+                        <div class="search-bar">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="patientSearch" placeholder="Search patients...">
+                        </div>
+                        <button class="add-patient-btn">
+                            <i class="fas fa-plus"></i> Add New Patient
+                        </button>
+                    </div>
+
+                    <div class="patients-table-container">
+                        <table class="patients-table">
+                            <thead>
+                                <tr>
+                                    <th>Patient Name</th>
+                                    <th>Last Visit</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="patientsTableBody">
+                                <tr>
+                                    <td>
+                                        <div class="patient-info">
+                                            <div class="patient-avatar avatar-1">J</div>
+                                            <span class="patient-name">Jane Doe</span>
+                                        </div>
+                                    </td>
+                                    <td>Sep 15, 2025</td>
+                                    <td><span class="status-badge status-at-risk">At Risk</span></td>
+                                    <td><button class="action-btn">View Chart</button></td>
+                                </tr>
+                                 <tr>
+                                    <td>
+                                        <div class="patient-info">
+                                            <div class="patient-avatar avatar-2">M</div>
+                                            <span class="patient-name">Michael Scott</span>
+                                        </div>
+                                    </td>
+                                    <td>Sep 12, 2025</td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td><button class="action-btn">View Chart</button></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="patient-info">
+                                            <div class="patient-avatar avatar-3">S</div>
+                                            <span class="patient-name">Sarah Connor</span>
+                                        </div>
+                                    </td>
+                                    <td>Sep 1, 2025</td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td><button class="action-btn">View Chart</button></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="patient-info">
+                                            <div class="patient-avatar avatar-4">K</div>
+                                            <span class="patient-name">Kyle Reese</span>
+                                        </div>
+                                    </td>
+                                    <td>Aug 28, 2025</td>
+                                    <td><span class="status-badge status-discharged">Discharged</span></td>
+                                    <td><button class="action-btn">View Chart</button></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="patient-info">
+                                            <div class="patient-avatar avatar-5">T</div>
+                                            <span class="patient-name">T-800</span>
+                                        </div>
+                                    </td>
+                                    <td>Aug 15, 2025</td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td><button class="action-btn">View Chart</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Shared component loader -->
+    <script src="js/shared-components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSidebar('provider');
+            
+            // Profile Dropdown Logic
+            const userInfoToggle = document.getElementById('userInfoToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            userInfoToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+            window.addEventListener('click', () => dropdownMenu.classList.remove('show'));
+            document.getElementById('logoutButton').addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = '/index.html';
+            });
+
+            // Patient Search Logic
+            const searchInput = document.getElementById('patientSearch');
+            const tableBody = document.getElementById('patientsTableBody');
+            const rows = tableBody.getElementsByTagName('tr');
+
+            searchInput.addEventListener('keyup', function() {
+                const filter = searchInput.value.toUpperCase();
+                for (let i = 0; i < rows.length; i++) {
+                    let nameCell = rows[i].getElementsByTagName('td')[0];
+                    if (nameCell) {
+                        let txtValue = nameCell.textContent || nameCell.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            rows[i].style.display = "";
+                        } else {
+                            rows[i].style.display = "none";
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

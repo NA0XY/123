@@ -58,10 +58,10 @@ function getSidebarHtml(role) {
         <div class="nav-section-title">Provider Portal</div>
         <ul class="nav-menu">
             <li><a href="provider-dashboard.html" class="nav-link" data-page="provider-dashboard"><i class="fas fa-th-large"></i><span>Dashboard</span></a></li>
-            <li><a href="#" class="nav-link" data-page="my-patients"><i class="fas fa-user-injured"></i><span>My Patients</span></a></li>
-            <li><a href="#" class="nav-link" data-page="provider-appointments"><i class="fas fa-calendar-check"></i><span>Appointments</span></a></li>
-            <li><a href="#" class="nav-link" data-page="provider-messages"><i class="fas fa-inbox"></i><span>Messages</span></a></li>
-            <li><a href="#" class="nav-link" data-page="provider-settings"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+            <li><a href="my-patient.html" class="nav-link" data-page="my-patient"><i class="fas fa-user-injured"></i><span>My Patients</span></a></li>
+            <li><a href="provider-appointments.html" class="nav-link" data-page="provider-appointments"><i class="fas fa-calendar-check"></i><span>Appointments</span></a></li>
+            <li><a href="provider-messages.html" class="nav-link" data-page="provider-messages"><i class="fas fa-inbox"></i><span>Messages</span></a></li>
+            <li><a href="provider-settings.html" class="nav-link" data-page="provider-settings"><i class="fas fa-cog"></i><span>Settings</span></a></li>
         </ul>
     `;
 

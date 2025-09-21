@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneCare - Messages</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #667eea;
+            --primary-color-dark: #5a6edc;
+            --secondary-color: #764ba2;
+            --background-color: #f7f9fc;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-color: rgba(149, 157, 165, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex; align-items: center; gap: 12px;
+            padding: 0 2rem; margin-bottom: 2.5rem;
+            font-size: 1.5rem; font-weight: 700; color: var(--primary-color);
+        }
+        .logo i { font-size: 1.8rem; }
+
+        .nav-section-title {
+            padding: 0 2rem; margin: 2rem 0 1rem 0;
+            font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);
+            text-transform: uppercase; letter-spacing: 0.8px;
+        }
+        
+        .nav-menu { list-style: none; }
+        
+        .nav-link {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 0.9rem 2rem; margin: 0.25rem 0; text-decoration: none;
+            color: var(--text-secondary); transition: all 0.3s ease;
+            border-left: 4px solid transparent; font-size: 0.95rem; font-weight: 500;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, rgba(102, 126, 234, 0) 100%);
+            color: var(--primary-color); border-left-color: var(--primary-color); font-weight: 600;
+        }
+        
+        .nav-link i { width: 20px; text-align: center; }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .top-bar {
+            background-color: var(--card-bg);
+            padding: 1.25rem 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+            flex-shrink: 0;
+        }
+        
+        .page-title { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); }
+        
+        .user-info { position: relative; display: flex; align-items: center; gap: 1rem; cursor: pointer; }
+        .user-avatar {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; font-weight: 600;
+        }
+        .user-details h4 { color: var(--text-primary); font-weight: 600; }
+        .user-details span { color: var(--text-secondary); font-size: 0.9rem; }
+
+        .dropdown-menu {
+            position: absolute; top: 120%; right: 0;
+            background-color: var(--card-bg); border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); border: 1px solid var(--border-color);
+            width: 220px; opacity: 0; visibility: hidden; transform: translateY(10px);
+            transition: all 0.3s ease; z-index: 1000;
+        }
+        .dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 0.85rem 1.25rem; text-decoration: none; color: var(--text-secondary);
+        }
+        .dropdown-item:hover { background-color: #f8f9fe; color: var(--primary-color); }
+        .dropdown-divider { height: 1px; background-color: var(--border-color); margin: 0.5rem 0; }
+
+        /* Messaging Layout */
+        .messaging-wrapper {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .conversation-list {
+            width: 350px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+        .conversation-list-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            font-size: 1rem;
+        }
+        .conversations {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        .conversation-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .conversation-item:hover, .conversation-item.active {
+            background: #f8f9fe;
+        }
+        .patient-avatar {
+            width: 48px; height: 48px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600; color: white;
+        }
+        .avatar-1 { background-color: #fbbf24; }
+        .avatar-2 { background-color: #a78bfa; }
+        .avatar-3 { background-color: #34d399; }
+        .conv-details h4 { font-weight: 600; font-size: 1rem; }
+        .conv-details p { color: var(--text-secondary); font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+        .conv-meta { margin-left: auto; text-align: right; }
+        .conv-time { font-size: 0.8rem; color: var(--text-secondary); }
+        .unread-badge {
+            background: var(--primary-color); color: white;
+            border-radius: 50%; font-size: 0.75rem;
+            width: 20px; height: 20px; line-height: 20px;
+            text-align: center; margin-top: 0.5rem;
+        }
+        
+        .chat-window {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1.25rem; font-weight: 600;
+        }
+        .message-area {
+            flex-grow: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .message { display: flex; gap: 1rem; max-width: 70%; }
+        .message.sent { align-self: flex-end; }
+        .message.received { align-self: flex-start; }
+        .message .msg-avatar {
+             width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600; color: white;
+        }
+        .msg-bubble { padding: 1rem; border-radius: 16px; }
+        .message.sent .msg-bubble { background: var(--primary-color); color: white; border-top-right-radius: 4px; }
+        .message.received .msg-bubble { background: #eef2ff; color: var(--text-primary); border-top-left-radius: 4px; }
+        .msg-time { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem; }
+        .message.sent .msg-time { text-align: right; }
+        
+        .message-input {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 1rem;
+        }
+        .message-input input {
+            flex-grow: 1;
+            padding: 0.8rem 1.2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+        .send-btn {
+            background: var(--primary-color); color: white;
+            border: none; padding: 0 1.5rem;
+            border-radius: 12px; font-size: 1.2rem; cursor: pointer;
+        }
+
+        .patient-info-panel {
+            width: 350px;
+            background: var(--card-bg);
+            border-left: 1px solid var(--border-color);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        .info-header { text-align: center; margin-bottom: 2rem; }
+        .info-header .patient-avatar { margin: 0 auto 1rem auto; width: 80px; height: 80px; font-size: 2rem; }
+        .info-header h3 { font-size: 1.25rem; }
+        .info-header p { color: var(--text-secondary); }
+        .info-section { margin-bottom: 1.5rem; }
+        .info-section h4 { font-size: 0.9rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.75rem; }
+        .info-item { display: flex; justify-content: space-between; padding: 0.5rem 0; }
+        .info-item .label { font-weight: 500; }
+        .view-chart-btn {
+            display: block; width: 100%;
+            padding: 0.8rem; background: #eef2ff; color: var(--primary-color);
+            border: none; border-radius: 12px; text-align: center;
+            text-decoration: none; font-weight: 600;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Provider Sidebar -->
+        <nav class="sidebar" id="sidebar"></nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <h1 class="page-title">Messages</h1>
+                <div class="user-info" id="userInfoToggle">
+                    <div class="user-details">
+                        <h4>Dr. Evelyn Reed</h4>
+                        <span>Cardiologist</span>
+                    </div>
+                    <div class="user-avatar">E</div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#" class="dropdown-item"><i class="fas fa-user-circle"></i><span>My Profile</span></a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" id="logoutButton"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="messaging-wrapper">
+                <div class="conversation-list">
+                    <div class="conversation-list-header">
+                        <div class="search-bar">
+                            <input type="text" placeholder="Search messages...">
+                        </div>
+                    </div>
+                    <div class="conversations" id="conversationList">
+                        <!-- Conversations will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="chat-window">
+                    <div class="chat-header" id="chatHeader">Select a conversation</div>
+                    <div class="message-area" id="messageArea">
+                        <!-- Messages will be loaded here -->
+                    </div>
+                    <div class="message-input">
+                        <input type="text" id="messageInput" placeholder="Type a message...">
+                        <button class="send-btn" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+
+                <div class="patient-info-panel" id="patientInfoPanel">
+                    <!-- Patient info will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Shared component loader -->
+    <script src="js/shared-components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSidebar('provider');
+            
+            const userInfoToggle = document.getElementById('userInfoToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            userInfoToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+            window.addEventListener('click', () => dropdownMenu.classList.remove('show'));
+            document.getElementById('logoutButton').addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = '/index.html';
+            });
+
+            // --- MESSAGING LOGIC ---
+            const mockData = {
+                patients: {
+                    'p1': { name: 'Jane Doe', avatar: 'J', avatarClass: 'avatar-1', age: 34, condition: 'Hypertension', allergies: 'Penicillin' },
+                    'p2': { name: 'Michael Scott', avatar: 'M', avatarClass: 'avatar-2', age: 45, condition: 'Type 2 Diabetes', allergies: 'None' },
+                    'p3': { name: 'Sarah Connor', avatar: 'S', avatarClass: 'avatar-3', age: 29, condition: 'Post-op Recovery', allergies: 'None' }
+                },
+                conversations: [
+                    { patientId: 'p1', lastMessage: "Thanks, I'll schedule it now.", time: '10:45 AM', unread: 2 },
+                    { patientId: 'p2', lastMessage: 'Should I continue with the new dosage?', time: 'Yesterday', unread: 0 },
+                    { patientId: 'p3', lastMessage: 'Feeling much better today!', time: '2 days ago', unread: 0 },
+                ],
+                messages: {
+                    'p1': [
+                        { sender: 'patient', text: 'Good morning, Dr. Reed. I have a question about my latest lab results.', time: '9:30 AM' },
+                        { sender: 'provider', text: 'Of course, Jane. I reviewed them, and everything looks stable. I do recommend we schedule a follow-up for next month.', time: '9:32 AM' },
+                        { sender: 'patient', text: "Thanks, I'll schedule it now.", time: '10:45 AM' },
+                    ],
+                    'p2': [
+                        { sender: 'patient', text: 'Should I continue with the new dosage?', time: 'Yesterday' },
+                    ]
+                }
+            };
+            
+            const conversationListEl = document.getElementById('conversationList');
+            const chatHeaderEl = document.getElementById('chatHeader');
+            const messageAreaEl = document.getElementById('messageArea');
+            const patientInfoPanelEl = document.getElementById('patientInfoPanel');
+            const messageInputEl = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            let activeConversationId = null;
+
+            function renderConversationList() {
+                conversationListEl.innerHTML = '';
+                mockData.conversations.forEach(conv => {
+                    const patient = mockData.patients[conv.patientId];
+                    const item = document.createElement('div');
+                    item.className = 'conversation-item';
+                    item.dataset.patientId = conv.patientId;
+                    item.innerHTML = `
+                        <div class="patient-avatar ${patient.avatarClass}">${patient.avatar}</div>
+                        <div class="conv-details">
+                            <h4>${patient.name}</h4>
+                            <p>${conv.lastMessage}</p>
+                        </div>
+                        <div class="conv-meta">
+                            <div class="conv-time">${conv.time}</div>
+                            ${conv.unread > 0 ? `<div class="unread-badge">${conv.unread}</div>` : ''}
+                        </div>
+                    `;
+                    item.addEventListener('click', () => selectConversation(conv.patientId));
+                    conversationListEl.appendChild(item);
+                });
+            }
+
+            function selectConversation(patientId) {
+                activeConversationId = patientId;
+                document.querySelectorAll('.conversation-item').forEach(el => el.classList.remove('active'));
+                document.querySelector(`.conversation-item[data-patient-id="${patientId}"]`).classList.add('active');
+                
+                renderChatWindow(patientId);
+                renderPatientInfo(patientId);
+            }
+
+            function renderChatWindow(patientId) {
+                const patient = mockData.patients[patientId];
+                chatHeaderEl.textContent = `Conversation with ${patient.name}`;
+                
+                messageAreaEl.innerHTML = '';
+                const messages = mockData.messages[patientId] || [];
+                messages.forEach(msg => {
+                    appendMessage(msg.sender, msg.text, msg.time);
+                });
+                messageAreaEl.scrollTop = messageAreaEl.scrollHeight;
+            }
+            
+            function appendMessage(sender, text, time) {
+                 const msgEl = document.createElement('div');
+                 msgEl.className = `message ${sender === 'provider' ? 'sent' : 'received'}`;
+                 const avatar = sender === 'provider' ? 'E' : mockData.patients[activeConversationId].avatar;
+                 const avatarClass = sender === 'provider' ? 'user-avatar' : mockData.patients[activeConversationId].avatarClass;
+
+                 msgEl.innerHTML = `
+                    <div class="msg-avatar ${avatarClass}">${avatar}</div>
+                    <div class="msg-content">
+                        <div class="msg-bubble">${text}</div>
+                        <div class="msg-time">${time}</div>
+                    </div>
+                 `;
+                 messageAreaEl.appendChild(msgEl);
+                 messageAreaEl.scrollTop = messageAreaEl.scrollHeight;
+            }
+
+            function renderPatientInfo(patientId) {
+                const patient = mockData.patients[patientId];
+                patientInfoPanelEl.innerHTML = `
+                     <div class="info-header">
+                        <div class="patient-avatar ${patient.avatarClass}">${patient.avatar}</div>
+                        <h3>${patient.name}</h3>
+                        <p>Patient ID: ${patientId}</p>
+                    </div>
+                    <div class="info-section">
+                        <h4>Patient Details</h4>
+                        <div class="info-item">
+                            <span class="label">Age</span>
+                            <span>${patient.age}</span>
+                        </div>
+                         <div class="info-item">
+                            <span class="label">Condition</span>
+                            <span>${patient.condition}</span>
+                        </div>
+                         <div class="info-item">
+                            <span class="label">Allergies</span>
+                            <span>${patient.allergies}</span>
+                        </div>
+                    </div>
+                    <a href="#" class="view-chart-btn">View Full Chart</a>
+                `;
+            }
+
+            function sendMessage() {
+                const text = messageInputEl.value.trim();
+                if (text && activeConversationId) {
+                    appendMessage('provider', text, 'Now');
+                    messageInputEl.value = '';
+                }
+            }
+
+            sendBtn.addEventListener('click', sendMessage);
+            messageInputEl.addEventListener('keypress', e => {
+                if(e.key === 'Enter') sendMessage();
+            });
+
+            renderConversationList();
+        });
+    </script>
+</body>
+</html>

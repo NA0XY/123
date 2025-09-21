@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneCare - Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #667eea;
+            --primary-color-dark: #5a6edc;
+            --secondary-color: #764ba2;
+            --background-color: #f7f9fc;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-color: rgba(149, 157, 165, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex; align-items: center; gap: 12px;
+            padding: 0 2rem; margin-bottom: 2.5rem;
+            font-size: 1.5rem; font-weight: 700; color: var(--primary-color);
+        }
+        .logo i { font-size: 1.8rem; }
+
+        .nav-section-title {
+            padding: 0 2rem; margin: 2rem 0 1rem 0;
+            font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);
+            text-transform: uppercase; letter-spacing: 0.8px;
+        }
+        
+        .nav-menu { list-style: none; }
+        
+        .nav-link {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 0.9rem 2rem; margin: 0.25rem 0; text-decoration: none;
+            color: var(--text-secondary); transition: all 0.3s ease;
+            border-left: 4px solid transparent; font-size: 0.95rem; font-weight: 500;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, rgba(102, 126, 234, 0) 100%);
+            color: var(--primary-color); border-left-color: var(--primary-color); font-weight: 600;
+        }
+        
+        .nav-link i { width: 20px; text-align: center; }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            background-color: var(--card-bg);
+            padding: 1.25rem 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+        }
+        
+        .page-title { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); }
+        
+        .user-info { position: relative; display: flex; align-items: center; gap: 1rem; cursor: pointer; }
+        .user-avatar {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; font-weight: 600;
+        }
+        .user-details h4 { color: var(--text-primary); font-weight: 600; }
+        .user-details span { color: var(--text-secondary); font-size: 0.9rem; }
+
+        .dropdown-menu {
+            position: absolute; top: 120%; right: 0;
+            background-color: var(--card-bg); border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); border: 1px solid var(--border-color);
+            width: 220px; opacity: 0; visibility: hidden; transform: translateY(10px);
+            transition: all 0.3s ease; z-index: 1000;
+        }
+        .dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 0.85rem 1.25rem; text-decoration: none; color: var(--text-secondary);
+        }
+        .dropdown-item:hover { background-color: #f8f9fe; color: var(--primary-color); }
+        .dropdown-divider { height: 1px; background-color: var(--border-color); margin: 0.5rem 0; }
+
+        .content-wrapper {
+            flex: 1;
+            padding: 2.5rem;
+            overflow-y: auto;
+        }
+        
+        .settings-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .settings-card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 8px 24px var(--shadow-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 2rem;
+        }
+        .tab-btn {
+            padding: 1.25rem 1rem;
+            margin-right: 1.5rem;
+            background: none; border: none;
+            font-size: 1rem; font-weight: 500; color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .tab-content {
+            padding: 2.5rem;
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-section { margin-bottom: 2rem; }
+        .form-section h3 { font-size: 1.25rem; margin-bottom: 1.5rem; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 1rem;
+        }
+        .form-actions {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: right;
+        }
+        .save-btn {
+            background: var(--primary-color); color: white;
+            padding: 0.75rem 2rem; border-radius: 12px;
+            border: none; font-size: 1rem; font-weight: 500; cursor: pointer;
+        }
+
+        .notification-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem 0; border-bottom: 1px solid var(--border-color);
+        }
+        .notification-item:last-child { border-bottom: none; }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px; height: 24px;
+        }
+        .toggle-switch input { display: none; }
+        .slider {
+            position: absolute; cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute; content: "";
+            height: 16px; width: 16px;
+            left: 4px; bottom: 4px;
+            background-color: white; transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Provider Sidebar -->
+        <nav class="sidebar" id="sidebar"></nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <h1 class="page-title">Settings</h1>
+                <div class="user-info" id="userInfoToggle">
+                    <div class="user-details">
+                        <h4>Dr. Evelyn Reed</h4>
+                        <span>Cardiologist</span>
+                    </div>
+                    <div class="user-avatar">E</div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#" class="dropdown-item"><i class="fas fa-user-circle"></i><span>My Profile</span></a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" id="logoutButton"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-wrapper">
+                <div class="settings-container">
+                    <div class="settings-card">
+                        <div class="settings-tabs">
+                            <button class="tab-btn active" data-tab="profile">Profile</button>
+                            <button class="tab-btn" data-tab="notifications">Notifications</button>
+                            <button class="tab-btn" data-tab="security">Security</button>
+                            <button class="tab-btn" data-tab="availability">Availability</button>
+                        </div>
+
+                        <div id="profile" class="tab-content active">
+                            <div class="form-section">
+                                <h3>Personal Information</h3>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="fullName">Full Name</label>
+                                        <input type="text" id="fullName" value="Dr. Evelyn Reed">
+                                    </div>
+                                     <div class="form-group">
+                                        <label for="email">Email Address</label>
+                                        <input type="email" id="email" value="e.reed@onecare.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="specialty">Specialty</label>
+                                        <input type="text" id="specialty" value="Cardiology">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone">Phone Number</label>
+                                        <input type="tel" id="phone" value="+1 (555) 987-6543">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button class="save-btn">Save Changes</button>
+                            </div>
+                        </div>
+
+                        <div id="notifications" class="tab-content">
+                             <h3>Notification Preferences</h3>
+                             <div class="notification-item">
+                                 <p>New message from patient</p>
+                                 <label class="toggle-switch"><input type="checkbox" checked><span class="slider"></span></label>
+                             </div>
+                             <div class="notification-item">
+                                 <p>Appointment cancellation</p>
+                                 <label class="toggle-switch"><input type="checkbox" checked><span class="slider"></span></label>
+                             </div>
+                             <div class="notification-item">
+                                 <p>Weekly summary email</p>
+                                 <label class="toggle-switch"><input type="checkbox"><span class="slider"></span></label>
+                             </div>
+                        </div>
+
+                        <div id="security" class="tab-content">
+                            <h3>Security Settings</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="currentPassword">Current Password</label>
+                                    <input type="password" id="currentPassword">
+                                </div>
+                                <div class="form-group"></div>
+                                 <div class="form-group">
+                                    <label for="newPassword">New Password</label>
+                                    <input type="password" id="newPassword">
+                                </div>
+                                 <div class="form-group">
+                                    <label for="confirmPassword">Confirm New Password</label>
+                                    <input type="password" id="confirmPassword">
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button class="save-btn">Update Password</button>
+                            </div>
+                        </div>
+                        
+                        <div id="availability" class="tab-content">
+                             <h3>Set Your Availability</h3>
+                             <p>This will determine the time slots patients can book.</p>
+                             <!-- Availability settings can be more complex, this is a placeholder -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Shared component loader -->
+    <script src="js/shared-components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSidebar('provider');
+            
+            const userInfoToggle = document.getElementById('userInfoToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            userInfoToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+            window.addEventListener('click', () => dropdownMenu.classList.remove('show'));
+            document.getElementById('logoutButton').addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = '/index.html';
+            });
+
+            // --- SETTINGS TABS LOGIC ---
+            const tabs = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
