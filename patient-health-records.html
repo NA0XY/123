@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneCare - Health Records</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 2rem;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            color: #64748b;
+            transition: all 0.3s ease;
+            border-right: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
+            color: #667eea;
+            border-right-color: #667eea;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 10px;
+            background: #f8fafc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-1px);
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        /* User Menu */
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            background: #f8fafc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .user-menu:hover {
+            background: #e2e8f0;
+        }
+
+        .user-menu img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        .dropdown-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .user-menu.open .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* User Dropdown */
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            width: 280px;
+            z-index: 1000;
+            margin-top: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dropdown-header {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .dropdown-user-name {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .dropdown-user-email {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .dropdown-menu {
+            padding: 0.5rem;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.75rem 1rem;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-item:hover {
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .dropdown-item svg {
+            opacity: 0.7;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #f1f5f9;
+            margin: 0.5rem 0;
+        }
+
+        .logout-item {
+            color: #ef4444 !important;
+        }
+
+        .logout-item:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .content-wrapper {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Health Records Content */
+        .records-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .records-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .records-subtitle {
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        .records-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            background: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .records-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .record-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .record-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .record-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .record-type {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0.5rem;
+        }
+
+        .record-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .record-icon.lab {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .record-icon.imaging {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .record-icon.vitals {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .record-icon.visit {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        .record-title {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .record-date {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .record-content {
+            padding: 1.5rem;
+        }
+
+        .record-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .record-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .record-label {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .record-value {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .record-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-normal {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .status-high {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .status-critical {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .records-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                OneCare
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="patient-dashboard.html" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="appointments.html" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        Appointments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="patient-medications.html" class="nav-link">
+                        <i class="fas fa-pills"></i>
+                        Medications
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="patient-health-records.html" class="nav-link active">
+                        <i class="fas fa-file-medical"></i>
+                        Health Records
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="messages.html" class="nav-link">
+                        <i class="fas fa-comments"></i>
+                        Messages
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="patient-reports.html" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        Reports & Analytics
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <h1 class="page-title">
+                    <i class="fas fa-file-medical"></i>
+                    Health Records
+                </h1>
+                
+                <div class="top-bar-actions">
+                    <button class="icon-btn" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+                    
+                    <div class="user-menu" onclick="toggleUserDropdown(event)" id="userMenuTrigger">
+                        <img src="data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23dbeafe'/%3E%3Cpath d='M20 20a5 5 0 100-10 5 5 0 000 10zM20 22c-5.5 0-10 3-10 6v4h20v-4c0-3-4.5-6-10-6z' fill='%232563eb'/%3E%3C/svg%3E" alt="Profile">
+                        <div>
+                            <div class="user-name" id="userName">John Doe</div>
+                            <div class="user-role">Patient</div>
+                        </div>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        
+                        <!-- User Dropdown Menu -->
+                        <div class="user-dropdown" id="userDropdown" style="display: none;">
+                            <div class="dropdown-header">
+                                <div class="dropdown-user-name" id="dropdownUserName">John Doe</div>
+                                <div class="dropdown-user-email">john.doe@email.com</div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-menu">
+                                <button class="dropdown-item" onclick="showProfileModal()">
+                                    <i class="fas fa-user"></i>
+                                    My Profile
+                                </button>
+                                <button class="dropdown-item" onclick="showSettingsModal()">
+                                    <i class="fas fa-cog"></i>
+                                    Settings
+                                </button>
+                                <button class="dropdown-item" onclick="showHelpModal()">
+                                    <i class="fas fa-question-circle"></i>
+                                    Help & Support
+                                </button>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-item" onclick="showLogoutModal()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content-wrapper">
+                <!-- Records Header -->
+                <div class="records-header">
+                    <h2 class="records-title">Your Health Records</h2>
+                    <p class="records-subtitle">Access your complete medical history, test results, and health documents</p>
+                    
+                    <div class="records-filters">
+                        <button class="filter-btn active" onclick="filterRecords('all')">All Records</button>
+                        <button class="filter-btn" onclick="filterRecords('labs')">Lab Results</button>
+                        <button class="filter-btn" onclick="filterRecords('imaging')">Imaging</button>
+                        <button class="filter-btn" onclick="filterRecords('vitals')">Vitals</button>
+                        <button class="filter-btn" onclick="filterRecords('visits')">Visits</button>
+                    </div>
+                </div>
+
+                <!-- Records Grid -->
+                <div class="records-grid" id="recordsGrid">
+                    <!-- Lab Results -->
+                    <div class="record-card" data-type="labs" onclick="showRecordDetail('lab1')">
+                        <div class="record-header">
+                            <div class="record-type">
+                                <div class="record-icon lab">
+                                    <i class="fas fa-flask"></i>
+                                </div>
+                                <div>
+                                    <div class="record-title">Complete Blood Count</div>
+                                    <div class="record-date">March 15, 2024</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="record-content">
+                            <div class="record-details">
+                                <div class="record-detail">
+                                    <span class="record-label">White Blood Cells</span>
+                                    <span class="record-value">6.8 K/uL <span class="record-status status-normal">Normal</span></span>
+                                </div>
+                                <div class="record-detail">
+                                    <span class="record-label">Red Blood Cells</span>
+                                    <span class="record-value">4.5 M/uL <span class="record-status status-normal">Normal</span></span>
+                                </div>
+                                <div class="record-detail">
+                                    <span class="record-label">Hemoglobin</span>
+                                    <span class="record-value">14.2 g/dL <span class="record-status status-normal">Normal</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Imaging Results -->
+                    <div class="record-card" data-type="imaging" onclick="showRecordDetail('imaging1')">
+                        <div class="record-header">
+                            <div class="record-type">
+                                <div class="record-icon imaging">
+                                    <i class="fas fa-x-ray"></i>
+                                </div>
+                                <div>
+                                    <div class="record-title">Chest X-Ray</div>
+                                    <div class="record-date">February 28, 2024</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="record-content">
+                            <div class="record-details">
+                                <div class="record-detail">
+                                    <span class="record-label">Status</span>
+                                    <span class="record-value">
+                                        <span class="record-status status-normal">Normal</span>
+                                    </span>
+                                </div>
+                                <div class="record-detail">
+                                    <span class="record-label">Findings</span>
+                                    <span class="record-value">No acute abnormalities</span>
+                                </div>
+                                <div class="record-detail">
+                                    <span class="record-label">Radiologist</span>
+                                    <span class="record-value">Dr. Smith</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vital Signs -->
+                    <div class="record-card" data-type="vitals" onclick="showRecordDetail('vitals1')">
+                        <div class="record-header">
+                            <div class="record-type">
+                                <div class="record-icon vitals">
+                                    <i class="fas fa-heartbeat"></i>
+                                </div>
+                                <div>
+                                    <div class="record-title">Vital Signs Check</div>
+                                    <div class="record-date">March 20, 2024</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="record-content">
+                            <div class="record-details">
+                                <div class="record-detail">
+                                    <span class="record-label">Blood Pressure</span>
+                                    <span class="record-value">120/80 mmHg <span class="record-status status-normal">Normal</span></span>
+                                </div>
+                                <div class="record-detail">
+                                    <span class="record-label">Heart Rate</span>
+                                    <span class="record-value">72 bpm <span class="record-status status-normal">Normal</span></span>
+                                </div>
+                                <div class="record-detail">
+                                    <span class="record-label">Temperature</span>
+                                    <span class="record-value">98.6°F <span class="record-status status-normal">Normal</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Doctor Visit -->
+                    <div class="record-card" data-type="visits" onclick="showRecordDetail('visit1')">
+                        <div class="record-header">
+                            <div class="record-type">
+                                <div class="record-icon visit">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                                <div>
+                                    <div class="record-title">Annual Physical</div>
+                                    <div class="record-date">March 10, 2024</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="record-content">
+                            <div class="record-details">
+                                <div class="record-detail">
+                                    <span class="record-label">Provider</span>
+                                    <span class="record-value">Dr. Johnson</span>
+                                </div>
+                                <div class="record-detail">
+                                    <span class="record-label">Type</span>
+                                    <span class="record-value">Routine Checkup</span>
+                                </div>
+                                <div class="record-detail">
+                                    <span class="record-label">Status</span>
+                                    <span class="record-value">
+                                        <span class="record-status status-normal">Completed</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Documents -->
+                <div class="records-header">
+                    <h3 class="records-title">Upload Documents</h3>
+                    <p class="records-subtitle">Upload medical records, prescriptions, or other health documents</p>
+                    <button class="btn btn-primary" onclick="showUploadModal()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        Upload Document
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">My Profile</h2>
+                <button class="close-btn" onclick="closeModal('profileModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Profile management coming soon!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('authToken');
+            const userName = localStorage.getItem('userName');
+            
+            if (!token) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Update user name display
+            if (userName) {
+                document.getElementById('userName').textContent = userName;
+                document.getElementById('dropdownUserName').textContent = userName;
+            }
+        });
+
+        // User dropdown functionality
+        function toggleUserDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('userDropdown');
+            const trigger = document.getElementById('userMenuTrigger');
+            
+            const isVisible = dropdown.style.display !== 'none';
+            
+            if (isVisible) {
+                dropdown.style.display = 'none';
+                trigger.classList.remove('open');
+            } else {
+                dropdown.style.display = 'block';
+                trigger.classList.add('open');
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const trigger = document.getElementById('userMenuTrigger');
+            
+            if (!trigger.contains(event.target)) {
+                dropdown.style.display = 'none';
+                trigger.classList.remove('open');
+            }
+        });
+
+        // Filter records
+        function filterRecords(type) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            const cards = document.querySelectorAll('.record-card');
+            
+            // Update active button
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter cards
+            cards.forEach(card => {
+                if (type === 'all' || card.dataset.type === type) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Show record detail
+        function showRecordDetail(recordId) {
+            alert(`Showing details for record: ${recordId}\nFull record viewer coming soon!`);
+        }
+
+        // Modal functions
+        function showProfileModal() {
+            document.getElementById('profileModal').style.display = 'flex';
+            toggleUserDropdown(event);
+        }
+
+        function showSettingsModal() {
+            alert('Settings coming soon!');
+            toggleUserDropdown(event);
+        }
+
+        function showHelpModal() {
+            alert('Help & Support coming soon!');
+            toggleUserDropdown(event);
+        }
+
+        function showLogoutModal() {
+            if (confirm('Are you sure you want to sign out?')) {
+                logout();
+            }
+            toggleUserDropdown(event);
+        }
+
+        function showUploadModal() {
+            alert('Document upload feature coming soon!');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function showNotifications() {
+            alert('Notifications coming soon!');
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userRole');
+            window.location.href = 'index.html';
+        }
+
+        // Mobile menu toggle
+        if (window.innerWidth <= 768) {
+            const topBar = document.querySelector('.top-bar');
+            const menuButton = document.createElement('button');
+            menuButton.innerHTML = '<i class="fas fa-bars"></i>';
+            menuButton.onclick = () => document.getElementById('sidebar').classList.toggle('open');
+            menuButton.style.cssText = 'background: #f8fafc; border: none; padding: 0.75rem; border-radius: 12px; cursor: pointer; margin-right: 1rem;';
+            topBar.insertBefore(menuButton, topBar.firstChild);
+        }
+    </script>
+    
+    <!-- Profile Modal Integration -->
+    <script src="js/profile-modal.js"></script>
+</body>
+</html>

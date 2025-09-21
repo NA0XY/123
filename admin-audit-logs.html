@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneCare - Audit Logs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Admin Sidebar */
+        .sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 2rem;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            padding: 0 2rem;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.75rem 2rem;
+            text-decoration: none;
+            color: #64748b;
+            transition: all 0.3s ease;
+            border-right: 3px solid transparent;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
+            color: #667eea;
+            border-right-color: #667eea;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 300px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Filter Section */
+        .audit-filters {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .filter-control {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-control:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        /* Quick Filter Buttons */
+        .quick-filters {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .quick-filter-btn.active,
+        .quick-filter-btn:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        /* Stats Overview */
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            opacity: 0.8;
+        }
+
+        .stat-icon.logins {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-icon.actions {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .stat-icon.errors {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .stat-icon.security {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        /* Audit Logs Table */
+        .audit-logs-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .logs-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logs-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .audit-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .audit-table th,
+        .audit-table td {
+            padding: 1rem 2rem;
+            text-align: left;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .audit-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+
+        .audit-table tr:hover {
+            background: rgba(102, 126, 234, 0.02);
+        }
+
+        /* Log Entry Styling */
+        .log-timestamp {
+            font-family: 'Courier New', monospace;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .log-user {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .log-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-type {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .action-login {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .action-create {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .action-update {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .action-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .action-view {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .action-security {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+
+        .log-resource {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .log-ip {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .log-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .pagination-info {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .pagination-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #64748b;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Log Detail Modal */
+        .log-detail-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .log-detail-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .detail-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .detail-item {
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            color: #64748b;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+            
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .audit-table {
+                font-size: 0.8rem;
+            }
+            
+            .audit-table th,
+            .audit-table td {
+                padding: 0.75rem 1rem;
+            }
+            
+            .logs-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Admin Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                OneCare
+                <span class="admin-badge">ADMIN</span>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="admin-dashboard.html" class="nav-link">
+                            <i class="fas fa-chart-pie"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="admin-analytics.html" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            Analytics
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">User Management</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="admin-users.html" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            All Users
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Communications</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="admin-notifications.html" class="nav-link">
+                            <i class="fas fa-bell"></i>
+                            Notifications
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Security & Monitoring</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="admin-audit-logs.html" class="nav-link active">
+                            <i class="fas fa-clipboard-list"></i>
+                            Audit Logs
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">System</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="admin-settings.html" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            Settings
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <h1 class="page-title">
+                    <i class="fas fa-clipboard-list"></i>
+                    Audit Logs
+                </h1>
+                <button class="btn btn-primary" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="content-wrapper">
+                <!-- Filters Section -->
+                <div class="audit-filters">
+                    <h2 class="section-title">
+                        <i class="fas fa-filter"></i>
+                        Filter Logs
+                    </h2>
+                    
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label class="filter-label">Date Range</label>
+                            <select class="filter-control filter-select" id="dateRange">
+                                <option value="today">Today</option>
+                                <option value="yesterday">Yesterday</option>
+                                <option value="week" selected>Last 7 days</option>
+                                <option value="month">Last 30 days</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">Action Type</label>
+                            <select class="filter-control filter-select" id="actionType">
+                                <option value="">All Actions</option>
+                                <option value="login">Login</option>
+                                <option value="create">Create</option>
+                                <option value="update">Update</option>
+                                <option value="delete">Delete</option>
+                                <option value="view">View</option>
+                                <option value="security">Security</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">User Role</label>
+                            <select class="filter-control filter-select" id="userRole">
+                                <option value="">All Users</option>
+                                <option value="admin">Administrators</option>
+                                <option value="provider">Healthcare Providers</option>
+                                <option value="patient">Patients</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">Search</label>
+                            <input type="text" class="filter-control" id="searchQuery" placeholder="Search logs...">
+                        </div>
+                    </div>
+                    
+                    <div class="quick-filters">
+                        <button class="quick-filter-btn active" data-filter="all">All Events</button>
+                        <button class="quick-filter-btn" data-filter="security">Security Events</button>
+                        <button class="quick-filter-btn" data-filter="errors">Errors Only</button>
+                        <button class="quick-filter-btn" data-filter="admin">Admin Actions</button>
+                        <button class="quick-filter-btn" data-filter="today">Today's Activity</button>
+                    </div>
+                </div>
+
+                <!-- Stats Overview -->
+                <div class="stats-overview">
+                    <div class="stat-card">
+                        <div class="stat-icon logins">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </div>
+                        <div class="stat-number">1,247</div>
+                        <div class="stat-label">Login Events</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon actions">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="stat-number">3,856</div>
+                        <div class="stat-label">User Actions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon errors">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-number">23</div>
+                        <div class="stat-label">Error Events</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon security">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="stat-number">45</div>
+                        <div class="stat-label">Security Events</div>
+                    </div>
+                </div>
+
+                <!-- Audit Logs Table -->
+                <div class="audit-logs-container">
+                    <div class="logs-header">
+                        <h3 class="section-title">
+                            <i class="fas fa-list"></i>
+                            System Activity Log
+                        </h3>
+                        <div class="logs-actions">
+                            <button class="btn btn-secondary" onclick="exportLogs()">
+                                <i class="fas fa-download"></i>
+                                Export
+                            </button>
+                            <button class="btn btn-secondary" onclick="refreshLogs()">
+                                <i class="fas fa-sync-alt"></i>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <table class="audit-table" id="auditTable">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Resource</th>
+                                <th>IP Address</th>
+                                <th>Status</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditTableBody">
+                            <!-- Dynamic content will be loaded here -->
+                        </tbody>
+                    </table>
+
+                    <div class="pagination">
+                        <div class="pagination-info">
+                            Showing 1-25 of 1,247 entries
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="pagination-btn" id="prevBtn" onclick="previousPage()">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="pagination-btn active">1</button>
+                            <button class="pagination-btn" onclick="goToPage(2)">2</button>
+                            <button class="pagination-btn" onclick="goToPage(3)">3</button>
+                            <button class="pagination-btn" onclick="nextPage()">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Log Detail Modal -->
+    <div class="log-detail-modal" id="logDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Log Entry Details</h3>
+                <button class="modal-close" onclick="closeLogDetail()">&times;</button>
+            </div>
+            <div class="detail-grid" id="logDetailContent">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample audit log data
+        const auditLogs = [
+            {
+                id: 'log_001',
+                timestamp: '2024-01-17 14:23:15',
+                user: 'admin@onecare.com',
+                userRole: 'admin',
+                action: 'login',
+                resource: 'Admin Dashboard',
+                ipAddress: '192.168.1.100',
+                userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                status: 'success',
+                details: 'Successful admin login',
+                sessionId: 'sess_abc123',
+                location: 'New York, NY'
+            },
+            {
+                id: 'log_002',
+                timestamp: '2024-01-17 14:22:45',
+                user: 'dr.smith@hospital.com',
+                userRole: 'provider',
+                action: 'create',
+                resource: 'Patient Record',
+                ipAddress: '10.0.0.45',
+                userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
+                status: 'success',
+                details: 'Created new patient record for John Doe',
+                sessionId: 'sess_def456',
+                location: 'Los Angeles, CA'
+            },
+            {
+                id: 'log_003',
+                timestamp: '2024-01-17 14:21:30',
+                user: 'patient@email.com',
+                userRole: 'patient',
+                action: 'view',
+                resource: 'Medical Records',
+                ipAddress: '203.45.67.89',
+                userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)',
+                status: 'success',
+                details: 'Viewed personal medical records',
+                sessionId: 'sess_ghi789',
+                location: 'Chicago, IL'
+            },
+            {
+                id: 'log_004',
+                timestamp: '2024-01-17 14:20:15',
+                user: 'admin@onecare.com',
+                userRole: 'admin',
+                action: 'update',
+                resource: 'System Settings',
+                ipAddress: '192.168.1.100',
+                userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                status: 'success',
+                details: 'Updated notification settings',
+                sessionId: 'sess_abc123',
+                location: 'New York, NY'
+            },
+            {
+                id: 'log_005',
+                timestamp: '2024-01-17 14:19:45',
+                user: 'unknown_user',
+                userRole: 'anonymous',
+                action: 'security',
+                resource: 'Login System',
+                ipAddress: '123.45.67.89',
+                userAgent: 'curl/7.68.0',
+                status: 'error',
+                details: 'Failed login attempt - invalid credentials',
+                sessionId: null,
+                location: 'Unknown'
+            },
+            {
+                id: 'log_006',
+                timestamp: '2024-01-17 14:18:30',
+                user: 'nurse@clinic.com',
+                userRole: 'provider',
+                action: 'delete',
+                resource: 'Appointment',
+                ipAddress: '10.0.0.67',
+                userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                status: 'warning',
+                details: 'Cancelled appointment due to emergency',
+                sessionId: 'sess_jkl012',
+                location: 'Miami, FL'
+            }
+        ];
+
+        let currentPage = 1;
+        let filteredLogs = [...auditLogs];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            const token = localStorage.getItem('authToken');
+            const role = localStorage.getItem('userRole');
+            
+            if (!token || role !== 'admin') {
+                alert('Access denied. Admin privileges required.');
+                window.location.href = '/';
+                return;
+            }
+
+            initializeAuditLogs();
+        });
+
+        function initializeAuditLogs() {
+            // Initialize filter listeners
+            document.getElementById('dateRange').addEventListener('change', applyFilters);
+            document.getElementById('actionType').addEventListener('change', applyFilters);
+            document.getElementById('userRole').addEventListener('change', applyFilters);
+            document.getElementById('searchQuery').addEventListener('input', applyFilters);
+
+            // Initialize quick filter buttons
+            const quickFilterBtns = document.querySelectorAll('.quick-filter-btn');
+            quickFilterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    quickFilterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    applyQuickFilter(this.dataset.filter);
+                });
+            });
+
+            // Load initial logs
+            loadAuditLogs();
+        }
+
+        function applyFilters() {
+            const dateRange = document.getElementById('dateRange').value;
+            const actionType = document.getElementById('actionType').value;
+            const userRole = document.getElementById('userRole').value;
+            const searchQuery = document.getElementById('searchQuery').value.toLowerCase();
+
+            filteredLogs = auditLogs.filter(log => {
+                // Date range filter (simplified)
+                let dateMatch = true;
+                if (dateRange === 'today') {
+                    dateMatch = log.timestamp.includes('2024-01-17');
+                }
+
+                // Action type filter
+                const actionMatch = !actionType || log.action === actionType;
+
+                // User role filter
+                const roleMatch = !userRole || log.userRole === userRole;
+
+                // Search query filter
+                const searchMatch = !searchQuery || 
+                    log.user.toLowerCase().includes(searchQuery) ||
+                    log.resource.toLowerCase().includes(searchQuery) ||
+                    log.details.toLowerCase().includes(searchQuery);
+
+                return dateMatch && actionMatch && roleMatch && searchMatch;
+            });
+
+            currentPage = 1;
+            loadAuditLogs();
+        }
+
+        function applyQuickFilter(filter) {
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+
+            switch(filter) {
+                case 'all':
+                    filteredLogs = [...auditLogs];
+                    break;
+                case 'security':
+                    filteredLogs = auditLogs.filter(log => log.action === 'security' || log.status === 'error');
+                    break;
+                case 'errors':
+                    filteredLogs = auditLogs.filter(log => log.status === 'error');
+                    break;
+                case 'admin':
+                    filteredLogs = auditLogs.filter(log => log.userRole === 'admin');
+                    break;
+                case 'today':
+                    filteredLogs = auditLogs.filter(log => log.timestamp.includes('2024-01-17'));
+                    break;
+                default:
+                    filteredLogs = [...auditLogs];
+            }
+
+            currentPage = 1;
+            loadAuditLogs();
+        }
+
+        function loadAuditLogs() {
+            const tbody = document.getElementById('auditTableBody');
+            tbody.innerHTML = '';
+
+            const startIndex = (currentPage - 1) * 25;
+            const endIndex = Math.min(startIndex + 25, filteredLogs.length);
+
+            for (let i = startIndex; i < endIndex; i++) {
+                const log = filteredLogs[i];
+                const row = createLogRow(log);
+                tbody.appendChild(row);
+            }
+
+            updatePaginationInfo();
+        }
+
+        function createLogRow(log) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="log-timestamp">${log.timestamp}</td>
+                <td class="log-user">${log.user}</td>
+                <td class="log-action">
+                    <span class="action-type action-${log.action}">${log.action.toUpperCase()}</span>
+                </td>
+                <td class="log-resource">${log.resource}</td>
+                <td class="log-ip">${log.ipAddress}</td>
+                <td>
+                    <span class="log-status status-${log.status}">${log.status.toUpperCase()}</span>
+                </td>
+                <td>
+                    <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="showLogDetail('${log.id}')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </td>
+            `;
+            return row;
+        }
+
+        function showLogDetail(logId) {
+            const log = auditLogs.find(l => l.id === logId);
+            if (!log) return;
+
+            const detailContent = document.getElementById('logDetailContent');
+            detailContent.innerHTML = `
+                <div class="detail-item">
+                    <div class="detail-label">Timestamp</div>
+                    <div class="detail-value">${log.timestamp}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">User</div>
+                    <div class="detail-value">${log.user} (${log.userRole})</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Action</div>
+                    <div class="detail-value">${log.action.toUpperCase()}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Resource</div>
+                    <div class="detail-value">${log.resource}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">IP Address</div>
+                    <div class="detail-value">${log.ipAddress}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Location</div>
+                    <div class="detail-value">${log.location}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">User Agent</div>
+                    <div class="detail-value">${log.userAgent}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Session ID</div>
+                    <div class="detail-value">${log.sessionId || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value">${log.status.toUpperCase()}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Details</div>
+                    <div class="detail-value">${log.details}</div>
+                </div>
+            `;
+
+            document.getElementById('logDetailModal').classList.add('active');
+        }
+
+        function closeLogDetail() {
+            document.getElementById('logDetailModal').classList.remove('active');
+        }
+
+        function updatePaginationInfo() {
+            const startIndex = (currentPage - 1) * 25 + 1;
+            const endIndex = Math.min(currentPage * 25, filteredLogs.length);
+            const total = filteredLogs.length;
+            
+            document.querySelector('.pagination-info').textContent = 
+                `Showing ${startIndex}-${endIndex} of ${total} entries`;
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                loadAuditLogs();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredLogs.length / 25);
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadAuditLogs();
+            }
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            loadAuditLogs();
+        }
+
+        function exportLogs() {
+            alert('Exporting audit logs... (Feature coming soon)');
+        }
+
+        function refreshLogs() {
+            // Simulate refresh
+            loadAuditLogs();
+            alert('Logs refreshed successfully!');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('userName');
+                window.location.href = '/';
+            }
+        }
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Add mobile menu button for small screens
+        if (window.innerWidth <= 768) {
+            const topBar = document.querySelector('.top-bar');
+            const menuButton = document.createElement('button');
+            menuButton.innerHTML = '<i class="fas fa-bars"></i>';
+            menuButton.onclick = toggleSidebar;
+            menuButton.style.cssText = 'background: #f8fafc; border: none; padding: 0.75rem; border-radius: 12px; cursor: pointer; margin-right: 1rem;';
+            topBar.insertBefore(menuButton, topBar.firstChild);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('logDetailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLogDetail();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneCare - Notification Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Admin Sidebar */
+        .sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 2rem;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            padding: 0 2rem;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.75rem 2rem;
+            text-decoration: none;
+            color: #64748b;
+            transition: all 0.3s ease;
+            border-right: 3px solid transparent;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
+            color: #667eea;
+            border-right-color: #667eea;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 300px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Notification Controls */
+        .notification-controls {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .compose-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Notification Types */
+        .notification-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .notification-type {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .notification-type.active {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .notification-type i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #64748b;
+        }
+
+        .notification-type.active i {
+            color: #667eea;
+        }
+
+        .notification-type span {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .notification-type.active span {
+            color: #667eea;
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #64748b;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Notification History */
+        .notification-history {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+
+        .history-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-item {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: background 0.2s ease;
+        }
+
+        .notification-item:hover {
+            background: rgba(102, 126, 234, 0.02);
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .notification-icon.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .notification-icon.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .notification-icon.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-message {
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .notification-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .status-sent {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .status-failed {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        /* Recipient Selector */
+        .recipient-selector {
+            margin-bottom: 1.5rem;
+        }
+
+        .recipient-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .recipient-chip {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .recipient-chip .remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Priority Levels */
+        .priority-levels {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .priority-item {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .priority-item.active {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .priority-low { border-color: #10b981; }
+        .priority-low.active { background: rgba(16, 185, 129, 0.1); }
+
+        .priority-medium { border-color: #f59e0b; }
+        .priority-medium.active { background: rgba(245, 158, 11, 0.1); }
+
+        .priority-high { border-color: #ef4444; }
+        .priority-high.active { background: rgba(239, 68, 68, 0.1); }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .notification-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+            
+            .notification-types {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Admin Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                OneCare
+                <span class="admin-badge">ADMIN</span>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="admin-dashboard.html" class="nav-link">
+                            <i class="fas fa-chart-pie"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="admin-analytics.html" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            Analytics
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">User Management</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="admin-users.html" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            All Users
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Communications</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="admin-notifications.html" class="nav-link active">
+                            <i class="fas fa-bell"></i>
+                            Notifications
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">System</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="admin-settings.html" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            Settings
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <h1 class="page-title">
+                    <i class="fas fa-bell"></i>
+                    Notification Management
+                </h1>
+                <button class="btn btn-primary" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="content-wrapper">
+                <!-- Notification Controls -->
+                <div class="notification-controls">
+                    <!-- Compose Notification -->
+                    <div class="compose-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-plus-circle"></i>
+                            Compose Notification
+                        </h2>
+
+                        <form id="notificationForm">
+                            <div class="form-group">
+                                <label class="form-label">Notification Type</label>
+                                <div class="notification-types">
+                                    <div class="notification-type active" data-type="info">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Info</span>
+                                    </div>
+                                    <div class="notification-type" data-type="success">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Success</span>
+                                    </div>
+                                    <div class="notification-type" data-type="warning">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <span>Warning</span>
+                                    </div>
+                                    <div class="notification-type" data-type="error">
+                                        <i class="fas fa-times-circle"></i>
+                                        <span>Error</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Priority Level</label>
+                                <div class="priority-levels">
+                                    <div class="priority-item priority-low active" data-priority="low">
+                                        <div style="color: #10b981; margin-bottom: 0.5rem;">
+                                            <i class="fas fa-arrow-down"></i>
+                                        </div>
+                                        <span>Low</span>
+                                    </div>
+                                    <div class="priority-item priority-medium" data-priority="medium">
+                                        <div style="color: #f59e0b; margin-bottom: 0.5rem;">
+                                            <i class="fas fa-minus"></i>
+                                        </div>
+                                        <span>Medium</span>
+                                    </div>
+                                    <div class="priority-item priority-high" data-priority="high">
+                                        <div style="color: #ef4444; margin-bottom: 0.5rem;">
+                                            <i class="fas fa-arrow-up"></i>
+                                        </div>
+                                        <span>High</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Recipients</label>
+                                <select class="form-control form-select" id="recipientSelect">
+                                    <option value="">Select Recipients</option>
+                                    <option value="all">All Users</option>
+                                    <option value="patients">All Patients</option>
+                                    <option value="providers">Healthcare Providers</option>
+                                    <option value="admins">Administrators</option>
+                                    <option value="custom">Custom Selection</option>
+                                </select>
+                                <div class="recipient-chips" id="recipientChips"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Title</label>
+                                <input type="text" class="form-control" id="notificationTitle" placeholder="Enter notification title" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Message</label>
+                                <textarea class="form-control form-textarea" id="notificationMessage" placeholder="Enter your notification message..." required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Delivery Method</label>
+                                <select class="form-control form-select" id="deliveryMethod">
+                                    <option value="in-app">In-App Notification</option>
+                                    <option value="email">Email</option>
+                                    <option value="sms">SMS</option>
+                                    <option value="push">Push Notification</option>
+                                    <option value="all">All Methods</option>
+                                </select>
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane"></i>
+                                    Send Notification
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                                    <i class="fas fa-save"></i>
+                                    Save as Draft
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="scheduleNotification()">
+                                    <i class="fas fa-clock"></i>
+                                    Schedule Later
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="quick-stats">
+                        <h3 class="section-title">
+                            <i class="fas fa-chart-bar"></i>
+                            Quick Stats
+                        </h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-number">1,247</div>
+                                <div class="stat-label">Total Sent Today</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">98.2%</div>
+                                <div class="stat-label">Delivery Rate</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">23</div>
+                                <div class="stat-label">Pending</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">5</div>
+                                <div class="stat-label">Failed</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">456</div>
+                                <div class="stat-label">Read Today</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification History -->
+                <div class="notification-history">
+                    <div class="history-header">
+                        <h3 class="section-title">
+                            <i class="fas fa-history"></i>
+                            Recent Notifications
+                        </h3>
+                        <button class="btn btn-secondary" onclick="viewAllNotifications()">
+                            <i class="fas fa-eye"></i>
+                            View All
+                        </button>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notification-icon success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">System Maintenance Complete</div>
+                            <div class="notification-message">All systems are now fully operational after scheduled maintenance.</div>
+                            <div class="notification-meta">
+                                <span><i class="fas fa-users"></i> 2,847 recipients</span>
+                                <span><i class="fas fa-clock"></i> 2 hours ago</span>
+                                <span><i class="fas fa-tag"></i> System</span>
+                            </div>
+                        </div>
+                        <div class="notification-status status-sent">Sent</div>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notification-icon info">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">New Feature: AI Health Insights</div>
+                            <div class="notification-message">We've added new AI-powered health insights to help you better understand your health data.</div>
+                            <div class="notification-meta">
+                                <span><i class="fas fa-users"></i> 1,523 recipients</span>
+                                <span><i class="fas fa-clock"></i> 1 day ago</span>
+                                <span><i class="fas fa-tag"></i> Feature Update</span>
+                            </div>
+                        </div>
+                        <div class="notification-status status-sent">Sent</div>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notification-icon warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Appointment Reminder</div>
+                            <div class="notification-message">Don't forget your upcoming appointment tomorrow at 2:00 PM.</div>
+                            <div class="notification-meta">
+                                <span><i class="fas fa-users"></i> 234 recipients</span>
+                                <span><i class="fas fa-clock"></i> 2 days ago</span>
+                                <span><i class="fas fa-tag"></i> Appointment</span>
+                            </div>
+                        </div>
+                        <div class="notification-status status-pending">Pending</div>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notification-icon error">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Critical Security Alert</div>
+                            <div class="notification-message">Multiple failed login attempts detected. Please review your account security.</div>
+                            <div class="notification-meta">
+                                <span><i class="fas fa-users"></i> 12 recipients</span>
+                                <span><i class="fas fa-clock"></i> 3 days ago</span>
+                                <span><i class="fas fa-tag"></i> Security</span>
+                            </div>
+                        </div>
+                        <div class="notification-status status-failed">Failed</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            const token = localStorage.getItem('authToken');
+            const role = localStorage.getItem('userRole');
+            
+            if (!token || role !== 'admin') {
+                alert('Access denied. Admin privileges required.');
+                window.location.href = '/';
+                return;
+            }
+
+            initializeNotificationManagement();
+        });
+
+        function initializeNotificationManagement() {
+            // Initialize notification type selection
+            const notificationTypes = document.querySelectorAll('.notification-type');
+            notificationTypes.forEach(type => {
+                type.addEventListener('click', function() {
+                    notificationTypes.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Initialize priority selection
+            const priorityLevels = document.querySelectorAll('.priority-item');
+            priorityLevels.forEach(priority => {
+                priority.addEventListener('click', function() {
+                    priorityLevels.forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Initialize recipient selection
+            const recipientSelect = document.getElementById('recipientSelect');
+            recipientSelect.addEventListener('change', function() {
+                updateRecipientChips(this.value);
+            });
+
+            // Initialize form submission
+            const notificationForm = document.getElementById('notificationForm');
+            notificationForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                sendNotification();
+            });
+        }
+
+        function updateRecipientChips(value) {
+            const chipsContainer = document.getElementById('recipientChips');
+            chipsContainer.innerHTML = '';
+
+            if (value) {
+                const chipNames = {
+                    'all': 'All Users (2,847)',
+                    'patients': 'All Patients (2,456)',
+                    'providers': 'Healthcare Providers (341)',
+                    'admins': 'Administrators (50)',
+                    'custom': 'Custom Selection'
+                };
+
+                const chip = document.createElement('div');
+                chip.className = 'recipient-chip';
+                chip.innerHTML = `
+                    <span>${chipNames[value]}</span>
+                    <span class="remove" onclick="removeRecipientChip()">&times;</span>
+                `;
+                chipsContainer.appendChild(chip);
+            }
+        }
+
+        function removeRecipientChip() {
+            document.getElementById('recipientChips').innerHTML = '';
+            document.getElementById('recipientSelect').value = '';
+        }
+
+        function sendNotification() {
+            // Get form data
+            const type = document.querySelector('.notification-type.active').dataset.type;
+            const priority = document.querySelector('.priority-item.active').dataset.priority;
+            const recipients = document.getElementById('recipientSelect').value;
+            const title = document.getElementById('notificationTitle').value;
+            const message = document.getElementById('notificationMessage').value;
+            const deliveryMethod = document.getElementById('deliveryMethod').value;
+
+            // Validate required fields
+            if (!recipients || !title || !message) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            // Simulate sending notification
+            const notification = {
+                type,
+                priority,
+                recipients,
+                title,
+                message,
+                deliveryMethod,
+                timestamp: new Date().toISOString()
+            };
+
+            console.log('Sending notification:', notification);
+            
+            // Show success message
+            alert('Notification sent successfully!');
+            
+            // Clear form
+            clearNotificationForm();
+            
+            // Add to history (simulate)
+            addToNotificationHistory(notification);
+        }
+
+        function clearNotificationForm() {
+            document.getElementById('notificationTitle').value = '';
+            document.getElementById('notificationMessage').value = '';
+            document.getElementById('recipientSelect').value = '';
+            removeRecipientChip();
+            
+            // Reset to default selections
+            document.querySelectorAll('.notification-type').forEach(t => t.classList.remove('active'));
+            document.querySelector('.notification-type[data-type="info"]').classList.add('active');
+            
+            document.querySelectorAll('.priority-item').forEach(p => p.classList.remove('active'));
+            document.querySelector('.priority-item[data-priority="low"]').classList.add('active');
+        }
+
+        function addToNotificationHistory(notification) {
+            // In a real implementation, this would update the database
+            console.log('Adding to notification history:', notification);
+        }
+
+        function saveDraft() {
+            const title = document.getElementById('notificationTitle').value;
+            if (!title) {
+                alert('Please enter a title to save as draft.');
+                return;
+            }
+            
+            alert('Notification saved as draft!');
+        }
+
+        function scheduleNotification() {
+            const title = document.getElementById('notificationTitle').value;
+            if (!title) {
+                alert('Please enter notification details to schedule.');
+                return;
+            }
+            
+            alert('Scheduling feature coming soon! Notification will be added to scheduled list.');
+        }
+
+        function viewAllNotifications() {
+            alert('Opening full notification history... (Feature coming soon)');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('userName');
+                window.location.href = '/';
+            }
+        }
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Add mobile menu button for small screens
+        if (window.innerWidth <= 768) {
+            const topBar = document.querySelector('.top-bar');
+            const menuButton = document.createElement('button');
+            menuButton.innerHTML = '<i class="fas fa-bars"></i>';
+            menuButton.onclick = toggleSidebar;
+            menuButton.style.cssText = 'background: #f8fafc; border: none; padding: 0.75rem; border-radius: 12px; cursor: pointer; margin-right: 1rem;';
+            topBar.insertBefore(menuButton, topBar.firstChild);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneCare - Quick Launch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .launch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .launch-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .launch-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+            opacity: 0.9;
+        }
+
+        .card-content {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .card-description {
+            color: #64748b;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .launch-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1.1rem;
+        }
+
+        .launch-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .launch-btn.secondary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .launch-btn.secondary:hover {
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .quick-links {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .quick-links h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .quick-link {
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .quick-link:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+            transform: translateY(-1px);
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #dcfce7;
+            color: #166534;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏥</div>
+            <h1 class="title">OneCare</h1>
+            <p class="subtitle">Patient Dashboard Integration - Quick Launch</p>
+            <div class="status-indicator">
+                <i class="fas fa-check-circle"></i>
+                Integration Complete
+            </div>
+        </div>
+
+        <div class="launch-grid">
+            <!-- Main Application Launch -->
+            <div class="launch-card">
+                <div class="card-header">
+                    <div class="card-icon">🚀</div>
+                    <div class="card-title">Launch Application</div>
+                    <div class="card-subtitle">Start with the full OneCare experience</div>
+                </div>
+                <div class="card-content">
+                    <p class="card-description">
+                        Begin with the login page and experience the complete patient dashboard with all integrated features, including profile management, navigation, and authentication flow.
+                    </p>
+                    <a href="index.html" class="launch-btn">
+                        <i class="fas fa-play"></i>
+                        Start OneCare
+                    </a>
+                </div>
+            </div>
+
+            <!-- Integration Testing -->
+            <div class="launch-card">
+                <div class="card-header">
+                    <div class="card-icon">🧪</div>
+                    <div class="card-title">Integration Testing</div>
+                    <div class="card-subtitle">Verify all components work together</div>
+                </div>
+                <div class="card-content">
+                    <p class="card-description">
+                        Use the integration verification tool to test all patient dashboard pages, profile modals, settings functionality, and cross-page navigation.
+                    </p>
+                    <a href="verify-integration.html" class="launch-btn secondary">
+                        <i class="fas fa-flask"></i>
+                        Test Integration
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-links">
+            <h3>Quick Access to Patient Pages</h3>
+            <p style="color: #64748b; margin-bottom: 1rem;">Direct links to test individual pages (authentication will be set automatically)</p>
+            
+            <div class="links-grid">
+                <a href="patient-dashboard.html" class="quick-link">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+                <a href="patient-medications.html" class="quick-link">
+                    <i class="fas fa-pills"></i>
+                    Medications
+                </a>
+                <a href="patient-health-records.html" class="quick-link">
+                    <i class="fas fa-file-medical"></i>
+                    Health Records
+                </a>
+                <a href="patient-reports.html" class="quick-link">
+                    <i class="fas fa-chart-bar"></i>
+                    Reports
+                </a>
+                <a href="patient-screening.html" class="quick-link">
+                    <i class="fas fa-clipboard-check"></i>
+                    Screening
+                </a>
+                <a href="patient-emergency.html" class="quick-link">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Emergency
+                </a>
+                <a href="test-patient-dashboard.html" class="quick-link">
+                    <i class="fas fa-wrench"></i>
+                    Test Suite
+                </a>
+                <a href="INTEGRATION-COMPLETE.md" class="quick-link" target="_blank">
+                    <i class="fas fa-file-alt"></i>
+                    Documentation
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set up authentication for quick testing
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-setup test authentication for direct page access
+            if (!localStorage.getItem('authToken')) {
+                localStorage.setItem('authToken', 'quick_launch_token');
+                localStorage.setItem('userName', 'Demo User');
+                localStorage.setItem('userRole', 'patient');
+            }
+        });
+
+        // Add click handlers for better UX
+        document.querySelectorAll('.quick-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // Ensure auth is set before navigating
+                if (!localStorage.getItem('authToken')) {
+                    localStorage.setItem('authToken', 'quick_launch_token');
+                    localStorage.setItem('userName', 'Demo User');
+                    localStorage.setItem('userRole', 'patient');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

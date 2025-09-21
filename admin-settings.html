@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneCare - System Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Admin Sidebar */
+        .sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 2rem;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            padding: 0 2rem;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.75rem 2rem;
+            text-decoration: none;
+            color: #64748b;
+            transition: all 0.3s ease;
+            border-right: 3px solid transparent;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
+            color: #667eea;
+            border-right-color: #667eea;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 300px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Settings Navigation */
+        .settings-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+        }
+
+        .settings-tabs {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .settings-tab {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .settings-tab.active,
+        .settings-tab:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        /* Settings Content */
+        .settings-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        .settings-section {
+            display: none;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .form-description {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-control:disabled {
+            background: #f8fafc;
+            color: #94a3b8;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .toggle-info {
+            flex: 1;
+        }
+
+        .toggle-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .toggle-description {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #cbd5e1;
+            border-radius: 26px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #667eea;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #64748b;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Status Indicators */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .status-offline {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        /* Cards Grid */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .settings-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Backup Settings */
+        .backup-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .backup-info h4 {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .backup-info span {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .backup-status {
+            text-align: right;
+        }
+
+        /* Security Logs */
+        .security-log {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .log-type {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .log-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .log-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .log-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .log-description {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+            
+            .settings-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Admin Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                OneCare
+                <span class="admin-badge">ADMIN</span>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="admin-dashboard.html" class="nav-link">
+                            <i class="fas fa-chart-pie"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="admin-analytics.html" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            Analytics
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">User Management</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="admin-users.html" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            All Users
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">System</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="admin-settings.html" class="nav-link active">
+                            <i class="fas fa-cog"></i>
+                            Settings
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <h1 class="page-title">
+                    <i class="fas fa-cog"></i>
+                    System Settings
+                </h1>
+                <button class="btn btn-primary" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="content-wrapper">
+                <!-- Settings Navigation -->
+                <div class="settings-nav">
+                    <div class="settings-tabs">
+                        <button class="settings-tab active" data-section="general">
+                            <i class="fas fa-sliders-h"></i>
+                            General
+                        </button>
+                        <button class="settings-tab" data-section="security">
+                            <i class="fas fa-shield-alt"></i>
+                            Security
+                        </button>
+                        <button class="settings-tab" data-section="notifications">
+                            <i class="fas fa-bell"></i>
+                            Notifications
+                        </button>
+                        <button class="settings-tab" data-section="backup">
+                            <i class="fas fa-database"></i>
+                            Backup & Data
+                        </button>
+                        <button class="settings-tab" data-section="integrations">
+                            <i class="fas fa-plug"></i>
+                            Integrations
+                        </button>
+                        <button class="settings-tab" data-section="maintenance">
+                            <i class="fas fa-tools"></i>
+                            Maintenance
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Settings Content -->
+                <div class="settings-content">
+                    <!-- General Settings -->
+                    <div class="settings-section active" id="general">
+                        <h2 class="section-title">
+                            <i class="fas fa-sliders-h"></i>
+                            General Settings
+                        </h2>
+                        
+                        <div class="form-group">
+                            <label class="form-label">System Name</label>
+                            <input type="text" class="form-control" value="OneCare Health Platform" id="systemName">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Primary Domain</label>
+                            <div class="form-description">The primary domain where your OneCare platform is accessible</div>
+                            <input type="url" class="form-control" value="https://onecare.health" id="primaryDomain">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Time Zone</label>
+                            <select class="form-control form-select" id="timeZone">
+                                <option value="UTC">UTC (Coordinated Universal Time)</option>
+                                <option value="America/New_York">Eastern Time (US & Canada)</option>
+                                <option value="America/Chicago">Central Time (US & Canada)</option>
+                                <option value="America/Denver">Mountain Time (US & Canada)</option>
+                                <option value="America/Los_Angeles" selected>Pacific Time (US & Canada)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Default Language</label>
+                            <select class="form-control form-select" id="defaultLanguage">
+                                <option value="en" selected>English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Patient Registration</label>
+                            <div class="toggle-container">
+                                <div class="toggle-info">
+                                    <div class="toggle-title">Allow Patient Self-Registration</div>
+                                    <div class="toggle-description">Enable patients to create accounts without admin approval</div>
+                                </div>
+                                <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="saveGeneralSettings()">
+                                <i class="fas fa-save"></i>
+                                Save Changes
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetGeneralSettings()">
+                                <i class="fas fa-undo"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Security Settings -->
+                    <div class="settings-section" id="security">
+                        <h2 class="section-title">
+                            <i class="fas fa-shield-alt"></i>
+                            Security Settings
+                        </h2>
+
+                        <div class="settings-grid">
+                            <div class="settings-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-key"></i>
+                                    </div>
+                                    <div class="card-title">Password Policy</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Minimum Password Length</label>
+                                    <input type="number" class="form-control" value="8" min="6" max="20" id="minPasswordLength">
+                                </div>
+                                <div class="form-group">
+                                    <div class="toggle-container">
+                                        <div class="toggle-info">
+                                            <div class="toggle-title">Require Special Characters</div>
+                                        </div>
+                                        <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                            <div class="toggle-slider"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="settings-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="card-title">Session Management</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Session Timeout (minutes)</label>
+                                    <input type="number" class="form-control" value="30" min="5" max="480" id="sessionTimeout">
+                                </div>
+                                <div class="form-group">
+                                    <div class="toggle-container">
+                                        <div class="toggle-info">
+                                            <div class="toggle-title">Remember Me Option</div>
+                                        </div>
+                                        <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                            <div class="toggle-slider"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Two-Factor Authentication</label>
+                            <div class="toggle-container">
+                                <div class="toggle-info">
+                                    <div class="toggle-title">Require 2FA for Admin Accounts</div>
+                                    <div class="toggle-description">Force all administrator accounts to use two-factor authentication</div>
+                                </div>
+                                <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Recent Security Activity</label>
+                            <div class="security-log">
+                                <div class="log-header">
+                                    <span class="log-type log-success">Success</span>
+                                    <span>2 minutes ago</span>
+                                </div>
+                                <div class="log-description">Admin login from 192.168.1.100</div>
+                            </div>
+                            <div class="security-log">
+                                <div class="log-header">
+                                    <span class="log-type log-warning">Warning</span>
+                                    <span>1 hour ago</span>
+                                </div>
+                                <div class="log-description">Multiple failed login attempts detected</div>
+                            </div>
+                            <div class="security-log">
+                                <div class="log-header">
+                                    <span class="log-type log-success">Success</span>
+                                    <span>3 hours ago</span>
+                                </div>
+                                <div class="log-description">Password changed for user: john.doe@email.com</div>
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="saveSecuritySettings()">
+                                <i class="fas fa-save"></i>
+                                Save Security Settings
+                            </button>
+                            <button class="btn btn-danger" onclick="viewFullSecurityLog()">
+                                <i class="fas fa-eye"></i>
+                                View Full Security Log
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="settings-section" id="notifications">
+                        <h2 class="section-title">
+                            <i class="fas fa-bell"></i>
+                            Notification Settings
+                        </h2>
+
+                        <div class="form-group">
+                            <label class="form-label">Email Notifications</label>
+                            <div class="toggle-container">
+                                <div class="toggle-info">
+                                    <div class="toggle-title">System Alerts</div>
+                                    <div class="toggle-description">Send email alerts for critical system events</div>
+                                </div>
+                                <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="toggle-container">
+                                <div class="toggle-info">
+                                    <div class="toggle-title">User Activity Notifications</div>
+                                    <div class="toggle-description">Email notifications for new user registrations and activities</div>
+                                </div>
+                                <div class="toggle-switch" onclick="toggleSwitch(this)">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">SMTP Configuration</label>
+                            <div class="settings-grid">
+                                <div>
+                                    <label class="form-label">SMTP Server</label>
+                                    <input type="text" class="form-control" placeholder="smtp.gmail.com" id="smtpServer">
+                                </div>
+                                <div>
+                                    <label class="form-label">Port</label>
+                                    <input type="number" class="form-control" value="587" id="smtpPort">
+                                </div>
+                            </div>
+                            <div class="settings-grid">
+                                <div>
+                                    <label class="form-label">Username</label>
+                                    <input type="email" class="form-control" placeholder="your-email@gmail.com" id="smtpUsername">
+                                </div>
+                                <div>
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-control" placeholder="App Password" id="smtpPassword">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Push Notifications</label>
+                            <div class="toggle-container">
+                                <div class="toggle-info">
+                                    <div class="toggle-title">Enable Push Notifications</div>
+                                    <div class="toggle-description">Send push notifications to mobile apps and browsers</div>
+                                </div>
+                                <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="saveNotificationSettings()">
+                                <i class="fas fa-save"></i>
+                                Save Notification Settings
+                            </button>
+                            <button class="btn btn-secondary" onclick="testEmailSettings()">
+                                <i class="fas fa-paper-plane"></i>
+                                Test Email
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Backup & Data Settings -->
+                    <div class="settings-section" id="backup">
+                        <h2 class="section-title">
+                            <i class="fas fa-database"></i>
+                            Backup & Data Management
+                        </h2>
+
+                        <div class="form-group">
+                            <label class="form-label">Automatic Backups</label>
+                            <div class="toggle-container">
+                                <div class="toggle-info">
+                                    <div class="toggle-title">Enable Automatic Daily Backups</div>
+                                    <div class="toggle-description">Automatically backup system data every day at 2:00 AM</div>
+                                </div>
+                                <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Backup Retention</label>
+                            <select class="form-control form-select" id="backupRetention">
+                                <option value="7">7 days</option>
+                                <option value="30" selected>30 days</option>
+                                <option value="90">90 days</option>
+                                <option value="365">1 year</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Recent Backups</label>
+                            <div class="backup-item">
+                                <div class="backup-info">
+                                    <h4>Full System Backup</h4>
+                                    <span>Today at 2:00 AM • 2.4 GB</span>
+                                </div>
+                                <div class="backup-status">
+                                    <div class="status-indicator status-online">
+                                        <i class="fas fa-check-circle"></i>
+                                        Completed
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="backup-item">
+                                <div class="backup-info">
+                                    <h4>Database Backup</h4>
+                                    <span>Yesterday at 2:00 AM • 847 MB</span>
+                                </div>
+                                <div class="backup-status">
+                                    <div class="status-indicator status-online">
+                                        <i class="fas fa-check-circle"></i>
+                                        Completed
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="backup-item">
+                                <div class="backup-info">
+                                    <h4>Incremental Backup</h4>
+                                    <span>2 days ago at 2:00 AM • 156 MB</span>
+                                </div>
+                                <div class="backup-status">
+                                    <div class="status-indicator status-online">
+                                        <i class="fas fa-check-circle"></i>
+                                        Completed
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="createBackup()">
+                                <i class="fas fa-download"></i>
+                                Create Backup Now
+                            </button>
+                            <button class="btn btn-secondary" onclick="restoreFromBackup()">
+                                <i class="fas fa-upload"></i>
+                                Restore from Backup
+                            </button>
+                            <button class="btn btn-danger" onclick="exportData()">
+                                <i class="fas fa-file-export"></i>
+                                Export All Data
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Integrations Settings -->
+                    <div class="settings-section" id="integrations">
+                        <h2 class="section-title">
+                            <i class="fas fa-plug"></i>
+                            Third-Party Integrations
+                        </h2>
+
+                        <div class="settings-grid">
+                            <div class="settings-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-hospital"></i>
+                                    </div>
+                                    <div class="card-title">FHIR Integration</div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="toggle-container">
+                                        <div class="toggle-info">
+                                            <div class="toggle-title">Enable FHIR API</div>
+                                            <div class="toggle-description">Allow external systems to connect via FHIR</div>
+                                        </div>
+                                        <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                            <div class="toggle-slider"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="status-indicator status-online">
+                                    <i class="fas fa-check-circle"></i>
+                                    Connected
+                                </div>
+                            </div>
+
+                            <div class="settings-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <div class="card-title">Payment Gateway</div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="toggle-container">
+                                        <div class="toggle-info">
+                                            <div class="toggle-title">Enable Stripe Payments</div>
+                                            <div class="toggle-description">Accept online payments via Stripe</div>
+                                        </div>
+                                        <div class="toggle-switch" onclick="toggleSwitch(this)">
+                                            <div class="toggle-slider"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="status-indicator status-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Configuration Required
+                                </div>
+                            </div>
+
+                            <div class="settings-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div class="card-title">SMS Service</div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="toggle-container">
+                                        <div class="toggle-info">
+                                            <div class="toggle-title">Enable Twilio SMS</div>
+                                            <div class="toggle-description">Send SMS notifications to patients</div>
+                                        </div>
+                                        <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                            <div class="toggle-slider"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="status-indicator status-online">
+                                    <i class="fas fa-check-circle"></i>
+                                    Connected
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="saveIntegrations()">
+                                <i class="fas fa-save"></i>
+                                Save Integration Settings
+                            </button>
+                            <button class="btn btn-secondary" onclick="testIntegrations()">
+                                <i class="fas fa-vial"></i>
+                                Test Connections
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Maintenance Settings -->
+                    <div class="settings-section" id="maintenance">
+                        <h2 class="section-title">
+                            <i class="fas fa-tools"></i>
+                            System Maintenance
+                        </h2>
+
+                        <div class="form-group">
+                            <label class="form-label">Maintenance Mode</label>
+                            <div class="toggle-container">
+                                <div class="toggle-info">
+                                    <div class="toggle-title">Enable Maintenance Mode</div>
+                                    <div class="toggle-description">Block user access during system updates (Admins can still access)</div>
+                                </div>
+                                <div class="toggle-switch" onclick="toggleSwitch(this)">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Cache Management</label>
+                            <div class="settings-grid">
+                                <button class="btn btn-secondary" onclick="clearCache('application')">
+                                    <i class="fas fa-broom"></i>
+                                    Clear Application Cache
+                                </button>
+                                <button class="btn btn-secondary" onclick="clearCache('database')">
+                                    <i class="fas fa-database"></i>
+                                    Clear Database Cache
+                                </button>
+                                <button class="btn btn-secondary" onclick="clearCache('files')">
+                                    <i class="fas fa-file"></i>
+                                    Clear File Cache
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">System Cleanup</label>
+                            <div class="settings-grid">
+                                <button class="btn btn-secondary" onclick="cleanupLogs()">
+                                    <i class="fas fa-file-alt"></i>
+                                    Cleanup Old Logs
+                                </button>
+                                <button class="btn btn-secondary" onclick="cleanupTempFiles()">
+                                    <i class="fas fa-trash"></i>
+                                    Remove Temp Files
+                                </button>
+                                <button class="btn btn-secondary" onclick="optimizeDatabase()">
+                                    <i class="fas fa-rocket"></i>
+                                    Optimize Database
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-danger" onclick="restartSystem()">
+                                <i class="fas fa-redo"></i>
+                                Restart System Services
+                            </button>
+                            <button class="btn btn-secondary" onclick="exportSystemLogs()">
+                                <i class="fas fa-download"></i>
+                                Export System Logs
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            const token = localStorage.getItem('authToken');
+            const role = localStorage.getItem('userRole');
+            
+            if (!token || role !== 'admin') {
+                alert('Access denied. Admin privileges required.');
+                window.location.href = '/';
+                return;
+            }
+
+            // Initialize settings tabs
+            initializeTabs();
+            loadCurrentSettings();
+        });
+
+        function initializeTabs() {
+            const tabs = document.querySelectorAll('.settings-tab');
+            const sections = document.querySelectorAll('.settings-section');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs and sections
+                    tabs.forEach(t => t.classList.remove('active'));
+                    sections.forEach(s => s.classList.remove('active'));
+
+                    // Add active class to clicked tab and corresponding section
+                    this.classList.add('active');
+                    const sectionId = this.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.add('active');
+                });
+            });
+        }
+
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+        }
+
+        function loadCurrentSettings() {
+            // In a real implementation, you would load current settings from the server
+            console.log('Loading current system settings...');
+        }
+
+        // General Settings Functions
+        function saveGeneralSettings() {
+            const settings = {
+                systemName: document.getElementById('systemName').value,
+                primaryDomain: document.getElementById('primaryDomain').value,
+                timeZone: document.getElementById('timeZone').value,
+                defaultLanguage: document.getElementById('defaultLanguage').value
+            };
+            
+            console.log('Saving general settings:', settings);
+            alert('General settings saved successfully!');
+        }
+
+        function resetGeneralSettings() {
+            if (confirm('Are you sure you want to reset general settings to defaults?')) {
+                document.getElementById('systemName').value = 'OneCare Health Platform';
+                document.getElementById('primaryDomain').value = 'https://onecare.health';
+                document.getElementById('timeZone').value = 'America/Los_Angeles';
+                document.getElementById('defaultLanguage').value = 'en';
+                alert('General settings reset to defaults.');
+            }
+        }
+
+        // Security Settings Functions
+        function saveSecuritySettings() {
+            console.log('Saving security settings...');
+            alert('Security settings saved successfully!');
+        }
+
+        function viewFullSecurityLog() {
+            alert('Opening full security log viewer... (Feature coming soon)');
+        }
+
+        // Notification Settings Functions
+        function saveNotificationSettings() {
+            console.log('Saving notification settings...');
+            alert('Notification settings saved successfully!');
+        }
+
+        function testEmailSettings() {
+            alert('Sending test email... Check your inbox in a few minutes.');
+        }
+
+        // Backup Functions
+        function createBackup() {
+            if (confirm('Create a full system backup now? This may take several minutes.')) {
+                alert('Backup process started. You will be notified when complete.');
+            }
+        }
+
+        function restoreFromBackup() {
+            alert('Opening backup restoration wizard... (Feature coming soon)');
+        }
+
+        function exportData() {
+            if (confirm('Export all system data? This will create a large file.')) {
+                alert('Data export process started. Download will begin shortly.');
+            }
+        }
+
+        // Integration Functions
+        function saveIntegrations() {
+            console.log('Saving integration settings...');
+            alert('Integration settings saved successfully!');
+        }
+
+        function testIntegrations() {
+            alert('Testing all integration connections... Results will be displayed shortly.');
+        }
+
+        // Maintenance Functions
+        function clearCache(type) {
+            if (confirm(`Clear ${type} cache? This may temporarily slow down the system.`)) {
+                alert(`${type.charAt(0).toUpperCase() + type.slice(1)} cache cleared successfully!`);
+            }
+        }
+
+        function cleanupLogs() {
+            if (confirm('Remove old log files? This action cannot be undone.')) {
+                alert('Log cleanup completed successfully!');
+            }
+        }
+
+        function cleanupTempFiles() {
+            alert('Temporary files cleaned successfully!');
+        }
+
+        function optimizeDatabase() {
+            if (confirm('Optimize database? This may take several minutes.')) {
+                alert('Database optimization started. System performance may be affected temporarily.');
+            }
+        }
+
+        function restartSystem() {
+            if (confirm('Restart system services? This will temporarily interrupt service.')) {
+                alert('System restart initiated. Services will be back online shortly.');
+            }
+        }
+
+        function exportSystemLogs() {
+            alert('Exporting system logs... Download will begin shortly.');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('userName');
+                window.location.href = '/';
+            }
+        }
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Add mobile menu button for small screens
+        if (window.innerWidth <= 768) {
+            const topBar = document.querySelector('.top-bar');
+            const menuButton = document.createElement('button');
+            menuButton.innerHTML = '<i class="fas fa-bars"></i>';
+            menuButton.onclick = toggleSidebar;
+            menuButton.style.cssText = 'background: #f8fafc; border: none; padding: 0.75rem; border-radius: 12px; cursor: pointer; margin-right: 1rem;';
+            topBar.insertBefore(menuButton, topBar.firstChild);
+        }
+    </script>
+</body>
+</html>

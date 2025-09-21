@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneCare - Reports & Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: #333; }
+        .app-container { display: flex; min-height: 100vh; }
+        .sidebar { width: 280px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1); padding: 2rem 0; position: fixed; height: 100vh; overflow-y: auto; z-index: 100; }
+        .logo { display: flex; align-items: center; gap: 12px; padding: 0 2rem; margin-bottom: 2rem; font-size: 1.5rem; font-weight: 700; color: #667eea; }
+        .nav-menu { list-style: none; }
+        .nav-item { margin-bottom: 0.5rem; }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 1rem 2rem; text-decoration: none; color: #64748b; transition: all 0.3s ease; border-right: 3px solid transparent; }
+        .nav-link:hover, .nav-link.active { background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%); color: #667eea; border-right-color: #667eea; }
+        .main-content { flex: 1; margin-left: 280px; display: flex; flex-direction: column; min-height: 100vh; }
+        .top-bar { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); padding: 1rem 2rem; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1); display: flex; justify-content: space-between; align-items: center; z-index: 50; }
+        .page-title { font-size: 1.8rem; font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 12px; }
+        .content-wrapper { flex: 1; padding: 2rem; display: flex; align-items: center; justify-content: center; }
+        .coming-soon { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); padding: 4rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); text-align: center; max-width: 600px; }
+        .coming-soon-icon { font-size: 4rem; color: #667eea; margin-bottom: 2rem; }
+        .coming-soon-title { font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 1rem; }
+        .coming-soon-text { color: #64748b; font-size: 1.1rem; margin-bottom: 2rem; }
+        @media (max-width: 768px) { .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; } .sidebar.open { transform: translateX(0); } .main-content { margin-left: 0; } .content-wrapper { padding: 1rem; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <nav class="sidebar" id="sidebar">
+            <div class="logo"><i class="fas fa-heartbeat"></i> OneCare</div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="patient-dashboard.html" class="nav-link"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li class="nav-item"><a href="appointments.html" class="nav-link"><i class="fas fa-calendar-alt"></i> Appointments</a></li>
+                <li class="nav-item"><a href="medications.html" class="nav-link"><i class="fas fa-pills"></i> Medications</a></li>
+                <li class="nav-item"><a href="screening.html" class="nav-link"><i class="fas fa-clipboard-check"></i> Screening & Care Plans</a></li>
+                <li class="nav-item"><a href="messages.html" class="nav-link"><i class="fas fa-comments"></i> Messages</a></li>
+                <li class="nav-item"><a href="health-records.html" class="nav-link"><i class="fas fa-file-medical"></i> Health Records</a></li>
+                <li class="nav-item"><a href="reports.html" class="nav-link active"><i class="fas fa-chart-bar"></i> Reports & Analytics</a></li>
+                <li class="nav-item"><a href="emergency.html" class="nav-link"><i class="fas fa-exclamation-triangle"></i> Emergency & Urgent Care</a></li>
+            </ul>
+        </nav>
+        <main class="main-content">
+            <div class="top-bar">
+                <h1 class="page-title"><i class="fas fa-chart-bar"></i> Reports & Analytics</h1>
+                <div class="user-menu">
+                    <button onclick="alert('Coming soon!')"><i class="fas fa-bell"></i></button>
+                    <button onclick="alert('Coming soon!')"><i class="fas fa-user"></i></button>
+                </div>
+            </div>
+            <div class="content-wrapper">
+                <div class="coming-soon">
+                    <i class="fas fa-chart-bar coming-soon-icon"></i>
+                    <h2 class="coming-soon-title">Reports & Analytics</h2>
+                    <p class="coming-soon-text">Advanced health analytics and personalized reports are coming soon. Track your health trends, medication adherence, and screening compliance with AI-powered insights.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        if (window.innerWidth <= 768) {
+            const topBar = document.querySelector('.top-bar');
+            const menuButton = document.createElement('button');
+            menuButton.innerHTML = '<i class="fas fa-bars"></i>';
+            menuButton.onclick = () => document.getElementById('sidebar').classList.toggle('open');
+            menuButton.style.cssText = 'background: #f8fafc; border: none; padding: 0.75rem; border-radius: 12px; cursor: pointer; margin-right: 1rem;';
+            topBar.insertBefore(menuButton, topBar.firstChild);
+        }
+    </script>
+</body>
+</html>

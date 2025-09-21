@@ -1,0 +1,2743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screening & Care Plans - OneCare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 2rem;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            color: #64748b;
+            transition: all 0.3s ease;
+            border-right: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
+            color: #667eea;
+            border-right-color: #667eea;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-btn, .user-profile {
+            padding: 0.75rem;
+            background: #f8fafc;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover, .user-profile:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        .content-wrapper {
+            flex: 1;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Main Dashboard */
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-description {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 0.5rem;
+            gap: 0.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: none;
+            background: transparent;
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #64748b;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Content Sections */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Screening Section */
+        .screening-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .screening-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .screening-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .screening-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .screening-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .screening-icon.overdue {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .screening-icon.upcoming {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .screening-icon.completed {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .screening-icon.recommended {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .screening-info h3 {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .screening-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-overdue {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .status-upcoming {
+            background: #fffbeb;
+            color: #d97706;
+        }
+
+        .status-completed {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .status-recommended {
+            background: #eef2ff;
+            color: #667eea;
+        }
+
+        .screening-details {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .screening-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .screening-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ML Recommendations Section */
+        .ml-recommendations {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            color: white;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .ml-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .ml-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .risk-assessment {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .risk-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .risk-percentage {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .risk-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .ml-recommendations-list {
+            list-style: none;
+        }
+
+        .ml-recommendation {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Care Plans Section */
+        .care-plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .care-plan-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .care-plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .care-plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .care-plan-title {
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 1.2rem;
+        }
+
+        .care-plan-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .progress-container {
+            margin: 1.5rem 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .care-plan-goals {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .goal-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .goal-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .goal-checkbox.completed {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        /* Sidebar Panel */
+        .sidebar-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .panel-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .panel-title {
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .upcoming-appointments {
+            list-style: none;
+        }
+
+        .appointment-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .appointment-item:hover {
+            background: #e2e8f0;
+        }
+
+        .appointment-date {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .appointment-info h4 {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .appointment-info p {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        /* Health Metrics */
+        .health-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .metric-item {
+            text-align: center;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar-panel {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+            
+            .screening-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .care-plans-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                OneCare
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="patient-dashboard.html" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="appointments.html" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        Appointments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="medications.html" class="nav-link">
+                        <i class="fas fa-pills"></i>
+                        Medications
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="screening.html" class="nav-link active">
+                        <i class="fas fa-clipboard-check"></i>
+                        Screening & Care Plans
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="messages.html" class="nav-link">
+                        <i class="fas fa-comments"></i>
+                        Messages
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="health-records.html" class="nav-link">
+                        <i class="fas fa-file-medical"></i>
+                        Health Records
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reports.html" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        Reports & Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="emergency.html" class="nav-link">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Emergency & Urgent Care
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search screening tests, care plans, or recommendations...">
+                </div>
+                <div class="user-menu">
+                    <button class="notification-btn" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="user-profile" onclick="showUserMenu()">
+                        <i class="fas fa-user"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Wrapper -->
+            <div class="content-wrapper">
+                <!-- Main Dashboard -->
+                <div class="dashboard">
+                    <!-- Page Header -->
+                    <div class="page-header">
+                        <h1 class="page-title">Screening & Care Plans</h1>
+                        <p class="page-description">
+                            Manage preventive screenings, track care plan progress, and get AI-powered health recommendations
+                        </p>
+                    </div>
+
+                    <!-- Tab Navigation -->
+                    <div class="tab-navigation">
+                        <button class="tab-btn active" onclick="showTab('screening')">
+                            <i class="fas fa-search-plus"></i>
+                            Preventive Screening
+                        </button>
+                        <button class="tab-btn" onclick="showTab('carePlans')">
+                            <i class="fas fa-tasks"></i>
+                            Care Plans
+                        </button>
+                        <button class="tab-btn" onclick="showTab('mlRecommendations')">
+                            <i class="fas fa-brain"></i>
+                            AI Recommendations
+                        </button>
+                    </div>
+
+                    <!-- Screening Tab Content -->
+                    <div id="screening" class="tab-content active">
+                        <div class="screening-overview">
+                            <!-- Overdue Screenings -->
+                            <div class="screening-card">
+                                <div class="screening-header">
+                                    <div class="screening-icon overdue">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="screening-info">
+                                        <h3>Mammography</h3>
+                                        <span class="screening-status status-overdue">Overdue</span>
+                                    </div>
+                                </div>
+                                <div class="screening-details">
+                                    <div class="screening-detail">
+                                        <span>Last Done:</span>
+                                        <span>January 2022</span>
+                                    </div>
+                                    <div class="screening-detail">
+                                        <span>Recommended:</span>
+                                        <span>Annually</span>
+                                    </div>
+                                    <div class="screening-detail">
+                                        <span>Risk Level:</span>
+                                        <span style="color: #dc2626; font-weight: 600;">High</span>
+                                    </div>
+                                </div>
+                                <div class="screening-actions">
+                                    <button class="btn-primary" onclick="scheduleScreening('mammography')">Schedule Now</button>
+                                    <button class="btn-secondary" onclick="viewDetails('mammography')">View Details</button>
+                                </div>
+                            </div>
+
+                            <!-- Upcoming Screenings -->
+                            <div class="screening-card">
+                                <div class="screening-header">
+                                    <div class="screening-icon upcoming">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                    <div class="screening-info">
+                                        <h3>Colonoscopy</h3>
+                                        <span class="screening-status status-upcoming">Due Soon</span>
+                                    </div>
+                                </div>
+                                <div class="screening-details">
+                                    <div class="screening-detail">
+                                        <span>Scheduled:</span>
+                                        <span>March 15, 2024</span>
+                                    </div>
+                                    <div class="screening-detail">
+                                        <span>Provider:</span>
+                                        <span>Dr. Johnson</span>
+                                    </div>
+                                    <div class="screening-detail">
+                                        <span>Prep Required:</span>
+                                        <span>Yes</span>
+                                    </div>
+                                </div>
+                                <div class="screening-actions">
+                                    <button class="btn-primary" onclick="viewPrep('colonoscopy')">View Prep</button>
+                                    <button class="btn-secondary" onclick="rescheduleScreening('colonoscopy')">Reschedule</button>
+                                </div>
+                            </div>
+
+                            <!-- Completed Screenings -->
+                            <div class="screening-card">
+                                <div class="screening-header">
+                                    <div class="screening-icon completed">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="screening-info">
+                                        <h3>Blood Pressure Check</h3>
+                                        <span class="screening-status status-completed">Completed</span>
+                                    </div>
+                                </div>
+                                <div class="screening-details">
+                                    <div class="screening-detail">
+                                        <span>Date:</span>
+                                        <span>February 28, 2024</span>
+                                    </div>
+                                    <div class="screening-detail">
+                                        <span>Result:</span>
+                                        <span style="color: #059669; font-weight: 600;">120/80 mmHg</span>
+                                    </div>
+                                    <div class="screening-detail">
+                                        <span>Next Due:</span>
+                                        <span>February 2025</span>
+                                    </div>
+                                </div>
+                                <div class="screening-actions">
+                                    <button class="btn-primary" onclick="viewResults('blood-pressure')">View Results</button>
+                                    <button class="btn-secondary" onclick="addToCalendar('blood-pressure')">Add Reminder</button>
+                                </div>
+                            </div>
+
+                            <!-- AI Recommended Screenings -->
+                            <div class="screening-card">
+                                <div class="screening-header">
+                                    <div class="screening-icon recommended">
+                                        <i class="fas fa-brain"></i>
+                                    </div>
+                                    <div class="screening-info">
+                                        <h3>Diabetes Screening</h3>
+                                        <span class="screening-status status-recommended">AI Recommended</span>
+                                    </div>
+                                </div>
+                                <div class="screening-details">
+                                    <div class="screening-detail">
+                                        <span>Risk Factors:</span>
+                                        <span>Family history, BMI</span>
+                                    </div>
+                                    <div class="screening-detail">
+                                        <span>AI Confidence:</span>
+                                        <span style="color: #667eea; font-weight: 600;">87%</span>
+                                    </div>
+                                    <div class="screening-detail">
+                                        <span>Recommended:</span>
+                                        <span>HbA1c Test</span>
+                                    </div>
+                                </div>
+                                <div class="screening-actions">
+                                    <button class="btn-primary" onclick="acceptRecommendation('diabetes')">Accept</button>
+                                    <button class="btn-secondary" onclick="learnMore('diabetes')">Learn More</button>
+                                </div>
+                            </div>
+
+                            <!-- Cardiovascular Screening -->
+                            <div class="screening-card">
+                                <div class="screening-header">
+                                    <div class="screening-icon upcoming">
+                                        <i class="fas fa-heartbeat"></i>
+                                    </div>
+                                    <div class="screening-info">
+                                        <h3>Lipid Panel</h3>
+                                        <span class="screening-status status-upcoming">Scheduled</span>
+                                    </div>
+                                </div>
+                                <div class="screening-details">
+                                    <div class="screening-detail">
+                                        <span>Date:</span>
+                                        <span>March 20, 2024</span>
+                                    </div>
+                                    <div class="screening-detail">
+                                        <span>Fasting Required:</span>
+                                        <span>12 hours</span>
+                                    </div>
+                                    <div class="screening-detail">
+                                        <span>Location:</span>
+                                        <span>LabCorp Downtown</span>
+                                    </div>
+                                </div>
+                                <div class="screening-actions">
+                                    <button class="btn-primary" onclick="setReminder('lipid-panel')">Set Reminder</button>
+                                    <button class="btn-secondary" onclick="getDirections('labcorp')">Directions</button>
+                                </div>
+                            </div>
+
+                            <!-- Cancer Screening -->
+                            <div class="screening-card">
+                                <div class="screening-header">
+                                    <div class="screening-icon recommended">
+                                        <i class="fas fa-microscope"></i>
+                                    </div>
+                                    <div class="screening-info">
+                                        <h3>Pap Smear</h3>
+                                        <span class="screening-status status-completed">Up to Date</span>
+                                    </div>
+                                </div>
+                                <div class="screening-details">
+                                    <div class="screening-detail">
+                                        <span>Last Done:</span>
+                                        <span>September 2023</span>
+                                    </div>
+                                    <div class="screening-detail">
+                                        <span>Result:</span>
+                                        <span style="color: #059669; font-weight: 600;">Normal</span>
+                                    </div>
+                                    <div class="screening-detail">
+                                        <span>Next Due:</span>
+                                        <span>September 2026</span>
+                                    </div>
+                                </div>
+                                <div class="screening-actions">
+                                    <button class="btn-primary" onclick="viewResults('pap-smear')">View Results</button>
+                                    <button class="btn-secondary" onclick="shareWithProvider('pap-smear')">Share</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Care Plans Tab Content -->
+                    <div id="carePlans" class="tab-content">
+                        <div class="care-plans-grid">
+                            <!-- Diabetes Management Plan -->
+                            <div class="care-plan-card">
+                                <div class="care-plan-header">
+                                    <h3 class="care-plan-title">Diabetes Management</h3>
+                                    <span class="care-plan-status status-upcoming">Active</span>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-label">
+                                        <span>Overall Progress</span>
+                                        <span>78%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 78%"></div>
+                                    </div>
+                                </div>
+                                <ul class="care-plan-goals">
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox completed">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <span>Daily blood glucose monitoring</span>
+                                    </li>
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox completed">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <span>HbA1c < 7%</span>
+                                    </li>
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox"></div>
+                                        <span>30 minutes exercise daily</span>
+                                    </li>
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox"></div>
+                                        <span>Lose 10 lbs</span>
+                                    </li>
+                                </ul>
+                                <div class="screening-actions">
+                                    <button class="btn-primary" onclick="viewCarePlan('diabetes')">View Details</button>
+                                    <button class="btn-secondary" onclick="updateProgress('diabetes')">Update Progress</button>
+                                </div>
+                            </div>
+
+                            <!-- Hypertension Care Plan -->
+                            <div class="care-plan-card">
+                                <div class="care-plan-header">
+                                    <h3 class="care-plan-title">Hypertension Control</h3>
+                                    <span class="care-plan-status status-completed">On Track</span>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-label">
+                                        <span>Overall Progress</span>
+                                        <span>92%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 92%"></div>
+                                    </div>
+                                </div>
+                                <ul class="care-plan-goals">
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox completed">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <span>BP < 130/80 mmHg</span>
+                                    </li>
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox completed">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <span>Daily medication compliance</span>
+                                    </li>
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox completed">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <span>Low sodium diet</span>
+                                    </li>
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox"></div>
+                                        <span>Regular cardio exercise</span>
+                                    </li>
+                                </ul>
+                                <div class="screening-actions">
+                                    <button class="btn-primary" onclick="viewCarePlan('hypertension')">View Details</button>
+                                    <button class="btn-secondary" onclick="shareProgress('hypertension')">Share Progress</button>
+                                </div>
+                            </div>
+
+                            <!-- Weight Management Plan -->
+                            <div class="care-plan-card">
+                                <div class="care-plan-header">
+                                    <h3 class="care-plan-title">Weight Management</h3>
+                                    <span class="care-plan-status status-recommended">In Progress</span>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-label">
+                                        <span>Overall Progress</span>
+                                        <span>45%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 45%"></div>
+                                    </div>
+                                </div>
+                                <ul class="care-plan-goals">
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox completed">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <span>Track daily calorie intake</span>
+                                    </li>
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox"></div>
+                                        <span>Lose 15 lbs in 3 months</span>
+                                    </li>
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox"></div>
+                                        <span>150 min/week exercise</span>
+                                    </li>
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox"></div>
+                                        <span>Monthly nutrition counseling</span>
+                                    </li>
+                                </ul>
+                                <div class="screening-actions">
+                                    <button class="btn-primary" onclick="viewCarePlan('weight')">View Details</button>
+                                    <button class="btn-secondary" onclick="logProgress('weight')">Log Progress</button>
+                                </div>
+                            </div>
+
+                            <!-- Preventive Care Plan -->
+                            <div class="care-plan-card">
+                                <div class="care-plan-header">
+                                    <h3 class="care-plan-title">Preventive Care</h3>
+                                    <span class="care-plan-status status-upcoming">Active</span>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-label">
+                                        <span>Overall Progress</span>
+                                        <span>67%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 67%"></div>
+                                    </div>
+                                </div>
+                                <ul class="care-plan-goals">
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox completed">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <span>Annual physical exam</span>
+                                    </li>
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox completed">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <span>Up-to-date vaccinations</span>
+                                    </li>
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox"></div>
+                                        <span>Complete cancer screenings</span>
+                                    </li>
+                                    <li class="goal-item">
+                                        <div class="goal-checkbox"></div>
+                                        <span>Dental cleaning & exam</span>
+                                    </li>
+                                </ul>
+                                <div class="screening-actions">
+                                    <button class="btn-primary" onclick="viewCarePlan('preventive')">View Details</button>
+                                    <button class="btn-secondary" onclick="scheduleServices('preventive')">Schedule</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Recommendations Tab Content -->
+                    <div id="mlRecommendations" class="tab-content">
+                        <div class="ml-recommendations">
+                            <div class="ml-header">
+                                <div class="ml-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div>
+                                    <h2>AI-Powered Health Recommendations</h2>
+                                    <p>Personalized insights based on your health data, family history, and risk factors</p>
+                                </div>
+                            </div>
+
+                            <!-- Risk Assessment -->
+                            <div class="risk-assessment">
+                                <div class="risk-card">
+                                    <div class="risk-percentage">23%</div>
+                                    <div class="risk-label">Diabetes Risk</div>
+                                </div>
+                                <div class="risk-card">
+                                    <div class="risk-percentage">18%</div>
+                                    <div class="risk-label">Cardiovascular Risk</div>
+                                </div>
+                                <div class="risk-card">
+                                    <div class="risk-percentage">12%</div>
+                                    <div class="risk-label">Cancer Risk</div>
+                                </div>
+                                <div class="risk-card">
+                                    <div class="risk-percentage">95%</div>
+                                    <div class="risk-label">Health Score</div>
+                                </div>
+                            </div>
+
+                            <!-- ML Recommendations List -->
+                            <ul class="ml-recommendations-list">
+                                <li class="ml-recommendation">
+                                    <i class="fas fa-syringe"></i>
+                                    <div>
+                                        <strong>Get Diabetes Screening</strong>
+                                        <p>Based on your BMI and family history, we recommend HbA1c testing</p>
+                                    </div>
+                                    <button class="btn-primary" onclick="acceptRecommendation('diabetes-screening')">Schedule</button>
+                                </li>
+                                <li class="ml-recommendation">
+                                    <i class="fas fa-heart"></i>
+                                    <div>
+                                        <strong>Increase Cardio Exercise</strong>
+                                        <p>Your current activity level could be improved to reduce cardiovascular risk</p>
+                                    </div>
+                                    <button class="btn-primary" onclick="acceptRecommendation('exercise')">Add Goal</button>
+                                </li>
+                                <li class="ml-recommendation">
+                                    <i class="fas fa-apple-alt"></i>
+                                    <div>
+                                        <strong>Nutrition Counseling</strong>
+                                        <p>Your dietary patterns suggest you could benefit from professional guidance</p>
+                                    </div>
+                                    <button class="btn-primary" onclick="acceptRecommendation('nutrition')">Find Counselor</button>
+                                </li>
+                                <li class="ml-recommendation">
+                                    <i class="fas fa-bed"></i>
+                                    <div>
+                                        <strong>Sleep Quality Assessment</strong>
+                                        <p>Your reported fatigue levels suggest possible sleep disorders</p>
+                                    </div>
+                                    <button class="btn-primary" onclick="acceptRecommendation('sleep')">Learn More</button>
+                                </li>
+                                <li class="ml-recommendation">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <div>
+                                        <strong>Preventive Screenings</strong>
+                                        <p>Based on your age and gender, several screenings are recommended</p>
+                                    </div>
+                                    <button class="btn-primary" onclick="viewRecommendedScreenings()">View All</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar Panel -->
+                <div class="sidebar-panel">
+                    <!-- Upcoming Appointments -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <i class="fas fa-calendar-alt"></i>
+                            <h3 class="panel-title">Upcoming Screenings</h3>
+                        </div>
+                        <ul class="upcoming-appointments">
+                            <li class="appointment-item">
+                                <div class="appointment-date">
+                                    <div style="font-size: 0.8rem;">MAR</div>
+                                    <div style="font-size: 1.2rem; font-weight: 700;">15</div>
+                                </div>
+                                <div class="appointment-info">
+                                    <h4>Colonoscopy</h4>
+                                    <p>Dr. Johnson • 10:00 AM</p>
+                                </div>
+                            </li>
+                            <li class="appointment-item">
+                                <div class="appointment-date">
+                                    <div style="font-size: 0.8rem;">MAR</div>
+                                    <div style="font-size: 1.2rem; font-weight: 700;">20</div>
+                                </div>
+                                <div class="appointment-info">
+                                    <h4>Lipid Panel</h4>
+                                    <p>LabCorp • 8:00 AM (Fasting)</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Health Metrics -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <i class="fas fa-chart-line"></i>
+                            <h3 class="panel-title">Health Metrics</h3>
+                        </div>
+                        <div class="health-metrics">
+                            <div class="metric-item">
+                                <div class="metric-value">120/80</div>
+                                <div class="metric-label">Blood Pressure</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">6.8%</div>
+                                <div class="metric-label">HbA1c</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">180</div>
+                                <div class="metric-label">Total Cholesterol</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">165 lbs</div>
+                                <div class="metric-label">Weight</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <i class="fas fa-plus-circle"></i>
+                            <h3 class="panel-title">Quick Actions</h3>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn" onclick="scheduleScreening()">
+                                <i class="fas fa-calendar-plus"></i>
+                                Schedule Screening
+                            </button>
+                            <button class="action-btn" onclick="createCarePlan()">
+                                <i class="fas fa-tasks"></i>
+                                Create Care Plan
+                            </button>
+                            <button class="action-btn" onclick="viewReports()">
+                                <i class="fas fa-file-medical-alt"></i>
+                                View Reports
+                            </button>
+                            <button class="action-btn" onclick="exportData()">
+                                <i class="fas fa-download"></i>
+                                Export Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Schedule Screening Modal -->
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Schedule Screening</h2>
+                <button class="close-modal" onclick="closeModal('scheduleModal')">&times;</button>
+            </div>
+            <form id="scheduleForm">
+                <div class="form-group">
+                    <label class="form-label">Screening Type</label>
+                    <select class="form-select" id="screeningType">
+                        <option value="">Select screening type...</option>
+                        <option value="mammography">Mammography</option>
+                        <option value="colonoscopy">Colonoscopy</option>
+                        <option value="pap-smear">Pap Smear</option>
+                        <option value="bone-density">Bone Density</option>
+                        <option value="skin-cancer">Skin Cancer Screening</option>
+                        <option value="eye-exam">Comprehensive Eye Exam</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Preferred Date</label>
+                    <input type="date" class="form-input" id="preferredDate">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Provider/Location</label>
+                    <select class="form-select" id="provider">
+                        <option value="">Select provider...</option>
+                        <option value="dr-smith">Dr. Smith - Women's Health Center</option>
+                        <option value="dr-johnson">Dr. Johnson - GI Specialists</option>
+                        <option value="radiology-center">City Radiology Center</option>
+                        <option value="labcorp">LabCorp</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea class="form-textarea" id="screeningNotes" placeholder="Any special instructions or preferences..."></textarea>
+                </div>
+                <div class="screening-actions">
+                    <button type="submit" class="btn-primary">Schedule Screening</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('scheduleModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Care Plan Modal -->
+    <div id="carePlanModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Care Plan</h2>
+                <button class="close-modal" onclick="closeModal('carePlanModal')">&times;</button>
+            </div>
+            <form id="carePlanForm">
+                <div class="form-group">
+                    <label class="form-label">Care Plan Name</label>
+                    <input type="text" class="form-input" id="carePlanName" placeholder="e.g., Diabetes Management">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Health Condition</label>
+                    <select class="form-select" id="healthCondition">
+                        <option value="">Select condition...</option>
+                        <option value="diabetes">Diabetes</option>
+                        <option value="hypertension">Hypertension</option>
+                        <option value="weight-management">Weight Management</option>
+                        <option value="heart-disease">Heart Disease</option>
+                        <option value="preventive-care">Preventive Care</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Goals</label>
+                    <textarea class="form-textarea" id="carePlanGoals" placeholder="List your health goals..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Target Date</label>
+                    <input type="date" class="form-input" id="targetDate">
+                </div>
+                <div class="screening-actions">
+                    <button type="submit" class="btn-primary">Create Plan</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('carePlanModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Include advanced ML and integration services -->
+    <script src="js/ml-service.js"></script>
+    <script src="js/data-integration.js"></script>
+    <script src="js/system-integration.js"></script>
+    
+    <script>
+        // Advanced screening and care plan management with comprehensive ML capabilities
+        const appData = {
+            // User profile for ML risk assessment
+            userProfile: {
+                age: 52,
+                gender: 'female',
+                bmi: 26.5,
+                familyHistory: ['diabetes', 'heart-disease', 'breast-cancer'],
+                currentConditions: ['hypertension'],
+                medications: ['lisinopril', 'metformin'],
+                lifestyle: {
+                    smoking: false,
+                    alcohol: 'moderate',
+                    exercise: 'light',
+                    diet: 'mixed'
+                },
+                lastUpdated: '2024-02-28'
+            },
+
+            // Comprehensive screening categories
+            screeningCategories: {
+                'cancer': {
+                    name: 'Cancer Screening',
+                    icon: 'fas fa-microscope',
+                    color: '#dc2626',
+                    tests: ['mammography', 'colonoscopy', 'pap-smear', 'skin-cancer', 'lung-ct']
+                },
+                'cardiovascular': {
+                    name: 'Cardiovascular Health',
+                    icon: 'fas fa-heartbeat',
+                    color: '#ef4444',
+                    tests: ['blood-pressure', 'lipid-panel', 'ekg', 'stress-test']
+                },
+                'metabolic': {
+                    name: 'Metabolic Health',
+                    icon: 'fas fa-syringe',
+                    color: '#f59e0b',
+                    tests: ['diabetes-screening', 'thyroid', 'kidney-function']
+                },
+                'bone-health': {
+                    name: 'Bone Health',
+                    icon: 'fas fa-bone',
+                    color: '#10b981',
+                    tests: ['bone-density', 'vitamin-d']
+                },
+                'preventive': {
+                    name: 'General Preventive',
+                    icon: 'fas fa-shield-alt',
+                    color: '#667eea',
+                    tests: ['annual-physical', 'eye-exam', 'dental', 'immunizations']
+                }
+            },
+
+            // Detailed screening tests database
+            screenings: [
+                // Cancer Screening
+                {
+                    id: 'mammography',
+                    name: 'Mammography',
+                    category: 'cancer',
+                    status: 'overdue',
+                    lastDone: '2022-01-15',
+                    frequency: 12, // months
+                    ageStart: 40,
+                    riskLevel: 'high',
+                    mlScore: 0.85,
+                    reasons: ['Family history of breast cancer', 'Age > 50'],
+                    preparation: 'No deodorant or powder on exam day',
+                    duration: 20,
+                    cost: 250
+                },
+                {
+                    id: 'colonoscopy',
+                    name: 'Colonoscopy',
+                    category: 'cancer',
+                    status: 'scheduled',
+                    scheduledDate: '2024-03-15',
+                    scheduledTime: '10:00',
+                    provider: 'Dr. Johnson - GI Specialists',
+                    frequency: 120, // 10 years
+                    ageStart: 45,
+                    riskLevel: 'medium',
+                    mlScore: 0.65,
+                    preparation: '24-hour prep with clear liquids and prep solution',
+                    duration: 45,
+                    cost: 1200
+                },
+                {
+                    id: 'pap-smear',
+                    name: 'Pap Smear',
+                    category: 'cancer',
+                    status: 'completed',
+                    lastDone: '2023-09-15',
+                    result: 'Normal',
+                    nextDue: '2026-09-15',
+                    frequency: 36, // 3 years
+                    ageStart: 21,
+                    riskLevel: 'low',
+                    mlScore: 0.25
+                },
+
+                // Cardiovascular
+                {
+                    id: 'blood-pressure',
+                    name: 'Blood Pressure Check',
+                    category: 'cardiovascular',
+                    status: 'completed',
+                    lastDone: '2024-02-28',
+                    result: '120/80 mmHg',
+                    nextDue: '2025-02-28',
+                    frequency: 12,
+                    ageStart: 18,
+                    riskLevel: 'low',
+                    mlScore: 0.30
+                },
+                {
+                    id: 'lipid-panel',
+                    name: 'Lipid Panel',
+                    category: 'cardiovascular',
+                    status: 'scheduled',
+                    scheduledDate: '2024-03-20',
+                    scheduledTime: '08:00',
+                    provider: 'LabCorp Downtown',
+                    frequency: 12,
+                    ageStart: 35,
+                    riskLevel: 'medium',
+                    mlScore: 0.55,
+                    preparation: 'Fast for 12 hours before test',
+                    duration: 15,
+                    cost: 85
+                },
+
+                // Metabolic
+                {
+                    id: 'diabetes-screening',
+                    name: 'Diabetes Screening (HbA1c)',
+                    category: 'metabolic',
+                    status: 'recommended',
+                    mlScore: 0.87,
+                    riskLevel: 'high',
+                    reasons: ['BMI > 25', 'Family history', 'Age > 45'],
+                    frequency: 12,
+                    ageStart: 45,
+                    preparation: 'No fasting required',
+                    duration: 10,
+                    cost: 45
+                },
+
+                // Bone Health
+                {
+                    id: 'bone-density',
+                    name: 'Bone Density (DEXA Scan)',
+                    category: 'bone-health',
+                    status: 'due',
+                    lastDone: '2022-05-10',
+                    frequency: 24,
+                    ageStart: 50,
+                    riskLevel: 'medium',
+                    mlScore: 0.45,
+                    duration: 30,
+                    cost: 180
+                },
+
+                // Preventive
+                {
+                    id: 'annual-physical',
+                    name: 'Annual Physical Exam',
+                    category: 'preventive',
+                    status: 'completed',
+                    lastDone: '2024-01-15',
+                    result: 'Good overall health',
+                    nextDue: '2025-01-15',
+                    frequency: 12,
+                    ageStart: 18,
+                    riskLevel: 'low',
+                    duration: 45,
+                    cost: 300
+                },
+                {
+                    id: 'eye-exam',
+                    name: 'Comprehensive Eye Exam',
+                    category: 'preventive',
+                    status: 'overdue',
+                    lastDone: '2022-06-20',
+                    frequency: 24,
+                    ageStart: 40,
+                    riskLevel: 'low',
+                    mlScore: 0.35,
+                    duration: 60,
+                    cost: 150
+                }
+            ],
+            carePlans: [
+                {
+                    id: 'diabetes',
+                    name: 'Diabetes Management',
+                    status: 'active',
+                    progress: 78,
+                    goals: [
+                        { text: 'Daily blood glucose monitoring', completed: true },
+                        { text: 'HbA1c < 7%', completed: true },
+                        { text: '30 minutes exercise daily', completed: false },
+                        { text: 'Lose 10 lbs', completed: false }
+                    ]
+                },
+                {
+                    id: 'hypertension',
+                    name: 'Hypertension Control',
+                    status: 'active',
+                    progress: 92,
+                    goals: [
+                        { text: 'BP < 130/80 mmHg', completed: true },
+                        { text: 'Daily medication compliance', completed: true },
+                        { text: 'Low sodium diet', completed: true },
+                        { text: 'Regular cardio exercise', completed: false }
+                    ]
+                }
+            ],
+            mlRecommendations: [
+                {
+                    id: 'diabetes-screening',
+                    type: 'screening',
+                    title: 'Get Diabetes Screening',
+                    description: 'Based on your BMI and family history, we recommend HbA1c testing',
+                    confidence: 87,
+                    priority: 'high'
+                },
+                {
+                    id: 'exercise',
+                    type: 'lifestyle',
+                    title: 'Increase Cardio Exercise',
+                    description: 'Your current activity level could be improved to reduce cardiovascular risk',
+                    confidence: 92,
+                    priority: 'medium'
+                }
+            ]
+        };
+
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab and activate button
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // ML-powered screening and risk assessment system
+        const mlSystem = {
+            // Calculate risk scores based on user profile and medical history
+            calculateRiskScores: function() {
+                const profile = appData.userProfile;
+                const riskScores = {
+                    diabetes: 0,
+                    cardiovascular: 0,
+                    cancer: 0,
+                    bone: 0
+                };
+                
+                // Diabetes risk factors
+                if (profile.bmi > 25) riskScores.diabetes += 0.2;
+                if (profile.familyHistory.includes('diabetes')) riskScores.diabetes += 0.3;
+                if (profile.age > 45) riskScores.diabetes += 0.15;
+                if (profile.lifestyle.exercise === 'light' || profile.lifestyle.exercise === 'none') riskScores.diabetes += 0.15;
+                
+                // Cardiovascular risk factors
+                if (profile.currentConditions.includes('hypertension')) riskScores.cardiovascular += 0.3;
+                if (profile.familyHistory.includes('heart-disease')) riskScores.cardiovascular += 0.25;
+                if (profile.age > 50) riskScores.cardiovascular += 0.15;
+                if (profile.lifestyle.smoking) riskScores.cardiovascular += 0.3;
+                
+                // Cancer risk factors (focusing on common cancers)
+                if (profile.familyHistory.includes('breast-cancer') && profile.gender === 'female') riskScores.cancer += 0.4;
+                if (profile.age > 50) riskScores.cancer += 0.2;
+                if (profile.lifestyle.smoking) riskScores.cancer += 0.25;
+                
+                // Bone health risk factors
+                if (profile.gender === 'female' && profile.age > 50) riskScores.bone += 0.3;
+                if (profile.bmi < 19) riskScores.bone += 0.2;
+                
+                return riskScores;
+            },
+            
+            // Generate personalized recommendations based on risk assessment
+            generateRecommendations: function() {
+                const riskScores = this.calculateRiskScores();
+                const recommendations = [];
+                const profile = appData.userProfile;
+                
+                // Check which screenings are due or overdue
+                const dueScreenings = appData.screenings.filter(screening => {
+                    if (screening.status === 'completed' || screening.status === 'scheduled') {
+                        return false;
+                    }
+                    
+                    // Check if appropriate for age
+                    if (profile.age < screening.ageStart) {
+                        return false;
+                    }
+                    
+                    return true;
+                });
+                
+                // Sort by risk level and ML score
+                dueScreenings.sort((a, b) => {
+                    const aScore = (a.mlScore || 0.5) * (a.riskLevel === 'high' ? 2 : a.riskLevel === 'medium' ? 1.5 : 1);
+                    const bScore = (b.mlScore || 0.5) * (b.riskLevel === 'high' ? 2 : b.riskLevel === 'medium' ? 1.5 : 1);
+                    return bScore - aScore;
+                });
+                
+                // Take top 5 recommendations
+                const topRecommendations = dueScreenings.slice(0, 5);
+                
+                // Format recommendations
+                topRecommendations.forEach(screening => {
+                    const category = appData.screeningCategories[screening.category];
+                    recommendations.push({
+                        id: screening.id,
+                        type: 'screening',
+                        title: `Get ${screening.name}`,
+                        description: this.generateRecommendationReason(screening),
+                        confidence: Math.round(screening.mlScore * 100) || 75,
+                        priority: screening.riskLevel || 'medium',
+                        icon: category ? category.icon : 'fas fa-stethoscope'
+                    });
+                });
+                
+                // Add lifestyle recommendations based on risk scores
+                if (riskScores.diabetes > 0.3) {
+                    recommendations.push({
+                        id: 'diabetes-prevention',
+                        type: 'lifestyle',
+                        title: 'Diabetes Prevention Program',
+                        description: 'Based on your risk factors, a structured lifestyle program could reduce diabetes risk',
+                        confidence: Math.round(riskScores.diabetes * 100),
+                        priority: 'high',
+                        icon: 'fas fa-apple-alt'
+                    });
+                }
+                
+                if (riskScores.cardiovascular > 0.3) {
+                    recommendations.push({
+                        id: 'cardio-exercise',
+                        type: 'lifestyle',
+                        title: 'Increase Cardio Exercise',
+                        description: 'Regular cardiovascular exercise could significantly reduce your heart disease risk',
+                        confidence: Math.round(riskScores.cardiovascular * 100),
+                        priority: 'high',
+                        icon: 'fas fa-heart'
+                    });
+                }
+                
+                if (profile.lifestyle.exercise === 'light' || profile.lifestyle.exercise === 'none') {
+                    recommendations.push({
+                        id: 'exercise-program',
+                        type: 'lifestyle',
+                        title: 'Personalized Exercise Plan',
+                        description: 'Based on your current activity level, a customized exercise program is recommended',
+                        confidence: 85,
+                        priority: 'medium',
+                        icon: 'fas fa-running'
+                    });
+                }
+                
+                return recommendations;
+            },
+            
+            // Generate natural language explanation for recommendation
+            generateRecommendationReason: function(screening) {
+                const profile = appData.userProfile;
+                const reasons = [];
+                
+                if (screening.status === 'overdue') {
+                    reasons.push('You are overdue for this screening');
+                } else if (screening.status === 'due') {
+                    reasons.push('This screening is due based on recommended frequency');
+                }
+                
+                if (screening.reasons && screening.reasons.length > 0) {
+                    reasons.push(...screening.reasons);
+                } else {
+                    if (profile.age >= screening.ageStart) {
+                        reasons.push(`Recommended for adults age ${screening.ageStart}+`);
+                    }
+                    
+                    if (screening.category === 'cancer' && profile.familyHistory.includes('breast-cancer')) {
+                        reasons.push('Family history of cancer');
+                    }
+                    
+                    if (screening.category === 'cardiovascular' && profile.currentConditions.includes('hypertension')) {
+                        reasons.push('Current hypertension diagnosis');
+                    }
+                }
+                
+                return reasons.join('. ');
+            },
+            
+            // Apply machine learning insights to personalize UI
+            personalizeDashboard: function() {
+                // Get ML recommendations
+                const recommendations = this.generateRecommendations();
+                
+                // Update ML recommendations tab
+                this.updateMlRecommendationsTab(recommendations);
+                
+                // Sort screening cards by priority
+                this.sortScreeningsByPriority();
+                
+                // Show ML risk assessment
+                this.updateRiskAssessment();
+                
+                console.log('AI personalization applied to dashboard');
+            },
+            
+            // Update the ML recommendations tab with generated recommendations
+            updateMlRecommendationsTab: function(recommendations) {
+                const recommendationsList = document.querySelector('.ml-recommendations-list');
+                if (!recommendationsList) return;
+                
+                // Clear existing recommendations
+                recommendationsList.innerHTML = '';
+                
+                // Add new recommendations
+                recommendations.forEach(rec => {
+                    const li = document.createElement('li');
+                    li.className = 'ml-recommendation';
+                    
+                    li.innerHTML = `
+                        <i class="${rec.icon}"></i>
+                        <div>
+                            <strong>${rec.title}</strong>
+                            <p>${rec.description}</p>
+                        </div>
+                        <button class="btn-primary" onclick="acceptRecommendation('${rec.id}')">
+                            ${rec.type === 'screening' ? 'Schedule' : 'Add Goal'}
+                        </button>
+                    `;
+                    
+                    recommendationsList.appendChild(li);
+                });
+            },
+            
+            // Sort screening cards by ML-determined priority
+            sortScreeningsByPriority: function() {
+                const screeningContainer = document.querySelector('.screening-overview');
+                if (!screeningContainer) return;
+                
+                const screeningCards = Array.from(screeningContainer.querySelectorAll('.screening-card'));
+                
+                // Sort cards by priority
+                screeningCards.sort((a, b) => {
+                    const aStatus = a.querySelector('.screening-status').textContent;
+                    const bStatus = b.querySelector('.screening-status').textContent;
+                    
+                    // Priority order: Overdue > AI Recommended > Due Soon > Scheduled > Completed
+                    const priority = {
+                        'Overdue': 5,
+                        'AI Recommended': 4,
+                        'Due Soon': 3,
+                        'Scheduled': 2,
+                        'Completed': 1,
+                        'Up to Date': 0
+                    };
+                    
+                    return (priority[bStatus] || 0) - (priority[aStatus] || 0);
+                });
+                
+                // Reappend in new order
+                screeningCards.forEach(card => screeningContainer.appendChild(card));
+            },
+            
+            // Update risk assessment display
+            updateRiskAssessment: function() {
+                const riskScores = this.calculateRiskScores();
+                const riskElements = {
+                    'Diabetes Risk': document.querySelector('.risk-card:nth-child(1) .risk-percentage'),
+                    'Cardiovascular Risk': document.querySelector('.risk-card:nth-child(2) .risk-percentage'),
+                    'Cancer Risk': document.querySelector('.risk-card:nth-child(3) .risk-percentage')
+                };
+                
+                if (riskElements['Diabetes Risk']) {
+                    riskElements['Diabetes Risk'].textContent = `${Math.round(riskScores.diabetes * 100)}%`;
+                }
+                
+                if (riskElements['Cardiovascular Risk']) {
+                    riskElements['Cardiovascular Risk'].textContent = `${Math.round(riskScores.cardiovascular * 100)}%`;
+                }
+                
+                if (riskElements['Cancer Risk']) {
+                    riskElements['Cancer Risk'].textContent = `${Math.round(riskScores.cancer * 100)}%`;
+                }
+                
+                // Calculate overall health score (inverse of average risk)
+                const avgRisk = (riskScores.diabetes + riskScores.cardiovascular + riskScores.cancer) / 3;
+                const healthScore = Math.round((1 - avgRisk) * 100);
+                
+                const healthScoreElement = document.querySelector('.risk-card:nth-child(4) .risk-percentage');
+                if (healthScoreElement) {
+                    healthScoreElement.textContent = `${healthScore}%`;
+                }
+            }
+        };
+
+        // Screening functions
+        function scheduleScreening(screeningType = null) {
+            const modal = document.getElementById('scheduleModal');
+            if (screeningType) {
+                document.getElementById('screeningType').value = screeningType;
+            }
+            modal.classList.add('active');
+        }
+
+        function viewDetails(screeningId) {
+            alert(`Viewing details for ${screeningId} screening`);
+        }
+
+        function viewResults(screeningId) {
+            alert(`Viewing results for ${screeningId}`);
+        }
+
+        function viewPrep(screeningId) {
+            alert(`Viewing preparation instructions for ${screeningId}`);
+        }
+
+        function rescheduleScreening(screeningId) {
+            alert(`Rescheduling ${screeningId}`);
+        }
+
+        function acceptRecommendation(recommendationId) {
+            alert(`Accepting AI recommendation: ${recommendationId}`);
+        }
+
+        function learnMore(screeningId) {
+            alert(`Learning more about ${screeningId} screening`);
+        }
+
+        // Care plan functions
+        function createCarePlan() {
+            document.getElementById('carePlanModal').classList.add('active');
+        }
+
+        function viewCarePlan(planId) {
+            alert(`Viewing care plan: ${planId}`);
+        }
+
+        function updateProgress(planId) {
+            alert(`Updating progress for ${planId} care plan`);
+        }
+
+        function shareProgress(planId) {
+            alert(`Sharing progress for ${planId} care plan with provider`);
+        }
+
+        function logProgress(planId) {
+            alert(`Logging progress for ${planId} care plan`);
+        }
+
+        // Modal functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Advanced screening system functions
+        const screeningSystem = {
+            // Schedule a new screening
+            scheduleScreening: function(screeningType, date, provider, notes) {
+                // Find screening in database
+                const screening = appData.screenings.find(s => s.id === screeningType);
+                if (!screening) return false;
+                
+                // Update screening status
+                screening.status = 'scheduled';
+                screening.scheduledDate = date;
+                screening.provider = provider;
+                if (notes) screening.notes = notes;
+                
+                // Add to upcoming appointments
+                this.updateUpcomingAppointments();
+                
+                return true;
+            },
+            
+            // Create HTML for screening cards
+            renderScreeningCards: function() {
+                const screeningContainer = document.querySelector('.screening-overview');
+                if (!screeningContainer) return;
+                
+                // Clear existing cards
+                screeningContainer.innerHTML = '';
+                
+                // Render all screenings
+                appData.screenings.forEach(screening => {
+                    const category = appData.screeningCategories[screening.category] || {
+                        icon: 'fas fa-stethoscope',
+                        color: '#667eea'
+                    };
+                    
+                    // Determine status class
+                    let statusClass = '';
+                    if (screening.status === 'overdue') statusClass = 'status-overdue';
+                    else if (screening.status === 'scheduled' || screening.status === 'due') statusClass = 'status-upcoming';
+                    else if (screening.status === 'completed') statusClass = 'status-completed';
+                    else if (screening.status === 'recommended') statusClass = 'status-recommended';
+                    
+                    // Format status text
+                    let statusText = screening.status.charAt(0).toUpperCase() + screening.status.slice(1);
+                    if (screening.status === 'due') statusText = 'Due Soon';
+                    if (screening.status === 'recommended') statusText = 'AI Recommended';
+                    
+                    // Create card HTML
+                    const cardHTML = `
+                        <div class="screening-card">
+                            <div class="screening-header">
+                                <div class="screening-icon ${screening.status}" style="background: ${category.color}">
+                                    <i class="${category.icon}"></i>
+                                </div>
+                                <div class="screening-info">
+                                    <h3>${screening.name}</h3>
+                                    <span class="screening-status ${statusClass}">${statusText}</span>
+                                </div>
+                            </div>
+                            <div class="screening-details">
+                                ${this.generateScreeningDetails(screening)}
+                            </div>
+                            <div class="screening-actions">
+                                ${this.generateScreeningActions(screening)}
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Add to container
+                    screeningContainer.insertAdjacentHTML('beforeend', cardHTML);
+                });
+            },
+            
+            // Generate details for screening card
+            generateScreeningDetails: function(screening) {
+                let detailsHTML = '';
+                
+                if (screening.status === 'overdue' || screening.status === 'completed') {
+                    detailsHTML += `
+                        <div class="screening-detail">
+                            <span>Last Done:</span>
+                            <span>${this.formatDate(screening.lastDone)}</span>
+                        </div>
+                    `;
+                }
+                
+                if (screening.status === 'scheduled') {
+                    detailsHTML += `
+                        <div class="screening-detail">
+                            <span>Scheduled:</span>
+                            <span>${this.formatDate(screening.scheduledDate)}</span>
+                        </div>
+                        <div class="screening-detail">
+                            <span>Provider:</span>
+                            <span>${screening.provider || 'Not specified'}</span>
+                        </div>
+                    `;
+                    
+                    if (screening.preparation) {
+                        detailsHTML += `
+                            <div class="screening-detail">
+                                <span>Prep Required:</span>
+                                <span>Yes</span>
+                            </div>
+                        `;
+                    }
+                }
+                
+                if (screening.status === 'completed' && screening.result) {
+                    detailsHTML += `
+                        <div class="screening-detail">
+                            <span>Result:</span>
+                            <span style="color: #059669; font-weight: 600;">${screening.result}</span>
+                        </div>
+                    `;
+                }
+                
+                if (screening.status === 'completed' && screening.nextDue) {
+                    detailsHTML += `
+                        <div class="screening-detail">
+                            <span>Next Due:</span>
+                            <span>${this.formatDate(screening.nextDue)}</span>
+                        </div>
+                    `;
+                }
+                
+                if (screening.frequency && !screening.nextDue && screening.status !== 'scheduled') {
+                    detailsHTML += `
+                        <div class="screening-detail">
+                            <span>Recommended:</span>
+                            <span>${this.formatFrequency(screening.frequency)}</span>
+                        </div>
+                    `;
+                }
+                
+                if (screening.riskLevel) {
+                    let riskColor = '#64748b';
+                    if (screening.riskLevel === 'high') riskColor = '#dc2626';
+                    else if (screening.riskLevel === 'medium') riskColor = '#d97706';
+                    
+                    detailsHTML += `
+                        <div class="screening-detail">
+                            <span>Risk Level:</span>
+                            <span style="color: ${riskColor}; font-weight: 600;">${screening.riskLevel.charAt(0).toUpperCase() + screening.riskLevel.slice(1)}</span>
+                        </div>
+                    `;
+                }
+                
+                if (screening.status === 'recommended' && screening.reasons && screening.reasons.length > 0) {
+                    detailsHTML += `
+                        <div class="screening-detail">
+                            <span>Risk Factors:</span>
+                            <span>${screening.reasons[0]}</span>
+                        </div>
+                    `;
+                    
+                    if (screening.mlScore) {
+                        detailsHTML += `
+                            <div class="screening-detail">
+                                <span>AI Confidence:</span>
+                                <span style="color: #667eea; font-weight: 600;">${Math.round(screening.mlScore * 100)}%</span>
+                            </div>
+                        `;
+                    }
+                }
+                
+                return detailsHTML;
+            },
+            
+            // Generate action buttons for screening card
+            generateScreeningActions: function(screening) {
+                let actionsHTML = '';
+                
+                if (screening.status === 'overdue' || screening.status === 'due' || screening.status === 'recommended') {
+                    actionsHTML += `<button class="btn-primary" onclick="scheduleScreening('${screening.id}')">Schedule Now</button>`;
+                }
+                
+                if (screening.status === 'scheduled' && screening.preparation) {
+                    actionsHTML += `<button class="btn-primary" onclick="viewPrep('${screening.id}')">View Prep</button>`;
+                    actionsHTML += `<button class="btn-secondary" onclick="rescheduleScreening('${screening.id}')">Reschedule</button>`;
+                }
+                
+                if (screening.status === 'completed' && screening.result) {
+                    actionsHTML += `<button class="btn-primary" onclick="viewResults('${screening.id}')">View Results</button>`;
+                }
+                
+                if (screening.status === 'scheduled') {
+                    actionsHTML += `<button class="btn-primary" onclick="setReminder('${screening.id}')">Set Reminder</button>`;
+                }
+                
+                // Add view details button for all
+                if (!actionsHTML.includes('View Results') && !actionsHTML.includes('View Prep')) {
+                    actionsHTML += `<button class="btn-secondary" onclick="viewDetails('${screening.id}')">View Details</button>`;
+                }
+                
+                // Additional contextual actions
+                if (screening.status === 'completed') {
+                    actionsHTML += `<button class="btn-secondary" onclick="addToCalendar('${screening.id}')">Add Reminder</button>`;
+                }
+                
+                if (screening.status === 'recommended') {
+                    actionsHTML += `<button class="btn-secondary" onclick="learnMore('${screening.id}')">Learn More</button>`;
+                }
+                
+                return actionsHTML;
+            },
+            
+            // Format date strings
+            formatDate: function(dateString) {
+                // Check if it's a full date format
+                if (dateString.includes('-')) {
+                    const date = new Date(dateString);
+                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                    return date.toLocaleDateString('en-US', options);
+                }
+                // It's already a formatted string
+                return dateString;
+            },
+            
+            // Format frequency for human reading
+            formatFrequency: function(months) {
+                if (months === 12) return 'Annually';
+                if (months === 6) return 'Every 6 months';
+                if (months === 3) return 'Quarterly';
+                if (months === 24) return 'Every 2 years';
+                if (months === 36) return 'Every 3 years';
+                if (months === 60) return 'Every 5 years';
+                if (months === 120) return 'Every 10 years';
+                return `Every ${months} months`;
+            },
+            
+            // Update upcoming appointments sidebar
+            updateUpcomingAppointments: function() {
+                const appointmentsList = document.querySelector('.upcoming-appointments');
+                if (!appointmentsList) return;
+                
+                // Clear existing appointments
+                appointmentsList.innerHTML = '';
+                
+                // Get scheduled screenings
+                const scheduledScreenings = appData.screenings
+                    .filter(s => s.status === 'scheduled')
+                    .sort((a, b) => new Date(a.scheduledDate) - new Date(b.scheduledDate));
+                
+                // Add appointments to list
+                scheduledScreenings.forEach(screening => {
+                    const date = new Date(screening.scheduledDate);
+                    const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+                    const day = date.getDate();
+                    
+                    const appointmentHTML = `
+                        <li class="appointment-item">
+                            <div class="appointment-date">
+                                <div style="font-size: 0.8rem;">${month}</div>
+                                <div style="font-size: 1.2rem; font-weight: 700;">${day}</div>
+                            </div>
+                            <div class="appointment-info">
+                                <h4>${screening.name}</h4>
+                                <p>${screening.provider || 'Not specified'} • ${screening.scheduledTime || 'Time TBD'}</p>
+                            </div>
+                        </li>
+                    `;
+                    
+                    appointmentsList.insertAdjacentHTML('beforeend', appointmentHTML);
+                });
+            }
+        };
+        
+        // Care Plan management system
+        const carePlanSystem = {
+            // Create a new care plan
+            createCarePlan: function(name, condition, goalsText, targetDate) {
+                // Parse goals from text
+                const goalLines = goalsText.split('\n').filter(line => line.trim() !== '');
+                const goals = goalLines.map(goal => ({ text: goal, completed: false }));
+                
+                // Create plan object
+                const newPlan = {
+                    id: condition + '-' + Date.now(),
+                    name: name,
+                    condition: condition,
+                    status: 'active',
+                    progress: 0,
+                    targetDate: targetDate,
+                    createdDate: new Date().toISOString().split('T')[0],
+                    goals: goals
+                };
+                
+                // Add to care plans
+                appData.carePlans.push(newPlan);
+                
+                // Render care plans
+                this.renderCarePlans();
+                
+                return true;
+            },
+            
+            // Render care plan cards
+            renderCarePlans: function() {
+                const carePlansContainer = document.querySelector('.care-plans-grid');
+                if (!carePlansContainer) return;
+                
+                // Clear existing plans
+                carePlansContainer.innerHTML = '';
+                
+                // Render all care plans
+                appData.carePlans.forEach(plan => {
+                    // Calculate progress
+                    if (plan.goals && plan.goals.length > 0) {
+                        const completedGoals = plan.goals.filter(goal => goal.completed).length;
+                        plan.progress = Math.round((completedGoals / plan.goals.length) * 100);
+                    }
+                    
+                    // Determine status class
+                    let statusClass = 'status-upcoming';
+                    if (plan.progress >= 90) statusClass = 'status-completed';
+                    else if (plan.progress < 30) statusClass = 'status-recommended';
+                    
+                    // Determine status text
+                    let statusText = 'Active';
+                    if (plan.progress >= 90) statusText = 'On Track';
+                    else if (plan.progress < 30) statusText = 'In Progress';
+                    
+                    // Create goals HTML
+                    let goalsHTML = '';
+                    if (plan.goals) {
+                        plan.goals.forEach(goal => {
+                            goalsHTML += `
+                                <li class="goal-item">
+                                    <div class="goal-checkbox ${goal.completed ? 'completed' : ''}">
+                                        ${goal.completed ? '<i class="fas fa-check"></i>' : ''}
+                                    </div>
+                                    <span>${goal.text}</span>
+                                </li>
+                            `;
+                        });
+                    }
+                    
+                    // Create card HTML
+                    const cardHTML = `
+                        <div class="care-plan-card" data-plan-id="${plan.id}">
+                            <div class="care-plan-header">
+                                <h3 class="care-plan-title">${plan.name}</h3>
+                                <span class="care-plan-status ${statusClass}">${statusText}</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Overall Progress</span>
+                                    <span>${plan.progress}%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${plan.progress}%"></div>
+                                </div>
+                            </div>
+                            <ul class="care-plan-goals">
+                                ${goalsHTML}
+                            </ul>
+                            <div class="screening-actions">
+                                <button class="btn-primary" onclick="viewCarePlan('${plan.id}')">View Details</button>
+                                <button class="btn-secondary" onclick="updateProgress('${plan.id}')">Update Progress</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Add to container
+                    carePlansContainer.insertAdjacentHTML('beforeend', cardHTML);
+                });
+            },
+            
+            // Update a goal's completion status
+            updateGoal: function(planId, goalIndex, completed) {
+                const plan = appData.carePlans.find(p => p.id === planId);
+                if (!plan || !plan.goals || goalIndex >= plan.goals.length) return false;
+                
+                plan.goals[goalIndex].completed = completed;
+                
+                // Update progress
+                const completedGoals = plan.goals.filter(goal => goal.completed).length;
+                plan.progress = Math.round((completedGoals / plan.goals.length) * 100);
+                
+                // Re-render care plans
+                this.renderCarePlans();
+                
+                return true;
+            }
+        };
+
+        // Form handlers
+        document.getElementById('scheduleForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = {
+                type: document.getElementById('screeningType').value,
+                date: document.getElementById('preferredDate').value,
+                provider: document.getElementById('provider').value,
+                notes: document.getElementById('screeningNotes').value
+            };
+            
+            if (screeningSystem.scheduleScreening(formData.type, formData.date, formData.provider, formData.notes)) {
+                screeningSystem.renderScreeningCards();
+                mlSystem.personalizeDashboard();
+                alert('Screening scheduled successfully!');
+            } else {
+                alert('Error scheduling screening. Please try again.');
+            }
+            
+            closeModal('scheduleModal');
+            this.reset();
+        });
+
+        document.getElementById('carePlanForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = {
+                name: document.getElementById('carePlanName').value,
+                condition: document.getElementById('healthCondition').value,
+                goals: document.getElementById('carePlanGoals').value,
+                targetDate: document.getElementById('targetDate').value
+            };
+            
+            if (carePlanSystem.createCarePlan(formData.name, formData.condition, formData.goals, formData.targetDate)) {
+                alert('Care plan created successfully!');
+            } else {
+                alert('Error creating care plan. Please try again.');
+            }
+            
+            closeModal('carePlanModal');
+            this.reset();
+        });
+
+        // Additional utility functions
+        function showNotifications() {
+            alert('Showing notifications');
+        }
+
+        function showUserMenu() {
+            alert('Showing user menu');
+        }
+
+        function addToCalendar(screeningId) {
+            alert(`Adding ${screeningId} reminder to calendar`);
+        }
+
+        function setReminder(screeningId) {
+            alert(`Setting reminder for ${screeningId}`);
+        }
+
+        function getDirections(location) {
+            alert(`Getting directions to ${location}`);
+        }
+
+        function shareWithProvider(screeningId) {
+            alert(`Sharing ${screeningId} results with provider`);
+        }
+
+        function viewRecommendedScreenings() {
+            alert('Viewing all recommended screenings');
+        }
+
+        function scheduleServices(planId) {
+            alert(`Scheduling services for ${planId} care plan`);
+        }
+
+        function viewReports() {
+            window.location.href = 'reports.html';
+        }
+
+        function exportData() {
+            alert('Exporting screening and care plan data');
+        }
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // Search functionality
+        document.querySelector('.search-input')?.addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            // Implement search logic here
+            console.log('Searching for:', query);
+        });
+
+        // Initialize advanced ML and integration systems
+        let advancedMLService;
+        let dataIntegration;
+        let systemIntegration;
+        
+        async function initializeAdvancedSystems() {
+            try {
+                // Initialize ML service with enhanced capabilities
+                advancedMLService = new OneCareMLService();
+                
+                // Initialize data integration layer
+                dataIntegration = new OneCareDataIntegration();
+                
+                // Initialize system integration
+                systemIntegration = new OneCareSystemIntegration();
+                
+                // Get comprehensive patient data
+                const patientId = 'demo-patient-123'; // In production, get from auth/session
+                const comprehensiveData = await dataIntegration.getComprehensivePatientData(patientId);
+                
+                // Run advanced ML risk assessment
+                const mlAssessment = await advancedMLService.calculateComprehensiveRisk(comprehensiveData.demographics);
+                
+                // Update UI with ML insights
+                updateMLInsights(mlAssessment);
+                
+                // Synchronize data across systems
+                await systemIntegration.synchronizePatientData(patientId);
+                
+                console.log('Advanced AI and integration systems initialized successfully');
+                console.log('ML Assessment:', mlAssessment);
+                console.log('Data Quality:', comprehensiveData.dataQuality);
+                
+            } catch (error) {
+                console.error('Error initializing advanced systems:', error);
+                // Fallback to basic functionality
+                console.log('Falling back to basic ML system');
+            }
+        }
+        
+        function updateMLInsights(mlAssessment) {
+            // Update risk percentages with ML results
+            if (mlAssessment.risks) {
+                const diabetesRisk = document.querySelector('.risk-card:nth-child(1) .risk-percentage');
+                if (diabetesRisk) {
+                    diabetesRisk.textContent = `${Math.round(mlAssessment.risks.diabetes * 100)}%`;
+                }
+                
+                const cardioRisk = document.querySelector('.risk-card:nth-child(2) .risk-percentage');
+                if (cardioRisk) {
+                    cardioRisk.textContent = `${Math.round(mlAssessment.risks.cardiovascular * 100)}%`;
+                }
+                
+                const cancerRisk = document.querySelector('.risk-card:nth-child(3) .risk-percentage');
+                if (cancerRisk) {
+                    cancerRisk.textContent = `${Math.round(mlAssessment.risks.cancer * 100)}%`;
+                }
+            }
+            
+            // Update recommendations with AI-generated insights
+            if (mlAssessment.recommendations && mlAssessment.recommendations.length > 0) {
+                updateAIRecommendations(mlAssessment.recommendations);
+            }
+            
+            // Show explainability information
+            if (mlAssessment.explanations) {
+                showMLExplanations(mlAssessment.explanations);
+            }
+            
+            // Display fairness assessment
+            if (mlAssessment.fairnessCheck) {
+                displayFairnessAssessment(mlAssessment.fairnessCheck);
+            }
+        }
+        
+        function updateAIRecommendations(recommendations) {
+            const recommendationsList = document.querySelector('.ml-recommendations-list');
+            if (!recommendationsList) return;
+            
+            // Clear existing recommendations
+            recommendationsList.innerHTML = '';
+            
+            // Add AI-generated recommendations
+            recommendations.forEach(rec => {
+                const li = document.createElement('li');
+                li.className = 'ml-recommendation';
+                
+                li.innerHTML = `
+                    <i class="${rec.icon || 'fas fa-brain'}"></i>
+                    <div>
+                        <strong>${rec.title}</strong>
+                        <p>${rec.description || rec.reason}</p>
+                        <small style="opacity: 0.8;">AI Confidence: ${rec.confidence || 85}%</small>
+                    </div>
+                    <button class="btn-primary" onclick="acceptRecommendation('${rec.id}')">
+                        ${rec.type === 'screening' ? 'Schedule' : 'Add Goal'}
+                    </button>
+                `;
+                
+                recommendationsList.appendChild(li);
+            });
+        }
+        
+        function showMLExplanations(explanations) {
+            // Add explanation tooltips or modals to screening cards
+            Object.entries(explanations).forEach(([condition, explanation]) => {
+                const riskCard = document.querySelector(`.risk-card:contains('${condition}')`);
+                if (riskCard && explanation.reasoning) {
+                    riskCard.title = explanation.reasoning;
+                }
+            });
+        }
+        
+        function displayFairnessAssessment(fairnessCheck) {
+            if (fairnessCheck.bias_detected) {
+                console.warn('Bias detected in AI recommendations:', fairnessCheck.recommendations);
+                
+                // Show bias warning to user if needed
+                const warningElement = document.createElement('div');
+                warningElement.className = 'bias-warning';
+                warningElement.innerHTML = `
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                        <strong>AI Fairness Notice:</strong> Our AI system has detected potential bias in recommendations. 
+                        Please consult with your healthcare provider for personalized advice.
+                    </div>
+                `;
+                
+                const mlSection = document.getElementById('mlRecommendations');
+                if (mlSection) {
+                    mlSection.insertBefore(warningElement, mlSection.firstChild);
+                }
+            }
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('Screening & Care Plans page loaded');
+            
+            // Initialize basic system components first
+            try {
+                // Render screening cards dynamically
+                screeningSystem.renderScreeningCards();
+                
+                // Render care plan cards
+                carePlanSystem.renderCarePlans();
+                
+                // Apply basic ML personalization
+                mlSystem.personalizeDashboard();
+                
+                // Update upcoming appointments sidebar
+                screeningSystem.updateUpcomingAppointments();
+                
+                console.log('Basic screening and care plan system initialized successfully');
+            } catch (error) {
+                console.error('Error initializing basic systems:', error);
+            }
+            
+            // Initialize advanced systems asynchronously
+            initializeAdvancedSystems();
+            
+            // Set minimum date for scheduling to today
+            const today = new Date().toISOString().split('T')[0];
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            dateInputs.forEach(input => {
+                input.min = today;
+            });
+            
+            // Add goal checkbox interactions
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('goal-checkbox')) {
+                    const goalItem = e.target.closest('.goal-item');
+                    const carePlanCard = e.target.closest('.care-plan-card');
+                    
+                    if (goalItem && carePlanCard) {
+                        const planId = carePlanCard.dataset.planId;
+                        const goalIndex = Array.from(carePlanCard.querySelectorAll('.goal-item')).indexOf(goalItem);
+                        const isCompleted = e.target.classList.contains('completed');
+                        
+                        // Toggle completion
+                        carePlanSystem.updateGoal(planId, goalIndex, !isCompleted);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

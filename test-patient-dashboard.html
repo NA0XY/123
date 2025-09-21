@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneCare - Patient Dashboard Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 2rem;
+        }
+
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .test-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .test-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .test-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .pages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .page-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .page-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .page-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .page-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-description {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .page-content {
+            padding: 1.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .feature-icon {
+            color: #10b981;
+            font-size: 0.8rem;
+        }
+
+        .test-button {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .test-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .status-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .status-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        .status-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .status-completed {
+            background: #10b981;
+        }
+
+        .status-pending {
+            background: #f59e0b;
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        .instructions-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        .instructions-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .instructions-item {
+            counter-increment: step-counter;
+            margin-bottom: 1rem;
+            padding-left: 2.5rem;
+            position: relative;
+        }
+
+        .instructions-item::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1.5rem;
+            height: 1.5rem;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1 class="test-title">OneCare Patient Dashboard Test</h1>
+            <p class="test-subtitle">Comprehensive testing of all patient dashboard pages and functionality</p>
+        </div>
+
+        <div class="status-section">
+            <h2 class="status-title">Implementation Status</h2>
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-icon status-completed">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">Patient Dashboard</div>
+                        <div style="font-size: 0.8rem; color: #64748b;">Navigation updated</div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon status-completed">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">Medications Page</div>
+                        <div style="font-size: 0.8rem; color: #64748b;">Profile dropdown added</div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon status-completed">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">Health Records</div>
+                        <div style="font-size: 0.8rem; color: #64748b;">Enhanced with dropdown</div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon status-completed">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">Reports & Analytics</div>
+                        <div style="font-size: 0.8rem; color: #64748b;">Charts and insights</div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon status-completed">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">Screening & Care</div>
+                        <div style="font-size: 0.8rem; color: #64748b;">Preventive care tracking</div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon status-completed">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">Emergency Care</div>
+                        <div style="font-size: 0.8rem; color: #64748b;">Emergency services</div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon status-completed">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">Profile Modal</div>
+                        <div style="font-size: 0.8rem; color: #64748b;">Working functionality</div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon status-completed">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">Settings Modal</div>
+                        <div style="font-size: 0.8rem; color: #64748b;">User preferences</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pages-grid">
+            <!-- Main Dashboard -->
+            <div class="page-card" onclick="testPage('patient-dashboard.html')">
+                <div class="page-header">
+                    <div class="page-icon"><i class="fas fa-home"></i></div>
+                    <div class="page-name">Patient Dashboard</div>
+                    <div class="page-description">Main dashboard with overview and quick actions</div>
+                </div>
+                <div class="page-content">
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Updated navigation links
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            User profile dropdown
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Quick action cards
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Health stats overview
+                        </li>
+                    </ul>
+                    <a href="patient-dashboard.html" class="test-button">Test Dashboard</a>
+                </div>
+            </div>
+
+            <!-- Medications -->
+            <div class="page-card" onclick="testPage('patient-medications.html')">
+                <div class="page-header">
+                    <div class="page-icon"><i class="fas fa-pills"></i></div>
+                    <div class="page-name">Medications</div>
+                    <div class="page-description">Comprehensive medication management</div>
+                </div>
+                <div class="page-content">
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Profile dropdown integration
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Medication tracking
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Adherence monitoring
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Refill management
+                        </li>
+                    </ul>
+                    <a href="patient-medications.html" class="test-button">Test Medications</a>
+                </div>
+            </div>
+
+            <!-- Health Records -->
+            <div class="page-card" onclick="testPage('patient-health-records.html')">
+                <div class="page-header">
+                    <div class="page-icon"><i class="fas fa-file-medical"></i></div>
+                    <div class="page-name">Health Records</div>
+                    <div class="page-description">Medical history and health documents</div>
+                </div>
+                <div class="page-content">
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Enhanced dropdown menu
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Medical history timeline
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Document management
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Test results tracking
+                        </li>
+                    </ul>
+                    <a href="patient-health-records.html" class="test-button">Test Health Records</a>
+                </div>
+            </div>
+
+            <!-- Reports & Analytics -->
+            <div class="page-card" onclick="testPage('patient-reports.html')">
+                <div class="page-header">
+                    <div class="page-icon"><i class="fas fa-chart-bar"></i></div>
+                    <div class="page-name">Reports & Analytics</div>
+                    <div class="page-description">Health insights and trend analysis</div>
+                </div>
+                <div class="page-content">
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Interactive charts
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Health trend analysis
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Progress tracking
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Export capabilities
+                        </li>
+                    </ul>
+                    <a href="patient-reports.html" class="test-button">Test Reports</a>
+                </div>
+            </div>
+
+            <!-- Screening & Care Plans -->
+            <div class="page-card" onclick="testPage('patient-screening.html')">
+                <div class="page-header">
+                    <div class="page-icon"><i class="fas fa-clipboard-check"></i></div>
+                    <div class="page-name">Screening & Care Plans</div>
+                    <div class="page-description">Preventive care and health screenings</div>
+                </div>
+                <div class="page-content">
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Screening schedules
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Care plan tracking
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Preventive alerts
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Compliance monitoring
+                        </li>
+                    </ul>
+                    <a href="patient-screening.html" class="test-button">Test Screening</a>
+                </div>
+            </div>
+
+            <!-- Emergency & Urgent Care -->
+            <div class="page-card" onclick="testPage('patient-emergency.html')">
+                <div class="page-header">
+                    <div class="page-icon"><i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i></div>
+                    <div class="page-name">Emergency & Urgent Care</div>
+                    <div class="page-description">Emergency contacts and urgent care services</div>
+                </div>
+                <div class="page-content">
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Emergency services info
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Location sharing
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Quick contact actions
+                        </li>
+                        <li class="feature-item">
+                            <i class="fas fa-check feature-icon"></i>
+                            Medical ID access
+                        </li>
+                    </ul>
+                    <a href="patient-emergency.html" class="test-button">Test Emergency</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h2 class="instructions-title">Testing Instructions</h2>
+            <ol class="instructions-list">
+                <li class="instructions-item">
+                    <strong>Authentication Test:</strong> Start by logging in through the main login page (index.html) to simulate the full user flow.
+                </li>
+                <li class="instructions-item">
+                    <strong>Navigation Test:</strong> Click on each page link above to verify all pages load correctly and navigation between pages works smoothly.
+                </li>
+                <li class="instructions-item">
+                    <strong>Profile Dropdown Test:</strong> On each page, click the user profile dropdown to verify it opens/closes correctly and shows consistent styling.
+                </li>
+                <li class="instructions-item">
+                    <strong>Profile Modal Test:</strong> Click "My Profile" in any dropdown to test the profile modal functionality and form submission.
+                </li>
+                <li class="instructions-item">
+                    <strong>Settings Modal Test:</strong> Click "Settings" in any dropdown to test the settings modal with notification toggles and preferences.
+                </li>
+                <li class="instructions-item">
+                    <strong>Mobile Responsiveness Test:</strong> Resize your browser or test on mobile devices to verify responsive design works across all pages.
+                </li>
+                <li class="instructions-item">
+                    <strong>Feature Integration Test:</strong> Test specific features like medication management, health record viewing, and emergency contact functions.
+                </li>
+                <li class="instructions-item">
+                    <strong>Logout Test:</strong> Use the logout function from any page to ensure it properly clears authentication and redirects to login.
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="js/profile-modal.js"></script>
+    <script>
+        function testPage(pageName) {
+            // This could be expanded to include automated testing
+            window.open(pageName, '_blank');
+        }
+
+        // Set up authentication for testing
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate logged in user for testing
+            if (!localStorage.getItem('authToken')) {
+                localStorage.setItem('authToken', 'test_token_123');
+                localStorage.setItem('userName', 'Test User');
+                localStorage.setItem('userRole', 'patient');
+            }
+        });
+    </script>
+</body>
+</html>

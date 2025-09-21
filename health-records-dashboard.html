@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Records Dashboard - OneCare</title>
+    <link rel="stylesheet" href="css/health-records.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-heart-pulse"></i>
+                    <span>OneCare</span>
+                </div>
+                <nav class="nav">
+                    <a href="frontend/health-records-advanced.html" class="nav-link">
+                        <i class="fas fa-file-medical"></i>
+                        Records
+                    </a>
+                    <a href="health-records-dashboard.html" class="nav-link active">
+                        <i class="fas fa-chart-line"></i>
+                        Dashboard
+                    </a>
+                    <a href="frontend/appointments.html" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        Appointments
+                    </a>
+                    <a href="frontend/patient-dashboard.html" class="nav-link">
+                        <i class="fas fa-user-md"></i>
+                        Overview
+                    </a>
+                </nav>
+                <div class="header-actions">
+                    <button class="btn-icon" id="notificationsBtn" aria-label="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <div class="user-menu">
+                        <img src="https://via.placeholder.com/32x32/4A90E2/ffffff?text=HS" alt="User Avatar" class="user-avatar">
+                        <span class="user-name">Harsh Singhal</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <h1>Health Dashboard</h1>
+                    <p>Monitor your health records and track important metrics</p>
+                </div>
+                <div class="dashboard-actions">
+                    <select class="date-filter" id="dateFilter">
+                        <option value="7">Last 7 days</option>
+                        <option value="30" selected>Last 30 days</option>
+                        <option value="90">Last 3 months</option>
+                        <option value="365">Last year</option>
+                        <option value="all">All time</option>
+                    </select>
+                    <button class="btn btn-secondary" id="exportBtn">
+                        <i class="fas fa-download"></i>
+                        Export Report
+                    </button>
+                    <button class="btn btn-primary" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Key Metrics Cards -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3 class="metric-value" id="totalRecords">--</h3>
+                        <p class="metric-label">Total Records</p>
+                        <span class="metric-change positive" id="recordsChange">+12% this month</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3 class="metric-value" id="recentUploads">--</h3>
+                        <p class="metric-label">Recent Uploads</p>
+                        <span class="metric-change positive" id="uploadsChange">+5 this week</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-heart-pulse"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3 class="metric-value" id="healthScore">--</h3>
+                        <p class="metric-label">Health Score</p>
+                        <span class="metric-change positive" id="scoreChange">+2 points</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3 class="metric-value" id="pendingActions">--</h3>
+                        <p class="metric-label">Pending Actions</p>
+                        <span class="metric-change negative" id="actionsChange">3 overdue</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts and Analytics -->
+            <div class="analytics-grid">
+                <!-- Records Timeline Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Records Timeline</h3>
+                        <div class="chart-controls">
+                            <button class="chart-toggle active" data-chart="timeline" data-type="line">Line</button>
+                            <button class="chart-toggle" data-chart="timeline" data-type="bar">Bar</button>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Category Distribution -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Category Distribution</h3>
+                        <div class="chart-controls">
+                            <button class="chart-toggle active" data-chart="category" data-type="doughnut">Donut</button>
+                            <button class="chart-toggle" data-chart="category" data-type="pie">Pie</button>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- File Types Analysis -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>File Types</h3>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="fileTypesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Health Metrics Trend -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Health Metrics Trend</h3>
+                        <div class="chart-controls">
+                            <select class="metric-selector" id="metricSelector">
+                                <option value="blood_pressure">Blood Pressure</option>
+                                <option value="weight">Weight</option>
+                                <option value="glucose">Blood Glucose</option>
+                                <option value="heart_rate">Heart Rate</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="healthMetricsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity and Insights -->
+            <div class="dashboard-sections">
+                <!-- Recent Activity -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3>Recent Activity</h3>
+                        <a href="health-records-system.html" class="section-link">View All</a>
+                    </div>
+                    <div class="activity-list" id="recentActivity">
+                        <!-- Activity items will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Health Insights -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3>Health Insights</h3>
+                        <button class="btn-icon" id="refreshInsights">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div class="insights-list" id="healthInsights">
+                        <!-- Insights will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Upcoming Reminders -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3>Upcoming Reminders</h3>
+                        <button class="btn-icon" id="addReminder">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="reminders-list" id="upcomingReminders">
+                        <!-- Reminders will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Analytics Tables -->
+            <div class="analytics-tables">
+                <!-- Records Summary Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Records Summary</h3>
+                        <div class="table-actions">
+                            <button class="btn btn-secondary btn-sm" id="exportTableBtn">
+                                <i class="fas fa-download"></i>
+                                Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="analytics-table" id="recordsSummaryTable">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Count</th>
+                                    <th>Latest Upload</th>
+                                    <th>Total Size</th>
+                                    <th>Avg Size</th>
+                                    <th>Trend</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Table rows will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Provider Analytics -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Healthcare Providers</h3>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="analytics-table" id="providersTable">
+                            <thead>
+                                <tr>
+                                    <th>Provider</th>
+                                    <th>Records</th>
+                                    <th>Last Visit</th>
+                                    <th>Upcoming</th>
+                                    <th>Contact</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Table rows will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Export Modal -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Export Dashboard Report</h2>
+                <button class="modal-close" data-modal="exportModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="exportForm">
+                    <div class="form-group">
+                        <label for="exportFormat">Format</label>
+                        <select id="exportFormat" required>
+                            <option value="pdf">PDF Report</option>
+                            <option value="csv">CSV Data</option>
+                            <option value="excel">Excel Spreadsheet</option>
+                            <option value="json">JSON Data</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="exportDateRange">Date Range</label>
+                        <select id="exportDateRange" required>
+                            <option value="7">Last 7 days</option>
+                            <option value="30">Last 30 days</option>
+                            <option value="90">Last 3 months</option>
+                            <option value="365">Last year</option>
+                            <option value="all">All time</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Include Sections</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked value="metrics"> Key Metrics
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked value="charts"> Charts & Graphs
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked value="activity"> Recent Activity
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked value="insights"> Health Insights
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked value="summary"> Records Summary
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-modal="exportModal">Cancel</button>
+                <button type="submit" form="exportForm" class="btn btn-primary">
+                    <i class="fas fa-download"></i>
+                    Export Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading dashboard data...</p>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Scripts -->
+    <script src="js/health-records-system.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        // Initialize dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const dashboard = new HealthDashboard();
+            dashboard.init();
+        });
+    </script>
+</body>
+</html>

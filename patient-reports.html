@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneCare - Reports & Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 2rem;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            color: #64748b;
+            transition: all 0.3s ease;
+            border-right: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
+            color: #667eea;
+            border-right-color: #667eea;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 10px;
+            background: #f8fafc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-1px);
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        /* User Menu */
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            background: #f8fafc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .user-menu:hover {
+            background: #e2e8f0;
+        }
+
+        .user-menu img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        .dropdown-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .user-menu.open .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* User Dropdown */
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            width: 280px;
+            z-index: 1000;
+            margin-top: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dropdown-header {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .dropdown-user-name {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .dropdown-user-email {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .dropdown-menu {
+            padding: 0.5rem;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.75rem 1rem;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-item:hover {
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #f1f5f9;
+            margin: 0.5rem 0;
+        }
+
+        .logout-item {
+            color: #ef4444 !important;
+        }
+
+        .logout-item:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .content-wrapper {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Reports Header */
+        .reports-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .reports-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .reports-subtitle {
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        .report-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            background: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        /* Chart Containers */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .chart-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .chart-subtitle {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .chart-body {
+            padding: 1.5rem;
+            height: 300px;
+            position: relative;
+        }
+
+        /* Health Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            margin: 0 auto 1rem;
+        }
+
+        .metric-icon.vitals {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .metric-icon.fitness {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .metric-icon.medication {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .metric-icon.appointments {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-trend {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+        }
+
+        .trend-up {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .trend-down {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .trend-stable {
+            background: rgba(100, 116, 139, 0.1);
+            color: #64748b;
+        }
+
+        /* Report Actions */
+        .report-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #64748b;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                OneCare
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="patient-dashboard.html" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="appointments.html" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        Appointments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="patient-medications.html" class="nav-link">
+                        <i class="fas fa-pills"></i>
+                        Medications
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="patient-health-records.html" class="nav-link">
+                        <i class="fas fa-file-medical"></i>
+                        Health Records
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="messages.html" class="nav-link">
+                        <i class="fas fa-comments"></i>
+                        Messages
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="patient-reports.html" class="nav-link active">
+                        <i class="fas fa-chart-bar"></i>
+                        Reports & Analytics
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <h1 class="page-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Reports & Analytics
+                </h1>
+                
+                <div class="top-bar-actions">
+                    <button class="icon-btn" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+                    
+                    <div class="user-menu" onclick="toggleUserDropdown(event)" id="userMenuTrigger">
+                        <img src="data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23dbeafe'/%3E%3Cpath d='M20 20a5 5 0 100-10 5 5 0 000 10zM20 22c-5.5 0-10 3-10 6v4h20v-4c0-3-4.5-6-10-6z' fill='%232563eb'/%3E%3C/svg%3E" alt="Profile">
+                        <div>
+                            <div class="user-name" id="userName">John Doe</div>
+                            <div class="user-role">Patient</div>
+                        </div>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        
+                        <!-- User Dropdown Menu -->
+                        <div class="user-dropdown" id="userDropdown" style="display: none;">
+                            <div class="dropdown-header">
+                                <div class="dropdown-user-name" id="dropdownUserName">John Doe</div>
+                                <div class="dropdown-user-email">john.doe@email.com</div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-menu">
+                                <button class="dropdown-item" onclick="showProfileModal()">
+                                    <i class="fas fa-user"></i>
+                                    My Profile
+                                </button>
+                                <button class="dropdown-item" onclick="showSettingsModal()">
+                                    <i class="fas fa-cog"></i>
+                                    Settings
+                                </button>
+                                <button class="dropdown-item" onclick="showHelpModal()">
+                                    <i class="fas fa-question-circle"></i>
+                                    Help & Support
+                                </button>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-item" onclick="showLogoutModal()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content-wrapper">
+                <!-- Reports Header -->
+                <div class="reports-header">
+                    <h2 class="reports-title">Your Health Analytics</h2>
+                    <p class="reports-subtitle">Track your health trends and get insights into your wellness journey</p>
+                    
+                    <div class="report-filters">
+                        <button class="filter-btn active" onclick="filterReports('7days')">Last 7 Days</button>
+                        <button class="filter-btn" onclick="filterReports('30days')">Last 30 Days</button>
+                        <button class="filter-btn" onclick="filterReports('3months')">Last 3 Months</button>
+                        <button class="filter-btn" onclick="filterReports('1year')">Last Year</button>
+                    </div>
+                </div>
+
+                <!-- Health Metrics -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon vitals">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <div class="metric-value">72</div>
+                        <div class="metric-label">Avg Heart Rate</div>
+                        <div class="metric-trend trend-stable">Stable</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon fitness">
+                            <i class="fas fa-running"></i>
+                        </div>
+                        <div class="metric-value">8,542</div>
+                        <div class="metric-label">Daily Steps</div>
+                        <div class="metric-trend trend-up">↑ 12%</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon medication">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                        <div class="metric-value">95%</div>
+                        <div class="metric-label">Med Adherence</div>
+                        <div class="metric-trend trend-up">↑ 3%</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon appointments">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="metric-value">12</div>
+                        <div class="metric-label">Appointments</div>
+                        <div class="metric-trend trend-stable">This Year</div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <!-- Vital Signs Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Vital Signs Trend</h3>
+                            <p class="chart-subtitle">Blood pressure and heart rate over time</p>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="vitalsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Weight Trend Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Weight Progress</h3>
+                            <p class="chart-subtitle">Weekly weight tracking</p>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="weightChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Medication Adherence Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Medication Adherence</h3>
+                            <p class="chart-subtitle">Weekly adherence percentage</p>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="adherenceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Activity Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Daily Activity</h3>
+                            <p class="chart-subtitle">Steps and active minutes</p>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report Actions -->
+                <div class="reports-header">
+                    <h3 class="reports-title">Export Reports</h3>
+                    <p class="reports-subtitle">Download your health data and reports</p>
+                    <div class="report-actions">
+                        <button class="btn btn-primary" onclick="exportReport('pdf')">
+                            <i class="fas fa-file-pdf"></i>
+                            Download PDF Report
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportReport('csv')">
+                            <i class="fas fa-file-csv"></i>
+                            Export Data (CSV)
+                        </button>
+                        <button class="btn btn-secondary" onclick="shareReport()">
+                            <i class="fas fa-share"></i>
+                            Share with Provider
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let chartsData = {
+            vitals: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                systolic: [120, 118, 122, 119],
+                diastolic: [80, 78, 82, 79],
+                heartRate: [72, 74, 71, 73]
+            },
+            weight: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                data: [180, 178, 175, 173, 171, 170]
+            },
+            adherence: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                data: [95, 92, 96, 94]
+            },
+            activity: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                steps: [8200, 9500, 7800, 10200, 8900, 6500, 7200],
+                activeMinutes: [45, 52, 38, 58, 47, 35, 42]
+            }
+        };
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('authToken');
+            const userName = localStorage.getItem('userName');
+            
+            if (!token) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Update user name display
+            if (userName) {
+                document.getElementById('userName').textContent = userName;
+                document.getElementById('dropdownUserName').textContent = userName;
+            }
+
+            initializeCharts();
+        });
+
+        // User dropdown functionality
+        function toggleUserDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('userDropdown');
+            const trigger = document.getElementById('userMenuTrigger');
+            
+            const isVisible = dropdown.style.display !== 'none';
+            
+            if (isVisible) {
+                dropdown.style.display = 'none';
+                trigger.classList.remove('open');
+            } else {
+                dropdown.style.display = 'block';
+                trigger.classList.add('open');
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const trigger = document.getElementById('userMenuTrigger');
+            
+            if (!trigger.contains(event.target)) {
+                dropdown.style.display = 'none';
+                trigger.classList.remove('open');
+            }
+        });
+
+        // Initialize charts
+        function initializeCharts() {
+            // Vitals Chart
+            const vitalsCtx = document.getElementById('vitalsChart').getContext('2d');
+            new Chart(vitalsCtx, {
+                type: 'line',
+                data: {
+                    labels: chartsData.vitals.labels,
+                    datasets: [
+                        {
+                            label: 'Systolic BP',
+                            data: chartsData.vitals.systolic,
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Diastolic BP',
+                            data: chartsData.vitals.diastolic,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 60,
+                            max: 140
+                        }
+                    }
+                }
+            });
+
+            // Weight Chart
+            const weightCtx = document.getElementById('weightChart').getContext('2d');
+            new Chart(weightCtx, {
+                type: 'line',
+                data: {
+                    labels: chartsData.weight.labels,
+                    datasets: [{
+                        label: 'Weight (lbs)',
+                        data: chartsData.weight.data,
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 160,
+                            max: 185
+                        }
+                    }
+                }
+            });
+
+            // Adherence Chart
+            const adherenceCtx = document.getElementById('adherenceChart').getContext('2d');
+            new Chart(adherenceCtx, {
+                type: 'bar',
+                data: {
+                    labels: chartsData.adherence.labels,
+                    datasets: [{
+                        label: 'Adherence %',
+                        data: chartsData.adherence.data,
+                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                        borderColor: '#667eea',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // Activity Chart
+            const activityCtx = document.getElementById('activityChart').getContext('2d');
+            new Chart(activityCtx, {
+                type: 'bar',
+                data: {
+                    labels: chartsData.activity.labels,
+                    datasets: [
+                        {
+                            label: 'Steps',
+                            data: chartsData.activity.steps,
+                            backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                            borderColor: '#10b981',
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Active Minutes',
+                            data: chartsData.activity.activeMinutes,
+                            backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                            borderColor: '#f59e0b',
+                            borderWidth: 1,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                        }
+                    }
+                }
+            });
+        }
+
+        // Filter reports by time period
+        function filterReports(period) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update charts with filtered data
+            console.log(`Filtering reports for: ${period}`);
+            // In a real app, this would update the charts with new data
+        }
+
+        // Export functions
+        function exportReport(format) {
+            alert(`Exporting report as ${format.toUpperCase()}...\nThis feature will generate a comprehensive health report with all your metrics and trends.`);
+        }
+
+        function shareReport() {
+            alert('Share report with provider...\nThis will securely send your health analytics to your healthcare provider.');
+        }
+
+        // Modal functions
+        function showProfileModal() {
+            alert('Profile modal coming soon!');
+            toggleUserDropdown(event);
+        }
+
+        function showSettingsModal() {
+            alert('Settings coming soon!');
+            toggleUserDropdown(event);
+        }
+
+        function showHelpModal() {
+            alert('Help & Support coming soon!');
+            toggleUserDropdown(event);
+        }
+
+        function showLogoutModal() {
+            if (confirm('Are you sure you want to sign out?')) {
+                logout();
+            }
+            toggleUserDropdown(event);
+        }
+
+        function showNotifications() {
+            alert('Notifications coming soon!');
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userRole');
+            window.location.href = 'index.html';
+        }
+
+        // Mobile menu toggle
+        if (window.innerWidth <= 768) {
+            const topBar = document.querySelector('.top-bar');
+            const menuButton = document.createElement('button');
+            menuButton.innerHTML = '<i class="fas fa-bars"></i>';
+            menuButton.onclick = () => document.getElementById('sidebar').classList.toggle('open');
+            menuButton.style.cssText = 'background: #f8fafc; border: none; padding: 0.75rem; border-radius: 12px; cursor: pointer; margin-right: 1rem;';
+            topBar.insertBefore(menuButton, topBar.firstChild);
+        }
+    </script>
+    
+    <!-- Profile Modal Integration -->
+    <script src="js/profile-modal.js"></script>
+</body>
+</html>
