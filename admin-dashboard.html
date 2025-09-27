@@ -127,9 +127,11 @@
         }
         
         .user-info {
+            position: relative;
             display: flex;
             align-items: center;
             gap: 1rem;
+            cursor: pointer;
         }
         
         .user-avatar {
@@ -153,6 +155,49 @@
         .user-details span {
             color: #64748b;
             font-size: 0.9rem;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 120%;
+            right: 0;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            width: 220px;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.85rem 1.25rem;
+            text-decoration: none;
+            color: #64748b;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fe;
+            color: #667eea;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e2e8f0;
+            margin: 0.5rem 0;
         }
 
         .content-wrapper {
@@ -350,28 +395,37 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Admin Sidebar -->
         <nav class="sidebar" id="sidebar">
-            <!-- Sidebar will be dynamically loaded -->
-        </nav>
+            </nav>
 
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Top Bar -->
             <div class="top-bar">
                 <h1 class="page-title">Admin Dashboard</h1>
-                <div class="user-info">
+                <div class="user-info" id="userInfoToggle">
                     <div class="user-details">
                         <h4 id="adminName">Admin User</h4>
                         <span>System Administrator</span>
                     </div>
                     <div class="user-avatar">A</div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-user-circle"></i>
+                            <span>My Profile</span>
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" id="logoutButton">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <!-- Content -->
             <div class="content-wrapper">
-                <!-- Stats Grid -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon users">
@@ -414,7 +468,6 @@
                     </div>
                 </div>
 
-                <!-- Dashboard Grid -->
                 <div class="dashboard-grid">
                     <div class="chart-container">
                         <h3 class="chart-title">User Role Distribution</h3>
@@ -481,40 +534,60 @@
         <span id="notificationMessage">Notification text</span>
     </div>
 
-    <!-- Shared component loader -->
     <script src="js/shared-components.js"></script>
     <script>
-        // Chart.js initialization
-        const platformGrowthCtx = document.getElementById('platformGrowthChart').getContext('2d');
-        new Chart(platformGrowthCtx, {
-            type: 'pie',
-            data: {
-                labels: ['Patients', 'Providers', 'Administrators'],
-                datasets: [{
-                    label: 'User Distribution',
-                    data: [2500, 300, 47], // Static data for user roles
-                    backgroundColor: [
-                        'rgba(102, 126, 234, 0.8)',
-                        'rgba(16, 185, 129, 0.8)',
-                        'rgba(245, 158, 11, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgba(102, 126, 234, 1)',
-                        'rgba(16, 185, 129, 1)',
-                        'rgba(245, 158, 11, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSidebar('admin');
+
+            const name = localStorage.getItem('userName') || 'Admin User';
+            document.getElementById('adminName').textContent = name;
+            document.querySelector('.user-avatar').textContent = name.charAt(0).toUpperCase();
+
+            // Profile Dropdown Logic
+            const userInfoToggle = document.getElementById('userInfoToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            userInfoToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+            window.addEventListener('click', () => dropdownMenu.classList.remove('show'));
+            document.getElementById('logoutButton').addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = '/index.html';
+            });
+
+            // Chart.js Configuration
+            const platformGrowthCtx = document.getElementById('platformGrowthChart').getContext('2d');
+            new Chart(platformGrowthCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Patients', 'Providers', 'Administrators'],
+                    datasets: [{
+                        label: 'User Distribution',
+                        data: [2500, 300, 47], // Static data for user roles
+                        backgroundColor: [
+                            'rgba(102, 126, 234, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(102, 126, 234, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(245, 158, 11, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
                     }
                 }
-            }
+            });
         });
         
         function showNotification(message, type = 'success') {
@@ -533,39 +606,6 @@
                 toast.classList.remove('show');
             }, 5000);
         }
-
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('OneCare Admin Dashboard loaded successfully');
-            loadSidebar('admin'); // Load admin sidebar
-            
-            // Use placeholder data since auth is off
-            const name = localStorage.getItem('userName') || 'Admin User';
-            document.getElementById('adminName').textContent = name;
-            document.querySelector('.user-avatar').textContent = name.charAt(0).toUpperCase();
-            
-            
-            // Initialize real-time updates (placeholder)
-            setInterval(() => {
-                // Update stats in real-time (placeholder)
-                console.log('Updating dashboard stats...');
-            }, 30000);
-        });
-
-        // Show welcome notification
-        setTimeout(() => {
-            showNotification('Welcome back, Admin! System status is nominal.');
-        }, 1000);
-        
-        // Example of an error notification
-        setTimeout(() => {
-            showNotification('High memory usage detected on Server 2.', 'error');
-        }, 8000);
-
-        setTimeout(() => {
-            showNotification('System backup completed successfully', 'success');
-        }, 15000);
     </script>
 </body>
 </html>
-

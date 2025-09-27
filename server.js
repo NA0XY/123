@@ -11,13 +11,14 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // --- Mock In-Memory Database ---
+// This object simulates a database for the prototype.
 const database = {
     users: [
-        { id: 'admin01', name: 'Harsh Singhal', email: 'harsh.singhal@onecare.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'admin', lastLogin: null },
-        { id: 'provider01', name: 'Dr. Evelyn Reed', email: 'e.reed@onecare.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'provider', specialty: 'Cardiology', lastLogin: null },
-        { id: 'patient01', name: 'Jane Doe', email: 'jane.doe@email.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'patient', lastLogin: null },
-        { id: 'patient02', name: 'Michael Scott', email: 'michael.scott@email.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'patient', lastLogin: null },
-        { id: 'patient03', name: 'Sarah Connor', email: 'sarah.connor@email.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'patient', lastLogin: null },
+        { id: 'admin01', name: 'Harsh Singhal', email: 'admin@onecare.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'admin', lastLogin: null },
+        { id: 'provider01', name: 'Dr. Evelyn Reed', email: 'doctor@onecare.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'provider', specialty: 'Cardiology', lastLogin: null },
+        { id: 'patient01', name: 'Jane Doe', email: 'patient1@onecare.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'patient', lastLogin: null },
+        { id: 'patient02', name: 'Michael Scott', email: 'patient2@onecare.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'patient', lastLogin: null },
+        { id: 'patient03', name: 'Sarah Connor', email: 'patient3@onecare.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'patient', lastLogin: null },
     ],
     patients: [
         { id: 'patient01', name: 'Jane Doe', lastVisit: '2025-09-15', status: 'At Risk', age: 34, condition: 'Hypertension', allergies: 'Penicillin' },
