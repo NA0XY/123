@@ -14,11 +14,11 @@ app.use(bodyParser.json());
 // This object simulates a database for the prototype.
 const database = {
     users: [
-        { id: 'admin01', name: 'Harsh Singhal', email: 'harsh.singhal@onecare.com', password: 'hashed_admin_password', role: 'admin', lastLogin: null },
-        { id: 'provider01', name: 'Dr. Evelyn Reed', email: 'e.reed@onecare.com', password: 'hashed_provider_password', role: 'provider', specialty: 'Cardiology', lastLogin: null },
-        { id: 'patient01', name: 'Jane Doe', email: 'jane.doe@email.com', password: 'hashed_patient_password', role: 'patient', lastLogin: null },
-        { id: 'patient02', name: 'Michael Scott', email: 'michael.scott@email.com', password: 'hashed_patient_password', role: 'patient', lastLogin: null },
-        { id: 'patient03', name: 'Sarah Connor', email: 'sarah.connor@email.com', password: 'hashed_patient_password', role: 'patient', lastLogin: null },
+        { id: 'admin01', name: 'Harsh Singhal', email: 'admin@onecare.com', password: 'hashed_admin_password', role: 'admin', lastLogin: null },
+        { id: 'provider01', name: 'Dr. Evelyn Reed', email: 'doctor@onecare.com', password: 'hashed_provider_password', role: 'provider', specialty: 'Cardiology', lastLogin: null },
+        { id: 'patient01', name: 'Jane Doe', email: 'patient1@email.com', password: 'hashed_patient_password', role: 'patient', lastLogin: null },
+        { id: 'patient02', name: 'Michael Scott', email: 'patient2@email.com', password: 'hashed_patient_password', role: 'patient', lastLogin: null },
+        { id: 'patient03', name: 'Sarah Connor', email: 'patient3@email.com', password: 'hashed_patient_password', role: 'patient', lastLogin: null },
     ],
     patients: [
         { id: 'patient01', name: 'Jane Doe', lastVisit: '2025-09-15', status: 'At Risk', age: 34, condition: 'Hypertension', allergies: 'Penicillin' },
