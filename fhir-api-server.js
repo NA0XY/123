@@ -804,5 +804,3 @@ const fhirAPIServer = new FHIRAPIServer();
 fhirAPIServer.start();
 
 module.exports = FHIRAPIServer;
-
-module.exports = FHIRAPIServer;

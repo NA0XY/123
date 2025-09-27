@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OneCare - Your Complete Healthcare Solution</title>
+    <meta name="description" content="OneCare provides comprehensive healthcare solutions with model-based preventive screening, smart care plans, and secure health management designed for modern healthcare needs.">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="OneCare - Your Complete Healthcare Solution">
+    <meta property="og:description" content="Model-based preventive screening, smart care plans, and seamless health management—all in one secure platform.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://onecare.replit.app">
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         * {
             margin: 0;
@@ -13,24 +22,29 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-            overflow-x: hidden;
+        html {
+            scroll-behavior: smooth;
         }
 
-        /* Header */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 50%, #1e3a8a 100%);
+            min-height: 100vh;
+            color: #1f2937;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Header - DigiLocker inspired */
         .header {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(30, 64, 175, 0.1);
             padding: 1rem 2rem;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             transition: all 0.3s ease;
         }
@@ -47,10 +61,21 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #667eea;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e40af;
             text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            color: #1e3a8a;
+        }
+        
+        .logo img {
+            height: 32px;
+            width: auto;
+            filter: brightness(1.1);
         }
 
         .nav-menu {
@@ -61,120 +86,211 @@
         }
 
         .nav-link {
-            color: #64748b;
+            color: #4b5563;
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s ease;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .nav-link:hover {
-            color: #667eea;
+            color: #1e40af;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #1e40af;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
         }
 
         .auth-buttons {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
             align-items: center;
         }
 
         .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 12px;
+            padding: 0.625rem 1.25rem;
+            border: 2px solid transparent;
+            border-radius: 8px;
             font-weight: 600;
+            font-size: 0.875rem;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
+            gap: 6px;
+            position: relative;
+            overflow: hidden;
         }
 
         .btn-outline {
             background: transparent;
-            color: #667eea;
-            border: 2px solid #667eea;
+            color: #1e40af;
+            border-color: #1e40af;
         }
 
         .btn-outline:hover {
-            background: #667eea;
+            background: #1e40af;
             color: white;
-            transform: translateY(-2px);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
             color: white;
+            border-color: #1e3a8a;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.3);
+            background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
         }
 
-        /* Hero Section */
+        /* Hero Section - Government official style */
         .hero {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            padding: 8rem 2rem 4rem;
+            padding: 6rem 2rem 4rem;
             position: relative;
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 50%, #1e3a8a 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+            opacity: 0.5;
         }
 
         .hero-content {
-            max-width: 800px;
+            max-width: 1100px;
             z-index: 2;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            align-items: center;
+            gap: 4rem;
+            position: relative;
+        }
+        
+        .hero-logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-logo {
+            width: 280px;
+            height: auto;
+            filter: brightness(1.5) contrast(1.2) drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+            opacity: 1;
+        }
+        
+        .hero-text-container {
+            text-align: left;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .hero-title {
-            font-size: 4rem;
+            font-size: 3.5rem;
             font-weight: 800;
             color: white;
             margin-bottom: 1.5rem;
             line-height: 1.1;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .hero-subtitle {
-            font-size: 1.4rem;
+            font-size: 1.25rem;
             color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
             line-height: 1.6;
+            max-width: 600px;
+            font-weight: 400;
         }
 
-        .hero-buttons {
+        .hero-cta {
             display: flex;
-            gap: 1.5rem;
-            justify-content: center;
+            gap: 1rem;
+            align-items: center;
             flex-wrap: wrap;
         }
 
-        .btn-large {
+        .btn-hero {
             padding: 1rem 2rem;
-            font-size: 1.1rem;
-            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
         }
 
-        .btn-white {
-            background: rgba(255, 255, 255, 0.95);
-            color: #667eea;
-            backdrop-filter: blur(20px);
-        }
-
-        .btn-white:hover {
+        .btn-hero-primary {
             background: white;
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            color: #1e40af;
+            border: 2px solid white;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
-        /* Features Section */
+        .btn-hero-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            background: #f8fafc;
+        }
+
+        .btn-hero-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-hero-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Features Section - Clean government design */
         .features {
-            padding: 6rem 2rem;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
+            padding: 8rem 2rem;
+            background: #f8fafc;
+            position: relative;
         }
 
         .features-container {
@@ -182,71 +298,288 @@
             margin: 0 auto;
         }
 
-        .features-title {
+        .section-header {
             text-align: center;
-            font-size: 3rem;
+            margin-bottom: 5rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title {
+            font-size: 2.75rem;
             font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 4rem;
+            color: #111827;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .section-subtitle {
+            color: #6b7280;
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
         }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
         }
 
         .feature-card {
             background: white;
-            padding: 3rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
             transition: all 0.3s ease;
-            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1e40af, #3730a3);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: #1e40af;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
         }
 
         .feature-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 1.75rem;
             color: white;
-            margin: 0 auto 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
         }
 
         .feature-icon.ai {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
         }
 
         .feature-icon.secure {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
         }
 
         .feature-icon.integrated {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+        }
+
+        .feature-icon.support {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        }
+
+        .feature-icon.analytics {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        }
+
+        .feature-icon.compliance {
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
         }
 
         .feature-title {
-            font-size: 1.5rem;
+            font-size: 1.375rem;
             font-weight: 600;
-            color: #1e293b;
+            color: #111827;
             margin-bottom: 1rem;
+            line-height: 1.3;
         }
 
         .feature-description {
-            color: #64748b;
+            color: #6b7280;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Services Section */
+        .services {
+            padding: 8rem 2rem;
+            background: white;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .service-card {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            text-center;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            background: white;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .service-icon {
+            width: 48px;
+            height: 48px;
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.25rem;
+        }
+
+        .service-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .service-description {
+            color: #6b7280;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Call to Action */
+        .cta {
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+            text-align: center;
+            position: relative;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+        }
+
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .cta-subtitle {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
             line-height: 1.6;
         }
 
-        /* Auth Modal */
+        /* Footer */
+        .footer {
+            background: #111827;
+            color: #9ca3af;
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo img {
+            height: 28px;
+            filter: brightness(0.8);
+        }
+
+        .footer-logo span {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #d1d5db;
+        }
+
+        .footer-text {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: #d1d5db;
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid #374151;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        /* Auth Modal - Government style */
         .modal {
             display: none;
             position: fixed;
@@ -254,41 +587,41 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.75);
             z-index: 2000;
-            backdrop-filter: blur(10px);
-            animation: fadeIn 0.3s ease;
+            backdrop-filter: blur(8px);
         }
 
         .modal.show {
             display: flex;
             align-items: center;
             justify-content: center;
+            animation: fadeIn 0.3s ease;
         }
 
         .modal-content {
             background: white;
             padding: 3rem;
-            border-radius: 25px;
+            border-radius: 16px;
             width: 90%;
-            max-width: 450px;
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
-            animation: slideUp 0.4s ease;
+            max-width: 420px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
             position: relative;
+            animation: slideUp 0.4s ease;
         }
 
         .close-btn {
             position: absolute;
             top: 1rem;
             right: 1rem;
-            background: none;
+            background: #f3f4f6;
             border: none;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             cursor: pointer;
-            color: #64748b;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            color: #6b7280;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -296,8 +629,8 @@
         }
 
         .close-btn:hover {
-            background: #f1f5f9;
-            color: #ef4444;
+            background: #e5e7eb;
+            color: #374151;
         }
 
         .auth-header {
@@ -306,50 +639,63 @@
         }
 
         .auth-title {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            color: #1e293b;
+            color: #111827;
             margin-bottom: 0.5rem;
         }
 
         .auth-subtitle {
-            color: #64748b;
-            font-size: 0.95rem;
+            color: #6b7280;
+            font-size: 0.9rem;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
         }
 
         .form-label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #1e293b;
+            font-weight: 500;
+            color: #374151;
+            font-size: 0.875rem;
         }
 
         .form-input {
             width: 100%;
-            padding: 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
             font-size: 0.95rem;
             transition: all 0.3s ease;
-            background: #fafbfc;
+            background: #f9fafb;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #1e40af;
             background: white;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
         }
 
         .submit-btn {
             width: 100%;
-            padding: 1rem;
-            font-size: 1rem;
+            padding: 0.875rem;
+            font-size: 0.95rem;
             margin-top: 1rem;
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
         }
 
         /* Animations */
@@ -361,139 +707,468 @@
         @keyframes slideUp {
             from { 
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(30px) scale(0.95);
             }
             to { 
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
+        /* Mobile Responsiveness */
         @media (max-width: 768px) {
-            .hero-title { font-size: 2.5rem; }
-            .hero-subtitle { font-size: 1.1rem; }
-            .hero-buttons { flex-direction: column; }
-            .nav-menu { display: none; }
-            .modal-content { margin: 1rem; padding: 2rem; }
+            .header {
+                padding: 0.75rem 1rem;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .hero {
+                padding: 5rem 1rem 3rem;
+            }
+            
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+            }
+            
+            .hero-logo {
+                width: 200px;
+            }
+            
+            .hero-text-container {
+                text-align: center;
+            }
+            
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.125rem;
+            }
+            
+            .features, .services, .cta {
+                padding: 4rem 1rem;
+            }
+            
+            .section-title {
+                font-size: 2.25rem;
+            }
+            
+            .cta-title {
+                font-size: 2rem;
+            }
+            
+            .modal-content {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .services-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+            
+            .hero-cta {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn-hero {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .hero-cta {
+                flex-direction: column;
+                width: 100%;
+            }
+        }
+
+        /* High contrast and accessibility improvements */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus indicators for keyboard navigation */
+        .btn:focus,
+        .nav-link:focus,
+        .form-input:focus {
+            outline: 2px solid #1e40af;
+            outline-offset: 2px;
         }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="nav-container">
-            <a href="#" class="logo"><i class="fas fa-heartbeat"></i> OneCare</a>
+            <a href="#" class="logo">
+                <img src="image_2ea42a.png" alt="OneCare Medical Logo">
+                OneCare
+            </a>
             <nav>
                 <ul class="nav-menu">
                     <li><a href="#features" class="nav-link">Features</a></li>
+                    <li><a href="#services" class="nav-link">Services</a></li>
                     <li><a href="#about" class="nav-link">About</a></li>
                     <li><a href="#contact" class="nav-link">Contact</a></li>
                 </ul>
             </nav>
             <div class="auth-buttons">
-                <button class="btn btn-outline" onclick="showAuthModal('signin')">Sign In</button>
-                <button class="btn btn-primary" onclick="showAuthModal('signup')">Get Started</button>
+                <button class="btn btn-outline" onclick="showAuthModal('signin')" data-testid="button-signin">Sign In</button>
+                <button class="btn btn-primary" onclick="showAuthModal('signup')" data-testid="button-signup">Get Started</button>
             </div>
         </div>
     </header>
 
     <section class="hero">
         <div class="hero-content">
-            <h1 class="hero-title">Your Complete Healthcare Solution</h1>
-            <p class="hero-subtitle">
-                AI-powered preventive screening, smart care plans, and seamless health management—all in one secure platform designed for modern healthcare needs.
-            </p>
-            <div class="hero-buttons">
-                <a href="patient-dashboard.html" class="btn btn-white btn-large">
-                    <i class="fas fa-user"></i>
-                    Patient Dashboard
-                </a>
-                <a href="provider-dashboard.html" class="btn btn-white btn-large">
-                    <i class="fas fa-user-md"></i>
-                    Provider Dashboard
-                </a>
-                 <a href="admin-dashboard.html" class="btn btn-white btn-large">
-                    <i class="fas fa-user-shield"></i>
-                    Admin Dashboard
-                </a>
+            <div class="hero-logo-container">
+                <img src="image_2ea42a.png" alt="OneCare Medical Symbol" class="hero-logo">
+            </div>
+            <div class="hero-text-container">
+                <div class="hero-badge">
+                    <i class="fas fa-shield-alt"></i> Trusted Healthcare Platform
+                </div>
+                <h1 class="hero-title">Your Complete Healthcare Solution</h1>
+                <p class="hero-subtitle">
+                    Model-based preventive screening, intelligent care plans, and seamless health management—all in one secure platform designed for modern healthcare needs and professional medical practice.
+                </p>
+                <div class="hero-cta">
+                    <button class="btn btn-hero btn-hero-primary" onclick="showAuthModal('signup')" data-testid="button-hero-primary">
+                        <i class="fas fa-rocket"></i> Get Started Today
+                    </button>
+                    <button class="btn btn-hero btn-hero-secondary" onclick="scrollToSection('features')" data-testid="button-hero-secondary">
+                        <i class="fas fa-info-circle"></i> Learn More
+                    </button>
+                </div>
             </div>
         </div>
     </section>
 
+    <section class="features" id="features">
+        <div class="features-container">
+            <div class="section-header">
+                <div class="section-badge">Why Choose OneCare</div>
+                <h2 class="section-title">Advanced Healthcare Management</h2>
+                <p class="section-subtitle">
+                    A modern, intelligent approach to managing your health with cutting-edge technology and personalized care solutions.
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card" data-testid="card-feature-ai">
+                    <div class="feature-icon ai">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="feature-title">Model-Powered Insights</h3>
+                    <p class="feature-description">
+                        Receive personalized screening recommendations and health insights powered by advanced statistical models and evidence-based medical protocols.
+                    </p>
+                </div>
+                <div class="feature-card" data-testid="card-feature-security">
+                    <div class="feature-icon secure">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Secure & Private</h3>
+                    <p class="feature-description">
+                        Your health data is protected with industry-leading security protocols, ensuring your information remains confidential and secure.
+                    </p>
+                </div>
+                <div class="feature-card" data-testid="card-feature-integration">
+                    <div class="feature-icon integrated">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h3 class="feature-title">Seamless Integration</h3>
+                    <p class="feature-description">
+                        Connect with your existing healthcare providers, medical devices, and health systems for a unified view of your complete health journey.
+                    </p>
+                </div>
+                <div class="feature-card" data-testid="card-feature-support">
+                    <div class="feature-icon support">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h3 class="feature-title">Expert Support</h3>
+                    <p class="feature-description">
+                        Access to certified healthcare professionals and dedicated support team to guide you through your health management journey.
+                    </p>
+                </div>
+                <div class="feature-card" data-testid="card-feature-analytics">
+                    <div class="feature-icon analytics">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Health Analytics</h3>
+                    <p class="feature-description">
+                        Track your health trends with comprehensive analytics, predictive insights, and actionable recommendations for better health outcomes.
+                    </p>
+                </div>
+                <div class="feature-card" data-testid="card-feature-compliance">
+                    <div class="feature-icon compliance">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3 class="feature-title">Regulatory Compliance</h3>
+                    <p class="feature-description">
+                        Fully compliant with healthcare regulations including HIPAA, ensuring your data privacy and meeting all government healthcare standards.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="services" id="services">
+        <div class="features-container">
+            <div class="section-header">
+                <div class="section-badge">Our Services</div>
+                <h2 class="section-title">Comprehensive Care Solutions</h2>
+                <p class="section-subtitle">
+                    Everything you need for modern healthcare management in one integrated platform.
+                </p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card" data-testid="card-service-screening">
+                    <div class="service-icon">
+                        <i class="fas fa-stethoscope"></i>
+                    </div>
+                    <h3 class="service-title">Preventive Screening</h3>
+                    <p class="service-description">Advanced screening protocols with model-driven risk assessment</p>
+                </div>
+                <div class="service-card" data-testid="card-service-records">
+                    <div class="service-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <h3 class="service-title">Health Records</h3>
+                    <p class="service-description">Secure digital health record management and sharing</p>
+                </div>
+                <div class="service-card" data-testid="card-service-monitoring">
+                    <div class="service-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3 class="service-title">Health Monitoring</h3>
+                    <p class="service-description">Continuous health tracking with smart device integration</p>
+                </div>
+                <div class="service-card" data-testid="card-service-emergency">
+                    <div class="service-icon">
+                        <i class="fas fa-ambulance"></i>
+                    </div>
+                    <h3 class="service-title">Emergency Care</h3>
+                    <p class="service-description">24/7 emergency support and rapid response coordination</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta" id="cta">
+        <div class="cta-content">
+            <h2 class="cta-title">Ready to Transform Your Healthcare?</h2>
+            <p class="cta-subtitle">
+                Join thousands of patients and healthcare providers who trust OneCare for comprehensive, secure, and intelligent health management.
+            </p>
+            <button class="btn btn-hero btn-hero-primary" onclick="showAuthModal('signup')" data-testid="button-cta-main" style="background: white; color: #1e40af;">
+                <i class="fas fa-arrow-right"></i> Start Your Health Journey
+            </button>
+        </div>
+    </section>
+
+    <footer class="footer" id="contact">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="image_2ea42a.png" alt="OneCare Logo">
+                <span>OneCare</span>
+            </div>
+            <p class="footer-text">
+                Empowering better health outcomes through innovative technology and compassionate care. 
+                Your trusted partner in comprehensive healthcare management.
+            </p>
+            <div class="footer-links">
+                <a href="#" class="footer-link" data-testid="link-privacy">Privacy Policy</a>
+                <a href="#" class="footer-link" data-testid="link-terms">Terms of Service</a>
+                <a href="#" class="footer-link" data-testid="link-support">Support</a>
+                <a href="#" class="footer-link" data-testid="link-contact">Contact</a>
+                <a href="#" class="footer-link" data-testid="link-hipaa">HIPAA Compliance</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 OneCare Healthcare Solutions. All rights reserved. Licensed healthcare platform.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
     <div class="modal" id="authModal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeAuthModal()">&times;</button>
+            <button class="close-btn" onclick="closeAuthModal()" data-testid="button-close-modal">
+                <i class="fas fa-times"></i>
+            </button>
             <div class="auth-header">
-                <h2 class="auth-title">Welcome to OneCare</h2>
-                <p class="auth-subtitle">Select a role to continue to the prototype</p>
+                <h2 class="auth-title" id="authTitle">Sign In</h2>
+                <p class="auth-subtitle" id="authSubtitle">Access your secure healthcare dashboard</p>
             </div>
-            <form id="signinForm" class="auth-form">
+            <form id="authForm" onsubmit="handleAuthSubmit(event)">
                 <div class="form-group">
-                    <label class="form-label">Email Address (for prototype)</label>
-                    <input type="email" class="form-input" id="emailInput" required placeholder="Enter your email">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" class="form-input" id="email" name="email" required data-testid="input-email">
                 </div>
-                <button type="submit" class="btn btn-primary submit-btn">Continue</button>
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" class="form-input" id="password" name="password" required data-testid="input-password">
+                </div>
+                <div class="form-group" id="confirmPasswordGroup" style="display: none;">
+                    <label class="form-label" for="confirmPassword">Confirm Password</label>
+                    <input type="password" class="form-input" id="confirmPassword" name="confirmPassword" data-testid="input-confirm-password">
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn" data-testid="button-submit">Sign In</button>
             </form>
         </div>
     </div>
 
     <script>
-        function showAuthModal(tab = 'signin') {
-            document.getElementById('authModal').classList.add('show');
+        // Auth Modal Functions
+        function showAuthModal(type) {
+            const modal = document.getElementById('authModal');
+            const title = document.getElementById('authTitle');
+            const subtitle = document.getElementById('authSubtitle');
+            const submitBtn = document.getElementById('submitBtn');
+            const confirmPasswordGroup = document.getElementById('confirmPasswordGroup');
+            
+            if (type === 'signup') {
+                title.textContent = 'Create Account';
+                subtitle.textContent = 'Start your secure healthcare journey';
+                submitBtn.textContent = 'Create Account';
+                confirmPasswordGroup.style.display = 'block';
+                document.getElementById('confirmPassword').required = true;
+                document.getElementById('authForm').dataset.authType = 'signup';
+            } else {
+                title.textContent = 'Sign In';
+                subtitle.textContent = 'Access your secure healthcare dashboard';
+                submitBtn.textContent = 'Sign In';
+                confirmPasswordGroup.style.display = 'none';
+                document.getElementById('confirmPassword').required = false;
+                 document.getElementById('authForm').dataset.authType = 'signin';
+            }
+            
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus first input for accessibility
+            setTimeout(() => {
+                document.getElementById('email').focus();
+            }, 100);
         }
 
         function closeAuthModal() {
-            document.getElementById('authModal').classList.remove('show');
+            const modal = document.getElementById('authModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+            
+            // Reset form
+            document.getElementById('authForm').reset();
         }
 
-        document.getElementById('signinForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('emailInput').value;
-
-            // Simulate login without password
-            const response = await fetch('/api/auth/signin', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email }) // Send email to find user role
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                localStorage.setItem('authToken', data.token);
-                localStorage.setItem('userRole', data.role);
-                localStorage.setItem('userName', data.name);
-                
-                // Redirect based on role
-                switch (data.role) {
-                    case 'admin':
-                        window.location.href = '/admin-dashboard.html';
-                        break;
-                    case 'provider':
-                         window.location.href = '/provider-dashboard.html';
-                        break;
-                    case 'patient':
-                    default:
-                        window.location.href = '/patient-dashboard.html';
-                        break;
+        async function handleAuthSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const email = form.email.value;
+            const password = form.password.value;
+            
+            if (form.dataset.authType === 'signup') {
+                const confirmPassword = form.confirmPassword.value;
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match!');
+                    return;
                 }
-            } else {
-                alert('Login failed. For the prototype, any email will work.');
-                // As a fallback, let's just log in as a patient.
-                const fallbackResponse = await fetch('/api/auth/signin', {
-                     method: 'POST',
-                     headers: { 'Content-Type': 'application/json' },
-                     body: JSON.stringify({ email: "patient@onecare.com" })
+                // Placeholder for signup logic
+                console.log('Account creation attempted for:', email);
+                alert('Sign up is not yet implemented. Please sign in with a demo account.');
+                return;
+            }
+
+            // Sign in logic
+            try {
+                const response = await fetch('/api/auth/signin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, password: password }) 
                 });
-                 const data = await fallbackResponse.json();
-                 localStorage.setItem('authToken', data.token);
-                 localStorage.setItem('userRole', data.role);
-                 localStorage.setItem('userName', data.name);
-                 window.location.href = '/patient-dashboard.html';
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('userRole', data.role);
+                    localStorage.setItem('userName', data.name);
+                    
+                    // Redirect based on role
+                    switch (data.role) {
+                        case 'admin':
+                            window.location.href = '/admin-dashboard.html';
+                            break;
+                        case 'provider':
+                             window.location.href = '/provider-dashboard.html';
+                            break;
+                        case 'patient':
+                        default:
+                            window.location.href = '/patient-dashboard.html';
+                            break;
+                    }
+                } else {
+                    alert('Login failed. Please check your credentials.');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('An error occurred during login. Please try again.');
+            }
+        }
+
+        // Smooth scroll function
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            const headerHeight = document.querySelector('.header').offsetHeight;
+            const elementPosition = element.offsetTop - headerHeight;
+            
+            window.scrollTo({
+                top: elementPosition,
+                behavior: 'smooth'
+            });
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('authModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAuthModal();
             }
         });
 
-        document.getElementById('authModal').addEventListener('click', (e) => {
-            if (e.target.id === 'authModal') closeAuthModal();
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeAuthModal();
+            }
         });
+
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 50) {
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.05)';
+            }
+        });
+
+        // Initialize page
+        console.log('OneCare Healthcare Platform loaded successfully');
+        
     </script>
 </body>
 </html>
+

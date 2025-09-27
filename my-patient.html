@@ -295,12 +295,9 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Provider Sidebar -->
         <nav class="sidebar" id="sidebar"></nav>
 
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Top Bar -->
             <div class="top-bar">
                 <h1 class="page-title">My Patients</h1>
                 <div class="user-info" id="userInfoToggle">
@@ -317,7 +314,6 @@
                 </div>
             </div>
 
-            <!-- Content -->
             <div class="content-wrapper">
                 <div class="patients-container">
                     <div class="patients-toolbar">
@@ -341,62 +337,7 @@
                                 </tr>
                             </thead>
                             <tbody id="patientsTableBody">
-                                <tr>
-                                    <td>
-                                        <div class="patient-info">
-                                            <div class="patient-avatar avatar-1">J</div>
-                                            <span class="patient-name">Jane Doe</span>
-                                        </div>
-                                    </td>
-                                    <td>Sep 15, 2025</td>
-                                    <td><span class="status-badge status-at-risk">At Risk</span></td>
-                                    <td><button class="action-btn">View Chart</button></td>
-                                </tr>
-                                 <tr>
-                                    <td>
-                                        <div class="patient-info">
-                                            <div class="patient-avatar avatar-2">M</div>
-                                            <span class="patient-name">Michael Scott</span>
-                                        </div>
-                                    </td>
-                                    <td>Sep 12, 2025</td>
-                                    <td><span class="status-badge status-active">Active</span></td>
-                                    <td><button class="action-btn">View Chart</button></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="patient-info">
-                                            <div class="patient-avatar avatar-3">S</div>
-                                            <span class="patient-name">Sarah Connor</span>
-                                        </div>
-                                    </td>
-                                    <td>Sep 1, 2025</td>
-                                    <td><span class="status-badge status-active">Active</span></td>
-                                    <td><button class="action-btn">View Chart</button></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="patient-info">
-                                            <div class="patient-avatar avatar-4">K</div>
-                                            <span class="patient-name">Kyle Reese</span>
-                                        </div>
-                                    </td>
-                                    <td>Aug 28, 2025</td>
-                                    <td><span class="status-badge status-discharged">Discharged</span></td>
-                                    <td><button class="action-btn">View Chart</button></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="patient-info">
-                                            <div class="patient-avatar avatar-5">T</div>
-                                            <span class="patient-name">T-800</span>
-                                        </div>
-                                    </td>
-                                    <td>Aug 15, 2025</td>
-                                    <td><span class="status-badge status-active">Active</span></td>
-                                    <td><button class="action-btn">View Chart</button></td>
-                                </tr>
-                            </tbody>
+                                </tbody>
                         </table>
                     </div>
                 </div>
@@ -404,46 +345,8 @@
         </main>
     </div>
 
-    <!-- Shared component loader -->
     <script src="js/shared-components.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSidebar('provider');
-            
-            // Profile Dropdown Logic
-            const userInfoToggle = document.getElementById('userInfoToggle');
-            const dropdownMenu = document.getElementById('dropdownMenu');
-            userInfoToggle.addEventListener('click', (event) => {
-                event.stopPropagation();
-                dropdownMenu.classList.toggle('show');
-            });
-            window.addEventListener('click', () => dropdownMenu.classList.remove('show'));
-            document.getElementById('logoutButton').addEventListener('click', () => {
-                localStorage.clear();
-                window.location.href = '/index.html';
-            });
-
-            // Patient Search Logic
-            const searchInput = document.getElementById('patientSearch');
-            const tableBody = document.getElementById('patientsTableBody');
-            const rows = tableBody.getElementsByTagName('tr');
-
-            searchInput.addEventListener('keyup', function() {
-                const filter = searchInput.value.toUpperCase();
-                for (let i = 0; i < rows.length; i++) {
-                    let nameCell = rows[i].getElementsByTagName('td')[0];
-                    if (nameCell) {
-                        let txtValue = nameCell.textContent || nameCell.innerText;
-                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                            rows[i].style.display = "";
-                        } else {
-                            rows[i].style.display = "none";
-                        }
-                    }
-                }
-            });
-        });
-    </script>
+    <script src="js/ml-service.js"></script>
+    <script src="js/my-patient.js"></script>
 </body>
 </html>
-

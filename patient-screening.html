@@ -103,30 +103,6 @@
         }
         
         .nav-link i { width: 20px; text-align: center; }
-        
-        .emergency-contact { padding: 0 2rem; margin-top: 3rem; }
-        
-        .emergency-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-        }
-        .emergency-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-        }
 
         /* Main Content */
         .main-content {
@@ -170,8 +146,6 @@
             justify-content: center;
             font-size: 1.2rem;
             font-weight: 600;
-            border: 2px solid white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .user-details h4 { color: var(--text-primary); font-weight: 600; }
@@ -185,7 +159,6 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--border-color);
             width: 220px;
-            overflow: hidden;
             opacity: 0; visibility: hidden;
             transform: translateY(10px);
             transition: all 0.3s ease;
@@ -193,13 +166,9 @@
         }
         .dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
         .dropdown-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0.85rem 1.25rem;
-            text-decoration: none;
+            display: flex; align-items: center; gap: 10px;
+            padding: 0.85rem 1.25rem; text-decoration: none;
             color: var(--text-secondary);
-            font-size: 0.95rem; font-weight: 500;
         }
         .dropdown-item:hover { background-color: #f8f9fe; color: var(--primary-color); }
         .dropdown-divider { height: 1px; background-color: var(--border-color); margin: 0.5rem 0; }
@@ -211,13 +180,13 @@
         }
         
         .page-grid {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             display: grid;
             gap: 2.5rem;
         }
 
-        .screening-container, .preventive-screening-container {
+        .screening-container {
             background-color: var(--card-bg);
             border-radius: 24px;
             box-shadow: 0 8px 24px var(--shadow-color);
@@ -243,237 +212,56 @@
             max-width: 600px;
             margin: 0 auto;
         }
-
-        .progress-bar-container {
-            margin-bottom: 2.5rem;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 12px;
-            background-color: var(--border-color);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            width: 0%;
-            height: 100%;
-            background-color: var(--success-color);
-            border-radius: 10px;
-            transition: width 0.5s ease;
-        }
-
-        .question-group {
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .question-group:last-of-type {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-
-        .question-label {
-            display: block;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1.25rem;
-        }
-
-        .options-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-
-        .option-label {
-            flex: 1;
-            text-align: center;
-            cursor: pointer;
-        }
         
-        .option-label input {
-            display: none;
-        }
-
-        .option-label .option-button {
-            display: block;
-            padding: 1rem;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .option-label input:checked + .option-button {
-            background-color: #eef2ff;
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            font-weight: 600;
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.1);
-        }
-
-        .option-label .option-button:hover {
-             border-color: var(--primary-color);
-        }
-        
-        .screening-footer {
-            text-align: center;
-            margin-top: 2.5rem;
-        }
-
-        .submit-btn {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 0.85rem 2.5rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .submit-btn:disabled {
-            background-color: var(--border-color);
-            cursor: not-allowed;
-        }
-        
-        /* Preventive Screening Styles */
-        .preventive-list-item {
+        .screening-list-item {
             display: flex;
             align-items: center;
             gap: 1.5rem;
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .preventive-list-item:last-child {
-            border-bottom: none;
-        }
-
-        .preventive-icon {
-            font-size: 1.5rem; color: var(--primary-color);
-        }
-
-        .preventive-details { flex-grow: 1; }
-        .preventive-details h4 { font-size: 1rem; font-weight: 600; }
-        .preventive-details p { font-size: 0.9rem; color: var(--text-secondary); }
-        .status-due { color: var(--danger-color); }
-        .status-completed { color: var(--success-color); }
-
-        .preventive-actions button {
-            background-color: #f8fafc; border: 1px solid var(--border-color);
-            color: var(--text-secondary); padding: 0.6rem 1.2rem;
-            border-radius: 8px; cursor: pointer; font-size: 0.9rem;
-            font-weight: 500; transition: all 0.3s ease; margin-left: 0.5rem;
-        }
-        .preventive-actions button:hover {
-            background-color: var(--primary-color); color: white; border-color: var(--primary-color);
-        }
-        .preventive-actions button.complete-btn:disabled {
-             background-color: var(--border-color);
-             border-color: var(--border-color);
-             color: var(--text-secondary);
-             cursor: not-allowed;
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
         }
         
-        /* Future Feature Styles */
-        .future-feature {
-            border-style: dashed;
-            border-color: var(--primary-color);
-            background: linear-gradient(135deg, #fdfdff 0%, #f8f9fe 100%);
-        }
+        .risk-high { background-color: #fff1f2; border-left: 5px solid var(--danger-color); }
+        .risk-medium { background-color: #fffbeb; border-left: 5px solid var(--warning-color); }
+        .risk-low { background-color: #f0fdf4; border-left: 5px solid var(--success-color); }
 
-        .coming-soon-badge {
-            display: inline-block;
-            background-color: var(--warning-color);
-            color: #4d2d00;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        .feature-description {
-            text-align: left;
-            margin: 2rem auto;
-            color: var(--text-secondary);
-            max-width: 450px;
-        }
-        .feature-description p {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-            font-size: 1rem;
-        }
-         .feature-description i {
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            width: 24px;
-            text-align: center;
-         }
+        .screening-icon { font-size: 1.5rem; }
+        .risk-high .screening-icon { color: var(--danger-color); }
+        .risk-medium .screening-icon { color: var(--warning-color); }
+        .risk-low .screening-icon { color: var(--primary-color); }
 
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(30, 41, 59, 0.5);
-            display: none; align-items: center; justify-content: center;
-            z-index: 2000; backdrop-filter: blur(5px);
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-        .modal-overlay.show { 
-            display: flex; 
-            opacity: 1;
-        }
-        .modal-content {
-            background-color: var(--card-bg);
-            padding: 2.5rem; border-radius: 24px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-            width: 100%; max-width: 500px;
-            text-align: center;
-            transform: scale(0.95);
-            transition: transform 0.3s ease;
-        }
-        .modal-overlay.show .modal-content {
-             transform: scale(1);
-        }
-        .modal-icon {
-            font-size: 3rem;
-            color: var(--success-color);
-            margin-bottom: 1.5rem;
-        }
-        .modal-header h3 { font-size: 1.5rem; margin-bottom: 1rem; }
-        .modal-body p {
-             line-height: 1.6; color: var(--text-secondary);
-             margin-bottom: 2rem;
-        }
-        .modal-footer {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
-        .modal-btn {
-            background: var(--primary-color); color: white;
-            padding: 0.75rem 2rem; border-radius: 12px;
-            border: none; font-size: 1rem; font-weight: 500; cursor: pointer;
-        }
-        .modal-btn.secondary {
-             background-color: var(--border-color);
-             color: var(--text-primary);
-        }
+        .screening-details { flex-grow: 1; }
+        .screening-details h4 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .screening-details p { font-size: 0.9rem; color: var(--text-secondary); }
 
+        .screening-actions button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .screening-actions button:hover { background-color: var(--primary-color-dark); }
+        
+        .reminders-container {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
         <nav class="sidebar" id="sidebar"></nav>
 
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Top Bar -->
             <div class="top-bar">
                 <h1 class="page-title">Health Screening</h1>
                 <div class="user-info" id="userInfoToggle">
@@ -491,45 +279,23 @@
                 </div>
             </div>
 
-            <!-- Content -->
             <div class="content-wrapper">
                 <div class="page-grid">
-                    <div class="preventive-screening-container">
+                    <div class="screening-container">
                          <div class="screening-header">
-                            <h2>General Health Reminders</h2>
-                            <p>Stay on top of your health with these recommendations.</p>
+                            <h2>Your Personalized Screening Recommendations</h2>
+                            <p>Based on your health records and our risk assessment model, we recommend the following screenings.</p>
                         </div>
-                        <div id="preventiveList">
-                             <div class="preventive-list-item" data-screening="physical">
-                                <div class="preventive-icon"><i class="fas fa-user-md"></i></div>
-                                <div class="preventive-details">
-                                    <h4>Annual Physical Exam</h4>
-                                    <p class="status-due">Status: Due in 2 months</p>
-                                </div>
-                                <div class="preventive-actions">
-                                    <button class="schedule-btn">Schedule</button>
-                                </div>
+                        <div id="personalizedScreeningList">
                             </div>
-                            <div class="preventive-list-item" data-screening="blood-pressure">
-                                <div class="preventive-icon"><i class="fas fa-heartbeat"></i></div>
-                                <div class="preventive-details">
-                                    <h4>Blood Pressure Check</h4>
-                                    <p class="status-completed">Status: Completed on Aug 15, 2025</p>
-                                </div>
-                                <div class="preventive-actions">
-                                    <button class="complete-btn" disabled>Completed</button>
-                                </div>
+                        
+                        <div class="reminders-container">
+                            <div class="screening-header">
+                                <h2>General Health Reminders</h2>
+                                <p>Stay on top of your health with these general recommendations.</p>
                             </div>
-                             <div class="preventive-list-item" data-screening="cholesterol">
-                                <div class="preventive-icon"><i class="fas fa-vial"></i></div>
-                                <div class="preventive-details">
-                                    <h4>Cholesterol Screening</h4>
-                                    <p class="status-due">Status: Overdue by 1 month</p>
+                             <div id="generalRemindersList">
                                 </div>
-                                <div class="preventive-actions">
-                                     <button class="schedule-btn">Schedule Now</button>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -537,97 +303,8 @@
         </main>
     </div>
     
-    <!-- Modals -->
-    <div class="modal-overlay" id="submissionModal">
-        <div class="modal-content">
-            <div class="modal-icon"><i class="fas fa-check-circle"></i></div>
-            <div class="modal-header"><h3>Thank You!</h3></div>
-            <div class="modal-body"><p>Your screening has been successfully submitted. The results will be securely added to your health record.</p></div>
-            <div class="modal-footer"><button class="modal-btn" data-close>Done</button></div>
-        </div>
-    </div>
-    <div class="modal-overlay" id="preventiveModal">
-        <div class="modal-content">
-             <div class="modal-icon"><i class="fas fa-calendar-check"></i></div>
-             <div class="modal-header"><h3 id="preventiveModalTitle">Schedule Screening</h3></div>
-             <div class="modal-body"><p id="preventiveModalBody">You will be redirected to the appointments page to schedule your screening.</p></div>
-             <div class="modal-footer">
-                <button class="modal-btn secondary" data-close>Cancel</button>
-                <a href="appointments.html" class="modal-btn">Proceed</a>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Shared component loader -->
     <script src="js/shared-components.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSidebar('patient');
-
-            const name = localStorage.getItem('userName') || 'Jane Doe';
-            document.getElementById('patientName').textContent = name;
-            document.querySelector('.user-avatar').textContent = name.charAt(0).toUpperCase();
-
-            // Profile Dropdown Logic
-            const userInfoToggle = document.getElementById('userInfoToggle');
-            const dropdownMenu = document.getElementById('dropdownMenu');
-            userInfoToggle.addEventListener('click', (event) => {
-                event.stopPropagation();
-                dropdownMenu.classList.toggle('show');
-            });
-            window.addEventListener('click', () => dropdownMenu.classList.remove('show'));
-            document.getElementById('logoutButton').addEventListener('click', () => {
-                localStorage.clear();
-                window.location.href = '/index.html';
-            });
-
-            // --- SCREENING FORM LOGIC ---
-            const screeningForm = document.getElementById('screeningForm');
-            const progressBar = document.getElementById('progressBar');
-            const submitBtn = document.getElementById('submitBtn');
-            const totalQuestions = screeningForm.querySelectorAll('.question-group').length;
-
-            function updateProgress() {
-                const answeredQuestions = screeningForm.querySelectorAll('input[type="radio"]:checked').length;
-                const progress = (answeredQuestions / totalQuestions) * 100;
-                progressBar.style.width = `${progress}%`;
-                submitBtn.disabled = answeredQuestions !== totalQuestions;
-            }
-            
-            screeningForm.addEventListener('change', updateProgress);
-
-            // --- MODAL LOGIC ---
-            const submissionModal = document.getElementById('submissionModal');
-            screeningForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                submissionModal.classList.add('show');
-            });
-
-            submissionModal.addEventListener('click', function(e) {
-                if (e.target.matches('[data-close]') || e.target === submissionModal) {
-                    submissionModal.classList.remove('show');
-                }
-            });
-
-            // --- PREVENTIVE SCREENING LOGIC ---
-            const preventiveModal = document.getElementById('preventiveModal');
-            const preventiveList = document.getElementById('preventiveList');
-            
-            preventiveList.addEventListener('click', function(e) {
-                if (e.target.classList.contains('schedule-btn')) {
-                    preventiveModal.classList.add('show');
-                }
-            });
-
-            preventiveModal.addEventListener('click', function(e) {
-                if(e.target.matches('[data-close]') || e.target === preventiveModal) {
-                    preventiveModal.classList.remove('show');
-                }
-            });
-            
-        });
-    </script>
+    <script src="js/ml-service.js"></script>
+    <script src="js/patient-screening.js"></script>
 </body>
 </html>
-

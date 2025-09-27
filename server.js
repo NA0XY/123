@@ -11,21 +11,20 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // --- Mock In-Memory Database ---
-// This object simulates a database for the prototype.
 const database = {
     users: [
-        { id: 'admin01', name: 'Harsh Singhal', email: 'harsh.singhal@onecare.com', password: 'hashed_admin_password', role: 'admin', lastLogin: null },
-        { id: 'provider01', name: 'Dr. Evelyn Reed', email: 'e.reed@onecare.com', password: 'hashed_provider_password', role: 'provider', specialty: 'Cardiology', lastLogin: null },
-        { id: 'patient01', name: 'Jane Doe', email: 'jane.doe@email.com', password: 'hashed_patient_password', role: 'patient', lastLogin: null },
-        { id: 'patient02', name: 'Michael Scott', email: 'michael.scott@email.com', password: 'hashed_patient_password', role: 'patient', lastLogin: null },
-        { id: 'patient03', name: 'Sarah Connor', email: 'sarah.connor@email.com', password: 'hashed_patient_password', role: 'patient', lastLogin: null },
+        { id: 'admin01', name: 'Harsh Singhal', email: 'harsh.singhal@onecare.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'admin', lastLogin: null },
+        { id: 'provider01', name: 'Dr. Evelyn Reed', email: 'e.reed@onecare.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'provider', specialty: 'Cardiology', lastLogin: null },
+        { id: 'patient01', name: 'Jane Doe', email: 'jane.doe@email.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'patient', lastLogin: null },
+        { id: 'patient02', name: 'Michael Scott', email: 'michael.scott@email.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'patient', lastLogin: null },
+        { id: 'patient03', name: 'Sarah Connor', email: 'sarah.connor@email.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'patient', lastLogin: null },
     ],
     patients: [
         { id: 'patient01', name: 'Jane Doe', lastVisit: '2025-09-15', status: 'At Risk', age: 34, condition: 'Hypertension', allergies: 'Penicillin' },
         { id: 'patient02', name: 'Michael Scott', lastVisit: '2025-09-12', status: 'Active', age: 45, condition: 'Type 2 Diabetes', allergies: 'None' },
         { id: 'patient03', name: 'Sarah Connor', lastVisit: '2025-09-01', status: 'Active', age: 29, condition: 'Post-op Recovery', allergies: 'None' },
         { id: 'patient04', name: 'Kyle Reese', lastVisit: '2025-08-28', status: 'Discharged', age: 31, condition: 'Recovered', allergies: 'None' },
-        { id: 'patient05', name: 'T-800', lastVisit: '2025-08-15', status: 'Active', age: 35, condition: 'General Checkup', allergies: 'None' },
+        { id: 'patient05', name: 'T-800', lastVisit: '2025-08-15', status: 'At Risk', age: 35, condition: 'General Checkup', allergies: 'None' },
     ],
     appointments: {
         '2025-09-15': [
@@ -56,6 +55,7 @@ const database = {
         ],
         atRiskPatients: [
             { name: 'Jane Doe', reason: 'High Blood Pressure', lastVisit: '2025-09-15' },
+            { name: 'T-800', reason: 'Missed medication', lastVisit: '2025-08-15' }
         ]
     },
     providerMessages: {
@@ -103,25 +103,27 @@ const database = {
 
 // --- AUTHENTICATION API ---
 app.post('/api/auth/signin', (req, res) => {
-    const { email } = req.body;
+    const { email, password } = req.body;
     try {
         const user = database.users.find(u => u.email === email);
-        if (!user) {
-            const defaultUser = database.users[0];
-            return res.json({
-                success: true,
-                user: { id: defaultUser.id, name: defaultUser.name, email: defaultUser.email, role: defaultUser.role }
-            });
+
+        if (!user || !password) { // Basic check for password presence
+            return res.status(401).json({ error: 'Invalid credentials' });
         }
+
         user.lastLogin = new Date().toISOString();
         res.json({
             success: true,
-            user: { id: user.id, name: user.name, email: user.email, role: user.role }
+            token: 'mock-jwt-token', // In a real app, generate a JWT
+            role: user.role,
+            name: user.name,
+            id: user.id
         });
     } catch (error) {
         res.status(500).json({ error: 'Authentication failed' });
     }
 });
+
 
 // --- PROVIDER API ENDPOINTS ---
 app.get('/api/provider/dashboard', (req, res) => {
@@ -155,6 +157,42 @@ app.post('/api/provider/settings', (req, res) => {
     res.json({ success: true, message: 'Settings updated successfully.', settings: database.providerSettings });
 });
 
+// --- PATIENT API ENDPOINTS ---
+app.get('/api/patient/:id/screening', (req, res) => {
+    const patientId = req.params.id;
+    // In a real application you would fetch this data from a database
+    // For this example, we'll just return some mock data.
+    const patient = database.patients.find(p => p.id === patientId);
+
+    if (patient && patient.status === 'At Risk') {
+        res.json({
+            recommendations: [
+                {
+                    title: 'Comprehensive Health Screening',
+                    reason: 'Your profile indicates you are at risk. A comprehensive health screening is recommended.',
+                    type: 'screening'
+                },
+                {
+                    title: 'Lifestyle Consultation',
+                    reason: 'Discuss lifestyle modifications with your provider to mitigate risks.',
+                    type: 'lifestyle'
+                }
+            ]
+        });
+    } else {
+        res.json({
+            recommendations: [
+                 {
+                    title: 'Annual Physical Exam',
+                    reason: 'It is recommended to have an annual physical exam to maintain good health.',
+                    type: 'preventive_care'
+                }
+            ]
+        });
+    }
+});
+
+
 // --- ADMIN API ENDPOINTS ---
 app.get('/api/admin/dashboard', (req, res) => {
     res.json({
@@ -175,7 +213,7 @@ const pages = [
     'admin-audit-logs', 'admin-settings', 'admin-monitoring', 'patient-dashboard',
     'appointments', 'messages', 'patient-medications', 'patient-health-records',
     'patient-reports', 'patient-screening', 'patient-emergency', 'provider-dashboard',
-    'provider-appointments', 'my-patients', 'provider-messages', 'provider-settings'
+    'provider-appointments', 'my-patient', 'provider-messages', 'provider-settings'
 ];
 
 // Serve index.html at the root
@@ -203,4 +241,3 @@ app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
     console.log('Serving static files from:', __dirname);
 });
-

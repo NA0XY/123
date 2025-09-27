@@ -162,7 +162,7 @@ class OneCareScreeningAPI {
     
     validateRegistration = [
         body('email').isEmail().normalizeEmail(),
-        body('password').isLength({ min: 8 }).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)/).withMessage('Password must contain uppercase, lowercase, and number'),
+        body('password').isLength({ min: 8 }).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Password must contain uppercase, lowercase, and number'),
         body('firstName').trim().isLength({ min: 1 }).withMessage('First name is required'),
         body('lastName').trim().isLength({ min: 1 }).withMessage('Last name is required'),
         this.handleValidationErrors

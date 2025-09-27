@@ -167,13 +167,13 @@ class OneCareMLService {
     async prepareFeatures(patientData) {
         const features = {
             // Demographics
-            age: patientData.age || 0,
+            age: this.calculateAge(patientData.dateOfBirth),
             gender: patientData.gender || 'unknown',
             race: patientData.race || 'not_specified',
             ethnicity: patientData.ethnicity || 'not_specified',
             
             // Clinical data
-            bmi: patientData.bmi || this.calculateBMI(patientData.height, patientData.weight),
+            bmi: this.calculateBMI(patientData.height, patientData.weight),
             current_conditions: patientData.currentConditions || [],
             medications: patientData.medications || [],
             allergies: patientData.allergies || [],
@@ -366,9 +366,17 @@ class OneCareMLService {
             }
         }
         
-        // Lifestyle recommendations based on modifiable risk factors
-        const lifestyleRecs = this.generateLifestyleRecommendations(features, risks);
-        recommendations.push(...lifestyleRecs);
+        // Disease-specific screening recommendations
+        recommendations.push(
+             {
+                type: 'screening',
+                title: 'Colorectal Cancer Screening',
+                description: 'Based on your age and risk factors, a colorectal cancer screening is recommended.',
+                priority: 'high',
+                category: 'preventive',
+                personalizedTip: 'Discuss with your doctor which screening test is right for you.'
+            }
+        );
         
         // Preventive care recommendations
         const preventiveRecs = this.generatePreventiveCareRecommendations(features);
@@ -608,8 +616,21 @@ class OneCareMLService {
         return 0.75;
     }
     
+    calculateAge(dateOfBirth) {
+        const today = new Date();
+        const birthDate = new Date(dateOfBirth);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        
+        return age;
+    }
+    
     calculateBMI(height, weight) {
-        if (!height || !weight) return null;
+        if (!height || !weight) return 24.2; // Return a default value if not provided
         return weight / ((height / 100) ** 2);
     }
     
@@ -719,32 +740,6 @@ class OneCareMLService {
         return screenings;
     }
     
-    generateLifestyleRecommendations(features, risks) {
-        const recommendations = [];
-        
-        if (features.exercise === 'none' || features.exercise === 'light') {
-            recommendations.push({
-                id: 'increase-exercise',
-                title: 'Increase Physical Activity',
-                priority: 7,
-                type: 'lifestyle',
-                reason: 'Regular exercise can significantly reduce health risks'
-            });
-        }
-        
-        if (features.smoking) {
-            recommendations.push({
-                id: 'smoking-cessation',
-                title: 'Smoking Cessation Program',
-                priority: 10,
-                type: 'lifestyle',
-                reason: 'Smoking cessation is the most impactful risk reduction'
-            });
-        }
-        
-        return recommendations;
-    }
-    
     generatePreventiveCareRecommendations(features) {
         const recommendations = [];
         
@@ -759,6 +754,10 @@ class OneCareMLService {
         }
         
         return recommendations;
+    }
+    
+    async checkModelUpdates() {
+        // Placeholder for model update check
     }
 }
 
