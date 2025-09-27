@@ -44,6 +44,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         </td>
                         <td>${new Date(patient.lastVisit).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
                         <td><span class="status-badge ${statusClass}">${patient.status}</span></td>
+                        <td>${patient.diagnosis}</td>
+                        <td>${patient.familyHistory}</td>
+                        <td>${patient.atRiskFor.join(', ')}</td>
                         <td><button class="action-btn">View Chart</button></td>
                     </tr>
                 `;
@@ -52,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
         } catch (error) {
             console.error('Error fetching patients:', error);
-            tableBody.innerHTML = '<tr><td colspan="4">Could not load patient data.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="7">Could not load patient data.</td></tr>';
         }
     }
 

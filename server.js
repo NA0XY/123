@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs').promises;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,17 +22,16 @@ const database = {
         { id: 'patient03', name: 'Sarah Connor', email: 'patient3@onecare.com', passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LeRxkZjQBjyMM5/pm', role: 'patient', lastLogin: null },
     ],
     patients: [
-        { id: 'patient01', name: 'Jane Doe', lastVisit: '2025-09-15', status: 'At Risk', age: 34, condition: 'Hypertension', allergies: 'Penicillin' },
-        { id: 'patient02', name: 'Michael Scott', lastVisit: '2025-09-12', status: 'Active', age: 45, condition: 'Type 2 Diabetes', allergies: 'None' },
-        { id: 'patient03', name: 'Sarah Connor', lastVisit: '2025-09-01', status: 'Active', age: 29, condition: 'Post-op Recovery', allergies: 'None' },
-        { id: 'patient04', name: 'Kyle Reese', lastVisit: '2025-08-28', status: 'Discharged', age: 31, condition: 'Recovered', allergies: 'None' },
-        { id: 'patient05', name: 'T-800', lastVisit: '2025-08-15', status: 'At Risk', age: 35, condition: 'General Checkup', allergies: 'None' },
+        { id: 'patient-001', name: 'John Smith', lastVisit: '2025-09-15', status: 'At Risk', age: 50, diagnosis: 'Hypertension', familyHistory: 'Heart Disease', atRiskFor: ['Heart Disease', 'Stroke'] },
+        { id: 'patient-002', name: 'Jane Doe', lastVisit: '2025-09-12', status: 'Active', age: 33, diagnosis: 'Asthma', familyHistory: 'Diabetes', atRiskFor: ['Diabetes'] },
+        { id: 'patient-003', name: 'Mr. Yash', lastVisit: '2025-09-01', status: 'At Risk', age: 65, diagnosis: 'Mental Illness', familyHistory: 'Depression', atRiskFor: ['Anxiety', 'Depression'] },
+        { id: 'patient-004', name: 'Emily White', lastVisit: '2025-08-28', status: 'Discharged', age: 45, diagnosis: 'Remission', familyHistory: 'Ovarian Cancer', atRiskFor: ['Ovarian Cancer', 'Breast Cancer'] },
+        { id: 'patient-005', name: 'Michael Brown', lastVisit: '2025-08-15', status: 'At Risk', age: 27, diagnosis: 'Anxiety', familyHistory: 'Panic Attacks', atRiskFor: ['Anxiety', 'Depression'] },
     ],
     appointments: {
         '2025-09-15': [
             { time: '10:00 AM', patient: 'Michael Scott', reason: 'Pre-op Assessment', status: 'Confirmed' },
-            { time: '11:30 AM', patient: 'Sarah Connor', reason: 'Follow-up', status: 'Confirmed' },
-            { time: '02:00 PM', patient: 'Jane Doe', reason: 'Annual Checkup', status: 'Completed' }
+            { time: '11:30 AM', patient: 'Sarah Connor', reason: 'Follow-up', status: 'Completed' }
         ],
         '2025-09-18': [
             { time: '09:00 AM', patient: 'T-800', reason: 'Routine Check', status: 'Confirmed' }
@@ -190,6 +190,39 @@ app.get('/api/patient/:id/screening', (req, res) => {
                 }
             ]
         });
+    }
+});
+
+app.get('/api/patient/:id/risk', async (req, res) => {
+    const patientId = req.params.id;
+    try {
+        const fhirData = JSON.parse(await fs.readFile(path.join(__dirname, 'synthetic_fhir_data.json'), 'utf-8'));
+        const riskModelText = await fs.readFile(path.join(__dirname, 'risk_model.js'), 'utf-8');
+        
+        // This is a workaround to use the class from the file
+        const FakedRiskModel = eval(riskModelText + '; FakedRiskModel');
+        const riskAssessor = new FakedRiskModel();
+
+        const patientEntry = fhirData.entry.find(e => e.resource.resourceType === 'Patient' && e.resource.id === patientId);
+        if (!patientEntry) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+        const patient = patientEntry.resource;
+
+        const conditions = fhirData.entry
+            .filter(e => e.resource.resourceType === 'Condition' && e.resource.subject.reference.endsWith(patientId))
+            .map(e => e.resource);
+
+        const familyHistory = fhirData.entry
+            .filter(e => e.resource.resourceType === 'FamilyMemberHistory' && e.resource.patient.reference.endsWith(patientId))
+            .map(e => e.resource);
+
+        const riskAssessment = riskAssessor.assessRisk(patient, conditions, familyHistory);
+        res.json(riskAssessment);
+
+    } catch (error) {
+        console.error('Error assessing risk:', error);
+        res.status(500).json({ error: 'Could not assess risk' });
     }
 });
 

@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Mock patient data for demonstration
     const patientData = {
-        id: 'patient01',
+        id: 'patient-001',
         name: 'Jane Doe',
         dateOfBirth: '1988-05-20',
         gender: 'female',
@@ -35,27 +35,23 @@ document.addEventListener('DOMContentLoaded', function() {
         currentConditions: ['hypertension']
     };
 
-    const mlService = new OneCareMLService();
-
     async function generateScreeningRecommendations() {
         personalizedList.innerHTML = '<p>Analyzing your health records...</p>';
         
         try {
-            const riskAssessment = await mlService.calculateComprehensiveRisk(patientData);
+            const response = await fetch(`/api/patient/${patientData.id}/risk`);
+            const riskAssessment = await response.json();
             
             personalizedList.innerHTML = ''; 
 
-            if (riskAssessment.recommendations && riskAssessment.recommendations.length > 0) {
-                riskAssessment.recommendations.forEach(rec => {
-                    const riskClass = getRiskClass(rec.priority);
-                    const iconClass = getIconForRecommendation(rec.type);
-
+            if (riskAssessment.flaggedConditions && riskAssessment.flaggedConditions.length > 0) {
+                riskAssessment.flaggedConditions.forEach(condition => {
                     const listItem = `
-                        <div class="screening-list-item ${riskClass}">
-                            <div class="screening-icon"><i class="fas ${iconClass}"></i></div>
+                        <div class="screening-list-item risk-high">
+                            <div class="screening-icon"><i class="fas fa-exclamation-triangle"></i></div>
                             <div class="screening-details">
-                                <h4>${rec.title}</h4>
-                                <p>${rec.reason}</p>
+                                <h4>${condition}</h4>
+                                <p>Our model indicates an elevated risk for this condition based on your health data.</p>
                             </div>
                             <div class="screening-actions">
                                 <button class="schedule-btn">Learn More</button>
@@ -99,12 +95,6 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             generalList.innerHTML += listItem;
         });
-    }
-
-    function getRiskClass(priority) {
-        if (priority >= 8) return 'risk-high';
-        if (priority >= 5) return 'risk-medium';
-        return 'risk-low';
     }
 
     function getIconForRecommendation(type) {
